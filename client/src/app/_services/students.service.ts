@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment.development';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { map, Observable, shareReplay } from 'rxjs';
 import { ResponseDto } from '../_interfaces/response-dto';
 import { StudentPaymentCreateDto } from '../_interfaces/student-payment-create-dto';
 import { StudentsCreateDto } from '../_interfaces/students-create-dto';
 import { StudentEnrollmentFormModel } from '../_interfaces/student-enrollment-form-model';
 import { StudentPaymentModel } from '../_interfaces/student-payment-model';
+import { StudentDataModel } from '../_interfaces/student-data-model';
+import { StateGroup } from '../_pages/Payments/payment-pay/payment-pay.component';
 
 @Injectable({
   providedIn: 'root'
@@ -33,12 +35,18 @@ export class StudentsService {
   createStudentPayment = (data : StudentPaymentCreateDto) : Observable<ResponseDto> => this.http
     .post<ResponseDto>(`${this.myUrl}/StudentPayment/create`, data, {headers : { 'Allow-Offline' : 'true' }});
 
-  detailStudentEnrollmentForm = () : Observable<StudentEnrollmentFormModel> => this.http
-    .get<StudentEnrollmentFormModel>(`${this.myUrl}/Students/detail-student-enrollment-form`, {headers : { 'Allow-Offline' : 'true' }});
-
   detailStudentEnrollmentFormById = (id: string) : Observable<StudentEnrollmentFormModel> => this.http
     .post<StudentEnrollmentFormModel>(`${this.myUrl}/Students/detail-student-enrollment-form-by-id/${id}`, {headers : { 'Allow-Offline' : 'true' }});
 
   detailStudentPaymentReceiptById = (id: string) : Observable<StudentPaymentModel> => this.http
     .post<StudentPaymentModel>(`${this.myUrl}/StudentPayment/detail-student-payment-by-id/${id}`, {headers : { 'Allow-Offline' : 'true' }});
+
+  /*detailStudentEnrollmentForm = () : Observable<StudentEnrollmentFormModel> => this.http
+    .get<StudentEnrollmentFormModel>(`${this.myUrl}/Students/detail-student-enrollment-form`, {headers : { 'Allow-Offline' : 'true' }});*/
+
+  detailStudentData = () : Observable<StudentDataModel> => this.http
+    .get<StudentDataModel>(`${this.myUrl}/Students/detail-student-data`, {headers : { 'Allow-Offline' : 'true' }});
+
+  getStudentDataByFullName = (fullName: string) : Observable<StudentDataModel> => this.http
+    .post<StudentDataModel>(`${this.myUrl}/Students/detail-student-data-by-fullName/${fullName}`, {headers : { 'Allow-Offline' : 'true' }});
 }

@@ -27,7 +27,8 @@ export class SucessEnrollmentComponent implements OnInit, OnDestroy, ICellRender
   //studentDetail$!: Observable<StudentEnrollmentFormModel>;
   studentData: StudentEnrollmentFormModel = {
     studentId: '',
-    studentData: {
+    studentData:
+    {
       order: 0,
       id: '',
       documentType: '',

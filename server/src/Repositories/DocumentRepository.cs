@@ -690,6 +690,7 @@ namespace server.src.Repositories
                 </html>
             ";
         }
+
         private static string HtmlGeneratePaymentReceiptPrint(StudentPaymentModel ficha)
         {
             string banco = "";
@@ -850,7 +851,7 @@ namespace server.src.Repositories
                                         <div style='font-size: 14pt; font-weight: bold;'>COMPROVATIVO DE PAGAMENTO</div>
                                         <div style='font-size: 12pt; font-weight: bold; padding-top: 5px;'>
                                             VALOR
-                                            <span class='retang-value'>{ OnAmount(ficha.AmountMT) }</span>
+                                            <span class='retang-value'>{OnAmount(ficha.AmountMT)}</span>
                                             MT
                                         </div>  
                                     </div>                                    
@@ -858,14 +859,14 @@ namespace server.src.Repositories
                                 <td rowspan='2' valign='middle' align='center'>
                                     <div class='retang' style='padding: 40px 0'>
                                         <div style='font-size: 12pt; font-weight: bold;'>RECIBO Nº</div>
-                                        <div style='font-size: 14pt; font-weight: bold;'>{ OnCheckSpace(ficha.Id) }</div>
+                                        <div style='font-size: 14pt; font-weight: bold;'>{OnCheckSpace(ficha.Id)}</div>
                                     </div>                                    
                                 </td>
                             </tr>
                             <tr>
                                 <td valign='middle' align='center' class='space-col'>
                                     <div class='retang' style='font-size: 11pt; padding: 5px 0;'>
-                                        Número de Estudente: { OnCheckSpace(ficha.StudentId) }
+                                        Número de Estudente: {OnCheckSpace(ficha.StudentId)}
                                     </div>
                                 </td>
                             </tr>  
@@ -874,15 +875,15 @@ namespace server.src.Repositories
                         <div class='retang' style='margin-top: 5px;'>
                             <div style='font-size: 11pt; padding: 5px 0;'>
                                 Recebi(emos) do(a) Exmo.(a) Sr.(a)
-                                <span class='wide-field'>{ OnCheckSpace(ficha.ReceivedFrom) }</span>
+                                <span class='wide-field'>{OnCheckSpace(ficha.ReceivedFrom)}</span>
                             </div> 
                             <div style='font-size: 11pt; padding: 5px 0;'>
                                 a quantia de 
-                                <span class='wide-field-field'>{ OnCheckSpace(ficha.InWords) }</span>
+                                <span class='wide-field-field'>{OnCheckSpace(ficha.InWords)}</span>
                             </div> 
                             <div style='font-size: 11pt; padding: 5px 0;'>
                                 referente ao pagamento da 
-                                <span class='wide-field-field-field'>{ OnCheckSpace(ficha.DescriptionPortuguese) }</span>
+                                <span class='wide-field-field-field'>{OnCheckSpace(ficha.DescriptionPortuguese)}</span>
                             </div> 
                             <div style='font-size: 11pt; padding: 10px 0;'>
                                 de que passamos o presente recibo.
@@ -913,9 +914,9 @@ namespace server.src.Repositories
                             <div style='text-align: right; margin-top: 20px;'>
                                 <div style='display: inline-block; width: 50%; text-align: center;'>
                                     <div>
-                                        Maputo, <span class='input-line'>{ ficha.Days }</span> de 
-                                        <span class='input-line' style='padding: 0 50px'>{ OnCheckSpace(ficha.Months) }</span> de 
-                                        <span class='input-line'>{ ficha.Years }</span>
+                                        Maputo, <span class='input-line'>{ficha.Days}</span> de 
+                                        <span class='input-line' style='padding: 0 50px'>{OnCheckSpace(ficha.Months)}</span> de 
+                                        <span class='input-line'>{ficha.Years}</span>
                                     </div>
                                     <div style='font-size: 10pt; margin-top: 5px;'>
                                         Hora: {OnCheckSpace(ficha.Times)}
@@ -960,7 +961,7 @@ namespace server.src.Repositories
                                         <div style='font-size: 14pt; font-weight: bold;'>COMPROVATIVO DE PAGAMENTO</div>
                                         <div style='font-size: 12pt; font-weight: bold; padding-top: 5px;'>
                                             VALOR
-                                            <span class='retang-value'>{ OnAmount(ficha.AmountMT) }</span>
+                                            <span class='retang-value'>{OnAmount(ficha.AmountMT)}</span>
                                             MT
                                         </div>  
                                     </div>                                    
@@ -968,14 +969,14 @@ namespace server.src.Repositories
                                 <td rowspan='2' valign='middle' align='center'>
                                     <div class='retang' style='padding: 40px 0'>
                                         <div style='font-size: 12pt; font-weight: bold;'>RECIBO Nº</div>
-                                        <div style='font-size: 14pt; font-weight: bold;'>{ OnCheckSpace(ficha.Id) }</div>
+                                        <div style='font-size: 14pt; font-weight: bold;'>{OnCheckSpace(ficha.Id)}</div>
                                     </div>                                    
                                 </td>
                             </tr>
                             <tr>
                                 <td valign='middle' align='center' class='space-col'>
                                     <div class='retang' style='font-size: 11pt; padding: 5px 0;'>
-                                        Número de Estudente: { OnCheckSpace(ficha.StudentId) }
+                                        Número de Estudente: {OnCheckSpace(ficha.StudentId)}
                                     </div>
                                 </td>
                             </tr>  
@@ -984,15 +985,15 @@ namespace server.src.Repositories
                         <div class='retang' style='margin-top: 5px;'>
                             <div style='font-size: 11pt; padding: 5px 0;'>
                                 Recebi(emos) do(a) Exmo.(a) Sr.(a)
-                                <span class='wide-field'>{ OnCheckSpace(ficha.ReceivedFrom) }</span>
+                                <span class='wide-field'>{OnCheckSpace(ficha.ReceivedFrom)}</span>
                             </div> 
                             <div style='font-size: 11pt; padding: 5px 0;'>
                                 a quantia de 
-                                <span class='wide-field-field'>{ OnCheckSpace(ficha.InWords) }</span>
+                                <span class='wide-field-field'>{OnCheckSpace(ficha.InWords)}</span>
                             </div> 
                             <div style='font-size: 11pt; padding: 5px 0;'>
                                 referente ao pagamento da 
-                                <span class='wide-field-field-field'>{ OnCheckSpace(ficha.DescriptionPortuguese) }</span>
+                                <span class='wide-field-field-field'>{OnCheckSpace(ficha.DescriptionPortuguese)}</span>
                             </div> 
                             <div style='font-size: 11pt; padding: 10px 0;'>
                                 de que passamos o presente recibo.
@@ -1023,9 +1024,9 @@ namespace server.src.Repositories
                             <div style='text-align: right; margin-top: 20px;'>
                                 <div style='display: inline-block; width: 50%; text-align: center;'>
                                     <div>
-                                        Maputo, <span class='input-line'>{ ficha.Days }</span> de 
-                                        <span class='input-line' style='padding: 0 50px'>{ OnCheckSpace(ficha.Months) }</span> de 
-                                        <span class='input-line'>{ ficha.Years }</span>
+                                        Maputo, <span class='input-line'>{ficha.Days}</span> de 
+                                        <span class='input-line' style='padding: 0 50px'>{OnCheckSpace(ficha.Months)}</span> de 
+                                        <span class='input-line'>{ficha.Years}</span>
                                     </div>
                                     <div style='font-size: 10pt; margin-top: 5px;'>
                                         Hora: {OnCheckSpace(ficha.Times)}

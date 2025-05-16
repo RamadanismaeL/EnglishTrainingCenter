@@ -68,11 +68,19 @@ namespace server.src.Controllers
 
             return Ok(studentLastId);
         }
-        
+
         [HttpPost("detail-student-enrollment-form-by-id/{id}")]
         public async Task<ActionResult<StudentEnrollmentFormModel>> GetStudentEnrollmentFormById(string id)
         {
             var student = await _studentRepository.GetStudentEnrollmentFormById(id);
+
+            return Ok(student);
+        }
+        
+        [HttpPost("detail-student-data-by-fullName/{fullName}")]
+        public async Task<ActionResult<StudentDataModel>> GetStudentDataByName(string fullName)
+        {
+            var student = await _studentRepository.GetStudentDataByName(fullName);
 
             return Ok(student);
         }

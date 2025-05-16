@@ -13,14 +13,28 @@
         <div class="w-full shadow-xl rounded-3xl p-8 bg-white w-1/2 h-105"
         >
         <mat-form-field appearance="outline" class="w-full">
-          <mat-label>Student Name / Number</mat-label>
-            <input matInput
-              type="text" maxlength="50"
-              formControlName="studentName"/>
-            @if (getErrorForms('studentName')?.hasError('required')) {
-              <mat-error>This field is required</mat-error>
+          <mat-label>Student Name</mat-label>
+          <input matInput
+                type="text"
+                maxlength="50"
+                formControlName="studentName"
+                [matAutocomplete]="autoStudent"/>
+
+          <mat-autocomplete #autoStudent="matAutocomplete" class="scrollbar-custom">
+            @for (student of filteredStudents$ | async; track student.id) {
+              <mat-option [value]="student.fullName">
+                <div class="flex justify-between items-center">
+                  <span>{{ student.fullName }}</span>
+                  <span class="text-gray-500 text-sm ml-2">{{ student.id }}</span>
+                </div>
+              </mat-option>
             }
-          </mat-form-field>
+          </mat-autocomplete>
+
+          @if (getErrorForms('studentName')?.hasError('required')) {
+            <mat-error>This field is required</mat-error>
+          }
+        </mat-form-field>
 
         <mat-form-field appearance="outline" class="w-full">
           <mat-label>Received from the Honorable Mr./Ms.</mat-label>

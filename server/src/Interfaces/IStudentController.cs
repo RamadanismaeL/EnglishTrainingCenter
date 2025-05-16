@@ -16,5 +16,6 @@ namespace server.src.Interfaces
         Task<ActionResult<List<StudentEnrollmentFormModel>>> DetailStudentEnrollmentForm();
         Task<ActionResult<string>> GetStudentByLastId();
         Task<ActionResult<StudentEnrollmentFormModel>> GetStudentEnrollmentFormById(string id);
+        Task<ActionResult<StudentDataModel>> GetStudentDataByName(string fullName);
     }
 }

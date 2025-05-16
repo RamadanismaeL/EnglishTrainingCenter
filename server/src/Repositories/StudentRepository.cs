@@ -66,27 +66,29 @@ namespace server.src.Repositories
                 var trainerName = userNameClaim?.Value;
 
 
-                var studentExistIdDoc = !string.IsNullOrEmpty(studentCreateDto.IdNumber) 
+                var studentExistIdDoc = !string.IsNullOrEmpty(studentCreateDto.IdNumber)
                     && await _dbContext.StudentData.AnyAsync(s => s.IdNumber == studentCreateDto.IdNumber);
 
-                var studentExistFullName = !string.IsNullOrEmpty(studentCreateDto.FullName) 
+                var studentExistFullName = !string.IsNullOrEmpty(studentCreateDto.FullName)
                     && await _dbContext.StudentData.AnyAsync(s => s.FullName == studentCreateDto.FullName);
 
 
                 if (studentExistIdDoc || studentExistFullName)
                 {
-                    return new ResponseDto {
+                    return new ResponseDto
+                    {
                         IsSuccess = false,
                         Message = "Student already exist!"
                     };
                 }
 
-                
+
                 var newId = GenerateStudentID();
 
                 if (newId is null)
                 {
-                    return new ResponseDto {
+                    return new ResponseDto
+                    {
                         IsSuccess = false,
                         Message = "Failed to generate a new Student ID."
                     };
@@ -148,8 +150,9 @@ namespace server.src.Repositories
 
                     TrainerName = trainerName!
                 };
-                
-                var studentEnrollmentForm = new StudentEnrollmentFormModel {
+
+                var studentEnrollmentForm = new StudentEnrollmentFormModel
+                {
                     StudentId = newId,
 
                     CourseName = "Inglês",
@@ -170,19 +173,19 @@ namespace server.src.Repositories
                     Months = GetMonth(DateTime.Now.Month),
                     Years = DateTime.Now.Year,
                     Times = DateTime.Now,
-                    
+
                     TrainerName = trainerName!
                 };
 
                 //Console.WriteLine($"Student ID = {newId}\nMonthly Fee = {monthlyFee} \nCourse Fee = {courseFee} \nInstallment = {installment} \nAge = {age}");
-                
+
                 using var transaction = await _dbContext.Database.BeginTransactionAsync();
                 try
                 {
                     if (studentData != null) await _dbContext.StudentData.AddAsync(studentData);
                     if (studentCourseInfo != null) await _dbContext.StudentCourseInfo.AddAsync(studentCourseInfo);
                     if (studentEnrollmentForm != null) await _dbContext.StudentEnrollmentForm.AddAsync(studentEnrollmentForm);
-                    
+
                     await _dbContext.SaveChangesAsync();
                     await transaction.CommitAsync();
                 }
@@ -192,7 +195,7 @@ namespace server.src.Repositories
                     Console.WriteLine($"[Error] Transaction failed: {ex.Message}");
                     throw;
                 }
-                
+
                 return new ResponseDto
                 {
                     IsSuccess = true,
@@ -227,7 +230,7 @@ namespace server.src.Repositories
                     MonthlyFee = s.MonthlyFee,
                     Status = s.Status,
                     TrainerName = s.TrainerName,
-                    DateUpdate = s.DateUpdate         
+                    DateUpdate = s.DateUpdate
                 })
                 .ToListAsync();
         }
@@ -276,6 +279,7 @@ namespace server.src.Repositories
         public async Task<string> GetStudentByLastId()
         {
             var studentId = await _dbContext.StudentData
+                .AsNoTracking()
                 .OrderByDescending(s => s.Order)
                 .Select(s => s.Id)
                 .FirstOrDefaultAsync();
@@ -308,7 +312,7 @@ namespace server.src.Repositories
                     Years = s.Years,
                     Times = s.Times,
                     TrainerName = s.TrainerName,
-                    StudentData = s.StudentData  
+                    StudentData = s.StudentData
                 })
                 .ToListAsync();
         }
@@ -317,6 +321,7 @@ namespace server.src.Repositories
         {
             // Inclua StudentData e relacionamentos necessários
             var student = await _dbContext.StudentEnrollmentForm
+                .AsNoTracking()
                 .Include(s => s.StudentData) // Carrega os dados relacionados
                 .ThenInclude(sd => sd!.Payments) // Se Payments for uma subpropriedade
                 .Include(s => s.StudentData!.CourseInfo) // Se CourseInfo existir
@@ -399,6 +404,68 @@ namespace server.src.Repositories
             };
         }
 
+        public async Task<StudentDataModel> GetStudentDataByName(string fullName)
+        {
+            // Inclua StudentData e relacionamentos necessários
+            var student = await _dbContext.StudentData
+                .AsNoTracking()
+                .Include(s => s.CourseInfo)
+                .FirstOrDefaultAsync(s => s.FullName == fullName);
+
+            if (student == null) return null!;
+
+            // Mapeamento completo
+            return new StudentDataModel
+            {
+                Order = student.Order,
+                Id = student.Id,
+
+                DocumentType = student.DocumentType,
+                IdNumber = student.IdNumber,
+                PlaceOfIssue = student.PlaceOfIssue,
+                ExpirationDate = student.ExpirationDate,
+
+                FullName = student.FullName,
+                DateOfBirth = student.DateOfBirth,
+                DateOfBirthCalc = student.DateOfBirthCalc,
+                Gender = student.Gender,
+                MaritalStatus = student.MaritalStatus,
+                Nationality = student.Nationality,
+                PlaceOfBirth = student.PlaceOfBirth,
+                ResidentialAddress = student.ResidentialAddress,
+                FirstPhoneNumber = student.FirstPhoneNumber,
+                SecondPhoneNumber = student.SecondPhoneNumber,
+                EmailAddress = student.EmailAddress,
+                AdditionalNotes = student.AdditionalNotes,
+
+                GuardFullName = student.GuardFullName,
+                GuardRelationship = student.GuardRelationship,
+                GuardFirstPhoneNumber = student.GuardFirstPhoneNumber,
+                GuardSecondPhoneNumber = student.GuardSecondPhoneNumber,
+                GuardEmailAddress = student.GuardEmailAddress,
+
+                TrainerName = student.TrainerName,
+                DateUpdate = student.DateUpdate,
+
+                CourseInfo = new StudentCourseInfoModel
+                {
+                    StudentId = student.CourseInfo!.StudentId,
+                    CourseName = student.CourseInfo!.CourseName,
+                    Package = student.CourseInfo!.Package,
+                    Level = student.CourseInfo!.Level,
+                    Modality = student.CourseInfo!.Modality,
+                    AcademicPeriod = student.CourseInfo!.AcademicPeriod,
+                    Schedule = student.CourseInfo!.Schedule,
+                    Duration = student.CourseInfo!.Duration,
+                    MonthlyFee = student.CourseInfo!.MonthlyFee,
+                    Status = student.CourseInfo!.Status,
+                    TrainerName = student.CourseInfo!.TrainerName,
+                    DateUpdate = student.CourseInfo!.DateUpdate,
+                    StudentData = null
+                }                
+            };
+        }
+
         private string GenerateStudentID()
         {
             try
@@ -459,29 +526,29 @@ namespace server.src.Repositories
 
         private static string GetMonth(int month)
         {
-            if(month == 1)
+            if (month == 1)
             { return "Janeiro"; }
-            else if(month == 2)
+            else if (month == 2)
             { return "Fevereiro"; }
-            else if(month == 3)
+            else if (month == 3)
             { return "Março"; }
-            else if(month == 4)
+            else if (month == 4)
             { return "Abril"; }
-            else if(month == 5)
+            else if (month == 5)
             { return "Maio"; }
-            else if(month == 6)
+            else if (month == 6)
             { return "Junho"; }
-            else if(month == 7)
+            else if (month == 7)
             { return "Julho"; }
-            else if(month == 8)
+            else if (month == 8)
             { return "Agosto"; }
-            else if(month == 9)
+            else if (month == 9)
             { return "Setembro"; }
-            else if(month == 10)
+            else if (month == 10)
             { return "Outubro"; }
-            else if(month == 11)
+            else if (month == 11)
             { return "Novembro"; }
-            else if(month == 12)
+            else if (month == 12)
             { return "Dezembro"; }
 
             return "";
@@ -509,149 +576,5 @@ namespace server.src.Repositories
             return modality;
         }
 
-
-        /*
-        {
-  "package": "Regular",
-  "level": "A1",
-  "modality": "InPerson",
-  "academicPeriod": "Noon",
-  "schedule": "7h-9h",
-  "documentType": "BI",
-  "idNumber": "100123123321Q",
-  "placeOfIssue": "C. Matola",
-  "expirationDate": "11/12/2027",
-  "fullName": "Ramadan Ibraimo",
-  "dateOfBirth": "21/11/2001",
-  "dateOfBirthCalc": "2025-05-13T11:30:48.152Z",
-  "gender": "M",
-  "maritalStatus": "Single",
-  "nationality": "Mozambique",
-  "placeOfBirth": "Maputo",
-  "residentialAdress": "Machava Bedene",
-  "firstPhoneNumber": "3453245324",
-  "secondPhoneNumber": "",
-  "emailAddress": "string",
-  "additionalNotes": "string",
-  "guardFullName": "string",
-  "guardRelationship": "string",
-  "guardResidentialAddress": "string",
-  "guardFirstPhoneNumber": "string",
-  "guardSecondPhoneNumber": "string",
-  "guardEmailAddress": "string"
-}
-
-public async Task<ResponseDto> Update(StudentUpdateDto studentUpdateDto)
-{
-   try
-   {
-       var userPrincipal = _httpContextAccessor.HttpContext?.User;
-       if (userPrincipal == null)
-       {
-           return new ResponseDto
-           {
-               IsSuccess = false,
-               Message = "User not authenticated."
-           };
-       }
-       var userId = userPrincipal.FindFirst(ClaimTypes.NameIdentifier);
-       if (userId == null)
-       {
-           return new ResponseDto
-           {
-               IsSuccess = false,
-               Message = "User not found."
-           };
-       }
-
-       var userIdValue = userId.Value;
-       var user = await _dbContext.Users
-           .FirstOrDefaultAsync(u => u.Id == userIdValue);
-       if (user == null)
-       {
-           return new ResponseDto
-           {
-               IsSuccess = false,
-               Message = "User not found."
-           };
-       }
-
-       var userNameClaim = _httpContextAccessor.HttpContext?.User.FindFirst(JwtRegisteredClaimNames.Name);
-
-       var userName = userNameClaim?.Value;
-
-       var studentId = await _dbContext.Students
-           .FirstOrDefaultAsync(s => s.Id == studentUpdateDto.Id);
-
-       var studentExistIdDoc = await _dbContext.Students
-           .AnyAsync(s => s.IdNumber == studentUpdateDto.IdNumber && s.Id != studentUpdateDto.Id);
-
-       var studentExistFullName = await _dbContext.Students
-           .AnyAsync(s => s.FullName == studentUpdateDto.FullName && s.Id != studentUpdateDto.Id);
-
-
-       if (studentExistIdDoc || studentExistFullName)
-       {
-           return new ResponseDto {
-               IsSuccess = false,
-               Message = "Student already exists!"
-           };
-       }
-
-       if (studentId is not null)
-       {
-           studentId.Package = studentUpdateDto.Package;
-           studentId.Level = studentUpdateDto.Level;
-           studentId.Modality = studentUpdateDto.Modality;
-           studentId.AcademicPeriod = studentUpdateDto.AcademicPeriod;
-           studentId.Schedule = studentUpdateDto.Schedule;
-
-           studentId.DocumentType = studentUpdateDto.DocumentType;
-           studentId.IdNumber = studentUpdateDto.IdNumber;
-           studentId.PlaceOfIssue = studentUpdateDto.PlaceOfIssue;
-           studentId.ExpirationDate = studentUpdateDto.ExpirationDate;
-
-           studentId.FullName = studentUpdateDto.FullName;
-           studentId.DateOfBirth = studentUpdateDto.DateOfBirth;
-           studentId.Gender = studentUpdateDto.Gender;
-           studentId.MaritalStatus = studentUpdateDto.MaritalStatus;
-           studentId.Nationality = studentUpdateDto.Nationality;
-           studentId.PlaceOfBirth = studentUpdateDto.PlaceOfBirth;
-           studentId.ResidentialAdress = studentUpdateDto.ResidentialAdress;
-           studentId.PhoneNumber = studentUpdateDto.PhoneNumber;
-           studentId.EmailAddress = studentUpdateDto.EmailAddress;
-           studentId.AdditionalNotes = studentUpdateDto.AdditionalNotes;
-
-           studentId.GuardFullName = studentUpdateDto.GuardFullName;
-           studentId.GuardRelationship = studentUpdateDto.GuardRelationship;
-           studentId.GuardResidentialAddress = studentUpdateDto.ResidentialAdress;
-           studentId.GuardPhoneNumber = studentUpdateDto.GuardPhoneNumber;
-           studentId.GuardEmailAddress = studentUpdateDto.GuardEmailAddress;
-
-           studentId.TrainerId = user.Id;
-           studentId.TrainerName = userName!;
-
-           _dbContext.Students.Update(studentId);
-           await _dbContext.SaveChangesAsync();
-       }              
-
-       return new ResponseDto
-       {
-           IsSuccess = true,
-           Message = "Student updated successfully."
-       };
-   }
-   catch (Exception ex)
-   {
-       _logger.LogError(ex, "Error updating students.");
-       return new ResponseDto
-       {
-           IsSuccess = false,
-           Message = $"An unexpected error occurred while updating.{ex}"
-       };
-   }        
-}
-
-*/
     }
 }
