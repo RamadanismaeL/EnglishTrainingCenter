@@ -1,0 +1,320 @@
+<div class="flex items-center justify-center gap-2 text-2xl font-medium mb-8 text-center"
+matTooltip="ETC"
+[matTooltipPosition]="'right'"
+matTooltipHideDelay="50">
+  <img src="images/marca.png" width="40" alt="Logo">
+  <span class="text-white etc" *ngIf="collapsed" data-text="Awesome">
+    <div class="actual-text">&nbsp;etc&nbsp;</div>
+    <div class="front-text">&nbsp;etc&nbsp;</div>
+  </span>
+</div>
+<nav class="space-y-1">
+  <span class="min cursor-default" *ngIf="collapsed">General</span>
+
+  <div class="cursor-pointer">
+    <span routerLinkActive="active-btn"
+    [routerLink]="['/', {outlets: {ramRouter: ['dashboard']}}]"
+    (click)="navigateTo([
+      { label: 'DASHBOARD' }
+    ])"
+    class="btnLeft flex items-center p-2 rounded">
+      <a class="flex items-center gap-4 p-1">
+        <mat-icon>dashboard</mat-icon>
+        <span *ngIf="collapsed">Dashboard</span>
+      </a>
+    </span>
+
+    <div>
+      <span (click)="togglePanel()"
+      [ngClass]="{ 'active-btn-help': student }"
+      class="btnLeft flex items-center p-2 rounded">
+        <div class="w-full flex justify-between">
+          <a class="flex items-center gap-4">
+            <mat-icon>school</mat-icon>
+            <span *ngIf="collapsed">Students</span>
+          </a>
+          <svg
+              class="w-5 h-5 transition-transform duration-300"
+              [ngClass]="{ 'rotate-180': isOpen }"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+        </div>
+      </span>
+
+      <div *ngIf="isOpen" class="mt-2 space-y-2">
+        <span
+        [ngClass]="{ 'active-verticalLineBtn': studentActive }"
+        [routerLink]="['/', {outlets: {ramRouter: ['student-active']}}]"
+        (click)="navigateTo([
+          { label: 'STUDENTS : ACTIVE', url: ['/', {outlets: {ramRouter: ['student-active']}}] }
+        ])"
+        class="verticalLineBtn flex items-center p-2 rounded">
+          <a class="flex items-center gap-4">
+            @if (!collapsed)
+            {
+              <span class="verticalLine ml-2"></span>
+              <span>A</span>
+            }
+            @else
+            {
+              <span class="verticalLine ml-5 pr-1"></span>
+              <span *ngIf="collapsed">Active</span>
+            }
+          </a>
+        </span>
+
+        <span
+        [ngClass]="{ 'active-verticalLineBtn': studentScheduledExams }"
+        [routerLink]="['/', {outlets: {ramRouter: ['student-scheduled-exams']}}]"
+        (click)="navigateTo([
+          { label: 'STUDENTS : SCHEDULED EXAMS', url: ['/', {outlets: {ramRouter: ['student-scheduled-exams']}}] }
+        ])"
+        class="verticalLineBtn flex items-center p-2 rounded">
+          <a class="flex items-center gap-4">
+            @if (!collapsed)
+            {
+              <span class="verticalLine ml-2"></span>
+              <span>SE</span>
+            }
+            @else
+            {
+              <span class="verticalLine ml-5 pr-1"></span>
+              <span *ngIf="collapsed" class="truncate">Scheduled Exams</span>
+            }
+          </a>
+        </span>
+
+        <span [ngClass]="{ 'active-verticalLineBtn': studentFinished }"
+        [routerLink]="['/', {outlets: {ramRouter: ['student-finished']}}]"
+        (click)="navigateTo([
+          { label: 'STUDENTS : COMPLETED' }
+        ])"
+        class="verticalLineBtn flex items-center p-2 rounded">
+          <a class="flex items-center gap-4">
+            @if (!collapsed)
+            {
+              <span class="verticalLine ml-2"></span>
+              <span>C</span>
+            }
+            @else
+            {
+              <span class="verticalLine ml-5 pr-1"></span>
+              <span *ngIf="collapsed">Completed</span>
+            }
+          </a>
+        </span>
+
+        <span [ngClass]="{ 'active-verticalLineBtn': studentDropout }"
+        [routerLink]="['/', {outlets: {ramRouter: ['student-dropouts']}}]"
+        (click)="navigateTo([
+          { label: 'STUDENTS : INACTIVE' }
+        ])"
+        class="verticalLineBtn flex items-center p-2 rounded">
+          <a class="flex items-center gap-4">
+            @if (!collapsed)
+            {
+              <span class="verticalLine ml-2"></span>
+              <span>I</span>
+            }
+            @else
+            {
+              <span class="verticalLine ml-5 pr-1"></span>
+              <span *ngIf="collapsed">Inactive</span>
+            }
+          </a>
+        </span>
+      </div>
+    </div>
+
+    <span routerLinkActive="active-btn"
+    [routerLink]="['/', {outlets: {ramRouter: ['enrollments']}}]"
+    (click)="navigateTo([
+      { label: 'ENROLLMENTS' }
+    ])"
+    class="btnLeft flex items-center p-2 rounded">
+      <a class="flex items-center gap-4 p-1">
+        <mat-icon>assignment_ind</mat-icon>
+        <span *ngIf="collapsed">Enrollments</span>
+      </a>
+    </span>
+
+    <span routerLinkActive="active-btn"
+    [routerLink]="['/', {outlets: {ramRouter: ['payments']}}]"
+    (click)="navigateTo([
+      { label: 'PAYMENTS' }
+    ])"
+    class="btnLeft flex items-center p-2 rounded">
+      <a class="flex items-center gap-4">
+        <mat-icon>payment</mat-icon>
+        <span *ngIf="collapsed">Payments</span>
+      </a>
+    </span>
+
+    <div>
+      <span (click)="togglePanelFinancial()"
+      [ngClass]="{ 'active-btn-help': financial }"
+      class="btnLeft flex items-center p-2 rounded">
+        <div class="w-full flex justify-between">
+          <a class="flex items-center gap-4">
+            <mat-icon>account_balance</mat-icon>
+            <span *ngIf="collapsed">Financials</span>
+          </a>
+          <svg
+              class="w-5 h-5 transition-transform duration-300"
+              [ngClass]="{ 'rotate-180': isOpenFinancial }"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+        </div>
+      </span>
+      <div *ngIf="isOpenFinancial" class="mt-2 space-y-2">
+        <span [ngClass]="{ 'active-verticalLineBtn': financialExpense }"
+        [routerLink]="['/', {outlets: {ramRouter: ['financial-expense']}}]"
+        (click)="navigateTo([
+          { label: 'FINANCIALS : EXPENSE' }
+        ])"
+        class="verticalLineBtn flex items-center p-2 rounded">
+          <a class="flex items-center gap-4">
+            @if (!collapsed)
+            {
+              <span class="verticalLine ml-2"></span>
+              <span>E</span>
+            }
+            @else
+            {
+              <span class="verticalLine ml-5 pr-1"></span>
+              <span *ngIf="collapsed">Expense</span>
+            }
+          </a>
+        </span>
+
+        <span [ngClass]="{ 'active-verticalLineBtn': financialRevenue }"
+        [routerLink]="['/', {outlets: {ramRouter: ['financial-revenue']}}]"
+        (click)="navigateTo([
+          { label: 'FINANCIALS : REVENUE' }
+        ])"
+        class="verticalLineBtn flex items-center p-2 rounded">
+          <a class="flex items-center gap-4">
+            @if (!collapsed)
+            {
+              <span class="verticalLine ml-2"></span>
+              <span>R</span>
+            }
+            @else
+            {
+              <span class="verticalLine ml-5 pr-1"></span>
+              <span *ngIf="collapsed">Revenue</span>
+            }
+          </a>
+        </span>
+
+        <span [ngClass]="{ 'active-verticalLineBtn': financialTuition }"
+        [routerLink]="['/', {outlets: {ramRouter: ['financial-tuition']}}]"
+        (click)="navigateTo([
+          { label: 'FINANCIALS : TUITION MANAGEMENT' }
+        ])"
+        class="verticalLineBtn flex items-center p-2 rounded">
+          <a class="flex items-center gap-4">
+            @if (!collapsed)
+            {
+              <span class="verticalLine ml-2"></span>
+              <span>TM</span>
+            }
+            @else
+            {
+              <span class="verticalLine ml-5 pr-1"></span>
+              <span *ngIf="collapsed">Tuition Management</span>
+            }
+          </a>
+        </span>
+
+        <span [ngClass]="{ 'active-verticalLineBtn': financialCashFlow }"
+        [routerLink]="['/', {outlets: {ramRouter: ['financial-cash-flow']}}]"
+        (click)="navigateTo([
+          { label: 'FINANCIALS : CASH FLOW' }
+        ])"
+        class="verticalLineBtn flex items-center p-2 rounded">
+          <a class="flex items-center gap-4">
+            @if (!collapsed)
+            {
+              <span class="verticalLine ml-2"></span>
+              <span>CF</span>
+            }
+            @else
+            {
+              <span class="verticalLine ml-5 pr-1"></span>
+              <span *ngIf="collapsed">Cash Flow</span>
+            }
+          </a>
+        </span>
+
+        <span [ngClass]="{ 'active-verticalLineBtn': financialDailyReport }"
+        [routerLink]="['/', {outlets: {ramRouter: ['financial-daily-report']}}]"
+        (click)="navigateTo([
+          { label: 'FINANCIALS : DAILY REPORT' }
+        ])"
+        class="verticalLineBtn flex items-center p-2 rounded">
+          <a class="flex items-center gap-4">
+            @if (!collapsed)
+            {
+              <span class="verticalLine ml-2"></span>
+              <span>DR</span>
+            }
+            @else
+            {
+              <span class="verticalLine ml-5 pr-1"></span>
+              <span *ngIf="collapsed">Daily Report</span>
+            }
+          </a>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <span class="min cursor-default" *ngIf="collapsed">More</span>
+
+  <div class="cursor-pointer">
+    <span [ngClass]="{ 'active-btn' : trainer }"
+    [routerLink]="['/', {outlets: {ramRouter: ['trainers']}}]"
+    (click)="navigateTo([
+      { label: 'TRAINERS',
+      url: ['/', {outlets: {ramRouter: ['trainers']}}]
+      }
+    ])"
+    class="btnLeft flex items-center p-2 rounded"
+    >
+      <a class="flex items-center gap-4">
+        <mat-icon>supervisor_account</mat-icon>
+        <span *ngIf="collapsed">Trainers</span>
+      </a>
+    </span>
+
+    <span routerLinkActive="active-btn"
+    [routerLink]="['/', {outlets: {ramRouter: ['settings']}}]"
+    (click)="navigateTo([
+      { label: 'SETTINGS' }
+    ])"
+    class="btnLeft flex items-center p-2 rounded">
+      <a class="flex items-center gap-4">
+        <mat-icon>settings</mat-icon>
+        <span *ngIf="collapsed">Settings</span>
+      </a>
+    </span>
+
+    <span class="btnLeft flex items-center p-2 rounded">
+      <a routerLink="/dashboard" class="flex items-center gap-4">
+        <mat-icon>menu_book</mat-icon>
+        <span *ngIf="collapsed">Book Hub</span>
+      </a>
+    </span>
+  </div>
+</nav>

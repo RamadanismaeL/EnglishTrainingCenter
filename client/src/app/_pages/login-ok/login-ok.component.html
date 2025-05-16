@@ -1,0 +1,33 @@
+<div class="flex justify-center items-center px-4 sm:px-6 lg:px-8 py-12">
+  <div class="shadow-xl rounded-3xl p-8 bg-white max-w-lg">
+    <div class="mb-8 text-center">
+      <h1 class="font-bold py-2 text-3xl text-[#00bf80]">
+        Your password has been reset successfully.
+      </h1>
+      <h6 class="text-slate-600 text-base pr-4 pl-4">
+        You can now use your new password to sign in to your account!
+      </h6>
+    </div>
+
+    <div class="my-4"></div>
+
+    <div class="flex justify-center items-center">
+      <button
+      [routerLink]="['/login']"
+      class="animated-button flex">
+        <svg viewBox="0 0 24 24" class="arr-2" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
+          ></path>
+        </svg>
+        <span class="text">Back to Sign in</span>
+        <span class="circle"></span>
+        <svg viewBox="0 0 24 24" class="arr-1" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
+          ></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,74 @@
+<div class="flex justify-center items-center px-4 sm:px-6 lg:px-8 py-12">
+  <form class="shadow-xl rounded-3xl p-8 bg-white max-w-md"
+    [formGroup]="form"
+    (ngSubmit)="signIn()"
+  >
+    <div class="mb-8">
+      <h1 class="font-bold py-2 text-3xl text-[#2c2c2c]">
+        Welcome Back!
+      </h1>
+      <h6 class="text-slate-600 text-base">
+        Enter your email and password to sign in.
+      </h6>
+    </div>
+
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Email</mat-label>
+        <input matInput
+        formControlName="email"
+        type="email"
+        placeholder="Enter email" maxlength="50"/>
+        <mat-icon matPrefix>email</mat-icon>
+        @if (emailInput?.hasError('email')) {
+          <mat-error>Please enter a valid email address</mat-error>
+        }
+        @else if (emailInput?.hasError('required')) {
+          <mat-error>Email is required</mat-error>
+        }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Password</mat-label>
+        <input matInput
+        formControlName="password"
+        type="{{ hide ? 'password' : 'text' }}"
+        placeholder="Enter password" maxlength="50"/>
+        <mat-icon matPrefix>lock</mat-icon>
+        <mat-icon style="cursor: pointer;" matSuffix (click)="hide = !hide"
+        [matTooltip]="hide ? 'Show password' : 'Hide password'">
+          {{ hide ? 'visibility_off' : 'visibility'}}
+        </mat-icon>
+        @if (passwordInput?.hasError('required')) {
+          <mat-error>Password is required.</mat-error>
+        }
+    </mat-form-field>
+
+    <div class="flex justify-end">
+      <a [routerLink]="['/login', { outlets: { loginRouter: ['forgot-password'] } }]"
+        class="cursor-pointer"
+        matTooltip="Click if you’ve forgotten your password. You’ll receive instructions to reset it via email."
+        [matTooltipPosition]="position.value!"
+        matTooltipHideDelay="500"
+        >Forgot Password?
+      </a>
+    </div>
+    <div class="my-9"></div>
+    <button type="submit"
+      class="w-full gradient-button cursor-pointer"
+      >
+      Sign In
+      <span></span>
+    </button>
+    <div class="py-2"></div>
+    <span class="flex justify-start gap-2">
+      @if(showMigration)
+      {
+        <a class="cursor-pointer" (click)="migrateDb()">install</a>
+      }
+      @if(!showMigration && showAccount)
+      {
+        <a class="cursor-pointer" (click)="createNewAccount()">create admin account</a>
+      }
+    </span>
+  </form>
+</div>

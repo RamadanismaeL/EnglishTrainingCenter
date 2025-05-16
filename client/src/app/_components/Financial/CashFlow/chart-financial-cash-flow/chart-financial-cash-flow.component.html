@@ -1,0 +1,37 @@
+<div class="realtime-chart-container">
+  <div class="chart-controls">
+    <button (click)="resetZoom()" class="control-btn">
+      <i class="material-icons">refresh</i> Reset Zoom
+    </button>
+  </div>
+
+  <div class="chart-wrapper">
+    <canvas baseChart
+            [datasets]="chartData"
+            [options]="chartOptions"
+            [type]="chartType">
+    </canvas>
+  </div>
+
+  <div class="chart-footer">
+    <small>Dados atualizados automaticamente. Use scroll do mouse para zoom e arraste para navegar.</small>
+  </div>
+</div>
+
+
+
+<!--
+--
+<canvas style="display: block; box-sizing: border-box; height: 400px; width: 800px;" width="800" height="400"></canvas>
+--
+
+<div class="h-[70vh] overflow-hidden">
+  <div echarts [options]="chartOption" class="w-full h-full"></div>
+</div>
+
+<div echarts [options]="chartOption2" class="demo-chart" style="height: 400px;"></div>
+<div echarts [options]="chartOption3" class="bar-chart"></div>
+
+<div echarts [options]="chartOption4" class="bar-chart"></div>
+<div echarts [options]="chartOption5" class="bar-chart"></div>
+-->

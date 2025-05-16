@@ -1,0 +1,19 @@
+<div class="flex justify-center gap-4">
+  <button mat-icon-button
+  type="button"
+  style="color: #19d232; font-size: 26px; cursor: pointer;"
+  (click)="onEdit()"
+  matTooltip="Add Exam Results"
+  [matTooltipPosition]="positionL.value!"
+  matTooltipHideDelay="50">
+    <mat-icon>edit</mat-icon>
+  </button>
+  <button mat-icon-button
+  type="button"
+  style="color: red; font-size: 26px; cursor: pointer;"
+  matTooltip="Unschedule Exam"
+  [matTooltipPosition]="positionL.value!"
+  matTooltipHideDelay="50">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>

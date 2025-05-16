@@ -1,0 +1,197 @@
+
+// Custom Theming for Angular Material
+// For more information: https://material.angular.io/guide/theming
+@use '@angular/material' as mat;
+@use "tailwindcss";
+
+html {
+  @include mat.theme((
+    color: (
+      theme-type: light,
+      primary: mat.$azure-palette,
+      tertiary: mat.$blue-palette,
+    ),
+    typography: Roboto,
+    density: -3,
+  ));
+  @include mat.form-field-overrides((
+    outlined-outline-width: 1px 0px 1px 0px,
+    outlined-focus-outline-width: 1px 0px 1px 0px,
+    outlined-container-shape: 8px, // like border-radius
+    outlined-caret-color: #d3660c,
+    outlined-label-text-color: #918f9b,
+    outlined-hover-label-text-color: #9f6fec,
+    outlined-input-text-color: #1c1c1c,
+    outlined-outline-color: #918f9b, // border color
+    outlined-hover-outline-color: #2c2c2c, // border hover color
+    trailing-icon-color: #2c2c2c,
+    container-text-font: 'Poppins, sans-serif',
+    container-text-size: 12pt
+  ));
+  @include mat.select-overrides((
+    enabled-arrow-color: #c0c0c0,
+    trigger-text-font: 'Poppins, sans-serif',
+    trigger-text-size: 12pt
+  ));
+  @include mat.tooltip-overrides((
+    container-shape: 5px,
+    container-color: #643887,
+    supporting-text-color: #fff,
+    supporting-text-size: 11pt,
+  ));
+  @include mat.menu-overrides((
+    container-shape: 8px,
+    item-icon-color: #555555,
+    item-label-text-color: #1f1f1f,
+    item-hover-state-layer-color: #9f6fec3f,
+    item-label-text-size: 11pt,
+    item-label-text-weight: light
+  ));
+  @include mat.stepper-overrides((
+    header-icon-foreground-color: #fff,
+    header-selected-state-icon-background-color: #643887,
+    header-selected-state-icon-foreground-color: #fff,
+    container-color: transparent,
+    header-height: 3em,
+    header-label-text-color: #c0c0c0,
+    header-focus-state-layer-color: #9f6fec3f,
+    header-icon-background-color: #c0c0c0,
+    header-done-state-icon-background-color: transparent,
+    header-done-state-icon-foreground-color: green
+  ));
+  @include mat.tabs-overrides((
+    active-indicator-color: #643887,
+    divider-color: transparent,
+    label-text-size: 12pt,
+    label-text-weight: 400
+  ));
+}
+
+html, body { width: 100%; height: 100%; overflow: hidden; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; background: #ddd;}
+
+/* GLOBAL MESSAGE ALERT */
+.success-snackbar {
+  @include mat.snack-bar-overrides((
+    container-color: #3e8a41, // fundo
+    supporting-text-color: #fff,
+    container-shape: 10px, //border-radius
+    supporting-text-size: 12pt,
+    button-color: #fff
+  ));
+}
+
+.error-snackbar {
+  @include mat.snack-bar-overrides((
+    container-color: #be0003, // fundo
+    supporting-text-color: #fff,
+    container-shape: 10px, //border-radius
+    supporting-text-size: 12pt,
+    button-color: #fff
+  ));
+}
+
+.warning-snackbar {
+  @include mat.snack-bar-overrides((
+    container-color: #d47e0c, // fundo
+    supporting-text-color: #fff,
+    container-shape: 10px, //border-radius
+    supporting-text-size: 12pt,
+    button-color: #fff
+  ));
+}
+
+.info-snackbar {
+  @include mat.snack-bar-overrides((
+    container-color: #3a99d3, // fundo
+    supporting-text-color: #fff,
+    container-shape: 10px, //border-radius
+    supporting-text-size: 12pt,
+    button-color: #fff
+  ));
+}
+
+/* GLOBAL SCROLL BAR CONTAINERS*/
+.scrollbar-custom::-webkit-scrollbar {
+  width: 0.6em; /* Largura da barra */
+}
+
+.scrollbar-custom::-webkit-scrollbar-track {
+  background: transparent; /* Fundo transparente */
+  border-radius: 10px;
+  margin: 0.7em 0;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb {
+  background: #63388773; /* Cor do "ponteiro" */
+  border-radius: 10px;
+  border: 2px solid transparent; /* Borda transparente para efeito de padding */
+  background-clip: content-box; /* Garante que a cor não vaze para a borda */
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb:hover {
+  background: #f3ad0f; /* Cor ao passar o mouse */
+  border: 2px solid transparent; /* Borda transparente para efeito de padding */
+  background-clip: content-box; /* Garante que a cor não vaze para a borda - Evita vazamento de cor */
+}
+
+
+/* GLOBAL SCROLL BAR TABLES*/
+// HORIZONTAL
+/* Scroll vertical e horizontal no ag-Grid */
+/* Estilo global para scrollbars do ag-Grid */
+.ag-body-viewport,
+.ag-body-horizontal-scroll-viewport {
+  scrollbar-width: thin;
+  scrollbar-color: #63388773 transparent;
+
+  &:hover {
+    scrollbar-color: #f3ad0f transparent;
+  }
+
+  /* WebKit */
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #63388773;
+    border-radius: 4px;
+    border: 1px solid transparent; /* Melhora a visualização */
+    background-clip: content-box; /* Evita vazamentos de cor */
+  }
+}
+
+.ag-body-viewport,
+.ag-body-vertical-scroll-viewport {
+  scrollbar-width: thin;
+  scrollbar-color: #63388773 transparent;
+
+  &:hover {
+    scrollbar-color: #f3ad0f transparent;
+  }
+
+  /* WebKit */
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #63388773;
+    border-radius: 4px;
+    border: 1px solid transparent; /* Melhora a visualização */
+    background-clip: content-box; /* Evita vazamentos de cor */
+  }
+}
+
+.ag-row-selected {
+  background-color: #9f6fec3f;
+}

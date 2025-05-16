@@ -1,0 +1,253 @@
+<div class="flex justify-center">
+  <div class="w-full shadow-xl rounded-3xl p-7 bg-white max-w-2xl">
+    <div class="w-full flex justify-between">
+      <h1 class="text-lg text-gray-600 font-bold mb-1 text-start truncate">
+        RAMADAN IBRAIMO ISMAEL
+      </h1>
+
+      <button mat-icon-button [matMenuTriggerFor]="menu" class="text-gray-600 cursor-pointer">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+
+      <mat-menu #menu="matMenu">
+        <button [routerLink]="['/', { outlets : { ramRouter: ['student-edit-personal-data'] } }]"
+        (click)="navigateTo({ label: 'EDIT PERSONAL DATA', url: ['/', {outlets: {ramRouter: ['student-edit-personal-data']}}]})"
+        mat-menu-item
+        >
+          <mat-icon>edit</mat-icon>
+          <span>Edit Personal Data</span>
+        </button>
+        <button [routerLink]="['/', { outlets : { ramRouter: ['student-view-enrollment-form'] } }]"
+        (click)="navigateTo({ label: 'ENROLLMENT FORM', url: ['/', {outlets: {ramRouter: ['student-view-enrollment-form']}}]})"
+        mat-menu-item
+        >
+          <mat-icon>article</mat-icon>
+          <span>View Enrollment Form</span>
+        </button>
+      </mat-menu>
+
+    </div>
+    <hr class="border-slate-400">
+    <h1 class="text-lg text-[#555] font-bold mb-1 text-start mt-5">
+      COURSE INFORMATION
+    </h1>
+    <div class="flex gap-20 justify-start mt-5">
+      <div class="grid gap-5 w-48">
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">badge</span>
+          <span class="truncate">Student Number</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">local_offer</span>
+          <span class="truncate">Package</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">star</span>
+          <span class="truncate">Level</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">toggle_on</span>
+          <span class="truncate">Modality</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">calendar_month</span>
+          <span class="truncate">Academic Period</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">schedule</span>
+          <span class="truncate">Schedule</span>
+        </div>
+      </div>
+
+      <div class="grid gap-5 min-w-[1px]">
+        <div class="text-gray-600 font-medium truncate">--</div>
+
+        <div class="text-gray-600 font-medium truncate">--</div>
+
+        <div class="text-gray-600 font-medium truncate">--</div>
+
+        <div class="text-gray-600 font-medium truncate">--</div>
+
+        <div class="text-gray-600 font-medium truncate">--</div>
+
+        <div class="text-gray-600 font-medium truncate">--</div>
+      </div>
+    </div>
+    <h1 class="text-lg text-[#555] font-bold mb-1 text-start mt-10">
+      IDENTIFICATION DOCUMENT
+    </h1>
+    <div class="flex gap-20 justify-start mt-5">
+      <div class="grid gap-5 w-48">
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">inventory_2</span>
+          <span class="truncate">Document Type</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">badge</span>
+          <span class="truncate">Id Number</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">location_on</span>
+          <span class="truncate">Place of Issue</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">event_busy</span>
+          <span class="truncate">Expiration Date</span>
+        </div>
+      </div>
+
+      <div class="grid gap-5 min-w-[1px]">
+        <div class="text-gray-600 font-medium truncate">--</div>
+
+        <div class="text-gray-600 font-medium truncate">--</div>
+
+        <div class="text-gray-600 font-medium truncate">--</div>
+
+        <div class="text-gray-600 font-medium truncate">--</div>
+      </div>
+    </div>
+    <h1 class="text-lg text-[#555] font-bold mb-1 text-start mt-10">
+      PERSONAL DATA
+    </h1>
+    <div class="flex gap-20 justify-start mt-5">
+      <div class="grid gap-5 w-48">
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">person</span>
+          <span class="truncate">Full Name</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">cake</span>
+          <span class="truncate">Date of Birth</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">wc</span>
+          <span class="truncate">Gender</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">favorite</span>
+          <span class="truncate">Marital Status</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">public</span>
+          <span class="truncate">Nationality</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">location_city</span>
+          <span class="truncate">Place of Birth</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">home</span>
+          <span class="truncate">Residential Address</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">phone_in_talk</span>
+          <span class="truncate">Primary Phone</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">call</span>
+          <span class="truncate">Alternative Phone</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">email</span>
+          <span class="truncate">Email Address</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">notes</span>
+          <span class="truncate">Additional Notes</span>
+        </div>
+      </div>
+
+      <div class="grid gap-5 min-w-[1px]">
+        <div class="text-gray-600 font-medium truncate">--</div>
+
+        <div class="text-gray-600 font-medium truncate">--</div>
+
+        <div class="text-gray-600 font-medium truncate">--</div>
+
+        <div class="text-gray-600 font-medium truncate">--</div>
+
+        <div class="text-gray-600 font-medium truncate">--</div>
+
+        <div class="text-gray-600 font-medium truncate">--</div>
+
+        <div class="text-gray-600 font-medium truncate">--</div>
+
+        <div class="text-gray-600 font-medium truncate">--</div>
+
+        <div class="text-gray-600 font-medium truncate">--</div>
+
+        <div class="text-gray-600 font-medium truncate">--</div>
+
+        <div class="text-gray-600 font-medium truncate">--</div>
+      </div>
+    </div>
+    <h1 class="text-lg text-[#555] font-bold mb-1 text-start mt-10">
+      EMERGENCY CONTACT / GUARDIAN
+    </h1>
+    <div class="flex gap-20 justify-start mt-5">
+      <div class="grid gap-5 w-48">
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">person</span>
+          <span class="truncate">Full Name</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">supervisor_account</span>
+          <span class="truncate">Relationship</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">home</span>
+          <span class="truncate">Residential Address</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">phone_in_talk</span>
+          <span class="truncate">Primary Phone</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">call</span>
+          <span class="truncate">Alternative Phone</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">email</span>
+          <span class="truncate">Email Address</span>
+        </div>
+      </div>
+
+      <div class="grid gap-5 min-w-[1px]">
+        <div class="text-gray-600 font-medium truncate">--</div>
+
+        <div class="text-gray-600 font-medium truncate">--</div>
+
+        <div class="text-gray-600 font-medium truncate">--</div>
+
+        <div class="text-gray-600 font-medium truncate">--</div>
+
+        <div class="text-gray-600 font-medium truncate">--</div>
+
+        <div class="text-gray-600 font-medium truncate">--</div>
+      </div>
+    </div>
+  </div>
+</div>

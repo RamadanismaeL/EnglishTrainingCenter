@@ -1,0 +1,49 @@
+<div class="table-toolbar text-[#525252]">
+  <div class="w-full flex items-center justify-between">
+
+    <div class="flex gap-3">
+      <button type="button" class="w-30 mark" >
+        <span class="shadow"></span>
+        <span class="edge"></span>
+        <span class="front truncate">
+          <span class="flex justify-center items-center gap-2">
+            <span class="material-icons">task_alt</span>
+            Mark
+          </span>
+        </span>
+      </button>
+      <button type="button" class="w-30 unmark" >
+        <span class="shadow"></span>
+        <span class="edge"></span>
+        <span class="front truncate">
+          <span class="flex justify-center items-center gap-2">
+            <span class="material-icons">close</span>
+            Unmark
+          </span>
+        </span>
+      </button>
+    </div>
+
+    <div class="w-1/4 formField">
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Type to search...</mat-label>
+        <mat-icon matSuffix>search</mat-icon>
+          <input matInput [(ngModel)]="searchText" (input)="onSearch()"
+          type="text" maxlength="50"/>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <ag-grid-angular
+    class="ag-theme-alpine custom-scrollbar w-full h-full overflow-hidden"
+    [rowData]="filteredData"
+    [columnDefs]="columnDefs"
+    [animateRows]="true"
+    [domLayout]="'autoHeight'"
+    [pagination]="false"
+    [headerHeight]="50"
+    [rowHeight]="50"
+    [rowSelection]="rowSelection"
+    >
+  </ag-grid-angular>
+</div>

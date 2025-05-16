@@ -1,0 +1,65 @@
+<div class="flex justify-center items-center px-4 sm:px-6 lg:px-8 py-12">
+  <form class="shadow-xl rounded-3xl p-8 bg-white max-w-md"
+    [formGroup]="form"
+    (ngSubmit)="changePasswordHandler()"
+  >
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Current Password</mat-label>
+        <input matInput
+        formControlName="currentPassword"
+        type="{{ hideC ? 'password' : 'text' }}"
+        placeholder="Enter your current password" maxlength="50"/>
+        <mat-icon matPrefix>lock</mat-icon>
+        <mat-icon style="cursor: pointer;" matSuffix (click)="hideC = !hideC">{{hideC ? 'visibility_off' : 'visibility'}}
+        </mat-icon>
+        @if (currentPasswordInput?.hasError('required')) {
+          <mat-error>Please enter your current password.</mat-error>
+        }
+        @else if (currentPasswordInput?.hasError('minlength')) {
+          <mat-error>Password must be at least 6 characters long.</mat-error>
+        }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>New Password</mat-label>
+        <input matInput
+        formControlName="newPassword"
+        type="{{ hideN ? 'password' : 'text' }}"
+        placeholder="Enter your new password" maxlength="50"/>
+        <mat-icon matPrefix>lock</mat-icon>
+        <mat-icon style="cursor: pointer;" matSuffix (click)="hideN = !hideN">{{ hideN ? 'visibility_off' : 'visibility'}}
+        </mat-icon>
+        @if (newPasswordInput?.hasError('required')) {
+          <mat-error>Please enter your new password.</mat-error>
+        }
+        @else if (newPasswordInput?.hasError('minlength')) {
+          <mat-error>Password must be at least 6 characters long.</mat-error>
+        }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Confirm new Password</mat-label>
+        <input matInput
+        formControlName="confirmNewPassword"
+        type="{{ hideCN ? 'password' : 'text' }}"
+        placeholder="Confirm your new Password" maxlength="50"/>
+        <mat-icon matPrefix>lock</mat-icon>
+        <mat-icon style="cursor: pointer;" matSuffix (click)="hideCN = !hideCN">{{ hideCN ? 'visibility_off' : 'visibility'}}
+        </mat-icon>
+        @if (confirmNewPasswordInput?.hasError('required')) {
+          <mat-error>Your new password confirmation is required.</mat-error>
+        }
+        @else if (confirmNewPasswordInput?.hasError('minlength')) {
+          <mat-error>Password must be at least 6 characters long.</mat-error>
+        }
+    </mat-form-field>
+
+    <div class="my-4"></div>
+
+    <button type="submit"
+      class="w-full gradient-button cursor-pointer">
+      Change Password
+      <span></span>
+    </button>
+  </form>
+</div>

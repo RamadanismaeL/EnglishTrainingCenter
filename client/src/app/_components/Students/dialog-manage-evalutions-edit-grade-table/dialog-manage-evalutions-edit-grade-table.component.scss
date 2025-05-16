@@ -1,0 +1,31 @@
+.button-share-send {
+  color: royalblue;
+  cursor: pointer;
+  font-size: 12pt;
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    text-decoration: underline;
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0px);
+  }
+}
+
+.button-share-cancel {
+  color: royalblue;
+  cursor: pointer;
+  font-size: 12pt;
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    text-decoration: underline;
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0px);
+  }
+}

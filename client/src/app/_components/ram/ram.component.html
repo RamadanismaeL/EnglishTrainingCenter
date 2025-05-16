@@ -1,0 +1,32 @@
+@if(isLoggedIn())
+{
+  <div class="h-screen w-screen flex flex-col overflow-hidden">
+
+    <!-- Navbar Superior -->
+    <header class="flex items-center">
+      <app-ram-navbar (toggle)="toggleSidebar()"></app-ram-navbar>
+    </header>
+
+    <div class="flex flex-1 overflow-hidden">
+
+      <!-- Sidebar -->
+      <aside [ngClass]="isCollapsed ? 'w-64' : 'w-22'"
+        class="bg-gradient-to-b from-[#1b002d] to-[#482071] shadow-lg pt-4 px-2 transition-all duration-300 overflow-y-auto ml-5 mt-5 rounded-xl scrollbar-custom">
+        <app-ram-left [collapsed]="isCollapsed"></app-ram-left>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="flex-1 mx-5 mt-5">
+        <app-ram-center>
+          <router-outlet name="ramRouter"></router-outlet>
+        </app-ram-center>
+      </main>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="h-8 flex items-center justify-end px-6">
+      <app-ram-footer></app-ram-footer>
+    </footer>
+  </div>
+}

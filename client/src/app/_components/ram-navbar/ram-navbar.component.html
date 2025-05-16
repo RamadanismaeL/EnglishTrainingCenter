@@ -1,0 +1,154 @@
+<div class="flex gap-5 items-center w-screen px-5 pt-2 pl-13">
+  <div (click)="toggle.emit()">
+    <div (click)="handleMenuClick()">
+      @if (change) {
+        <mat-icon class="cursor-pointer"
+          matTooltip="Sidebar toggle"
+          [matTooltipPosition]="sideBar.value!"
+          matTooltipHideDelay="50"
+            >menu_open</mat-icon>
+      } @else {
+        <mat-icon class="cursor-pointer"
+          matTooltip="Sidebar toggle"
+          [matTooltipPosition]="sideBar.value!"
+          matTooltipHideDelay="50"
+          >menu</mat-icon>
+      }
+    </div>
+  </div>
+
+  <mat-card class="w-full ml-7 font-medium text-[#643887] text-base h-14">
+    <mat-card-content>
+      <div class="flex justify-between">
+        <span>
+          <ng-container *ngFor="let breadcrumb of breadcrumbs; let last = last">
+            <a *ngIf="!last"
+            (click)="goBackTo(breadcrumb.label)"
+              class="text-[#8c8c8c] cursor-pointer hover:underline hover:text-[#4b4b4b]"
+              >
+                {{ breadcrumb.label }}
+            </a>
+            <span *ngIf="last">{{ breadcrumb.label }}</span>
+            <span *ngIf="!last">&nbsp;/&nbsp;&nbsp;</span>
+          </ng-container>
+        </span>
+        <span class="back font-light hover:font-medium">
+          <ng-container *ngFor="let breadcrumb of breadcrumbs; let i = index">
+            <a *ngIf="i === breadcrumbs.length - 2"
+            (click)="goPreviousTo()"
+              class="text-[#4b4b4b] cursor-pointer"
+              >
+                <span class="flex items-center gap-1">
+                  <svg
+                  class="w-4 h-4"
+                  [ngClass]="'rotate-90'"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+                  Back
+                </span>
+            </a>
+          </ng-container>
+        </span>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="flex items-center justify-center text-lg h-14 w-1/3">
+    <mat-card-content class="w-full">
+      <div class="flex items-center justify-center gap-6 w-full">
+
+        <!-- Fullscreen Toggle -->
+        <button mat-icon-button class="cursor-pointer" (click)="toggleFullScren()"
+          >
+          @if (isFullScreen){
+            <mat-icon
+            matTooltip="Exit fullscreen"
+            [matTooltipPosition]="position.value!"
+            matTooltipHideDelay="50"
+              >fullscreen_exit</mat-icon>
+          }
+          @else {
+            <mat-icon
+            matTooltip="Fullscreen"
+            [matTooltipPosition]="position.value!"
+            matTooltipHideDelay="50"
+              >fullscreen</mat-icon>
+          }
+        </button>
+
+        <!-- Notificações -->
+        <button mat-icon-button class="cursor-pointer">
+          <mat-icon>notifications</mat-icon>
+        </button>
+
+        <!-- Perfil -->
+        <div class="max-w-50 truncate"> <!-- ESSENCIAL para cortar texto -->
+          <a *ngIf="profileDetail | async as user"
+            [matMenuTriggerFor]="menu"
+            class="flex gap-3 cursor-pointer items-center">
+              @if( user.profileImage )
+              {
+                <img src="{{ user.profileImage }}" alt="User" class="w-10 h-10 rounded-full shrink-0">
+              }
+              @else
+              {
+                <div class="bg-[#536DFE] rounded-full text-white text-[16pt] font-medium shadow-md w-10 h-10 flex justify-center items-center shrink-0">
+                  {{ user.fullName.trim()[0].toUpperCase() }}
+                </div>
+              }
+
+            <span class="leading-5 flex flex-col min-w-[1px]">
+              <p class="text-[11pt] font-light text-gray-800 truncate">{{ user.fullName }}</p>
+              <p class="text-[9pt] text-gray-500 truncate">{{ user.roles }}</p>
+            </span>
+          </a>
+
+
+          <!-- Menu de Opções -->
+          <mat-menu #menu="matMenu">
+            <button [routerLink]="['/', { outlets : { ramRouter: ['profile'] } }]"
+            (click)="navigateTo([
+              { label: 'MY PROFILE' }
+            ])"
+            mat-menu-item
+            >
+              <mat-icon>account_circle</mat-icon>
+              <span>Profile</span>
+            </button>
+            <button [routerLink]="['/',{ outlets : { ramRouter : ['system-access'] } }]"
+            (click)="navigateTo([
+              { label: 'SYSTEM ACCESS' }
+            ])"
+            mat-menu-item
+            >
+              <mat-icon>admin_panel_settings</mat-icon>
+              <span>System Access</span>
+            </button>
+            <button [routerLink]="['/', {outlets : {ramRouter : ['change-password']}}]"
+            (click)="navigateTo([
+              { label: 'CHANGE PASSWORD' }
+            ])"
+            mat-menu-item
+            >
+              <mat-icon>key</mat-icon>
+              <span>Change Password</span>
+            </button>
+            <mat-divider></mat-divider>
+            <button mat-menu-item (click)="refresh()">
+              <mat-icon>refresh</mat-icon>
+              <span>Refresh (F5)</span>
+            </button>
+            <button mat-menu-item (click)="sigout()">
+              <mat-icon>logout</mat-icon>
+              <span>Sign Out</span>
+            </button>
+          </mat-menu>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -1,0 +1,27 @@
+<div>
+  <mat-card appearance="outlined" class="h-full rounded-xl">
+    <mat-card-content>
+      <mat-stepper #stepperPayment linear [selectedIndex]="currentStep">
+
+        <mat-step label="Review & Pay" [editable]="false">
+          <app-payment-pay></app-payment-pay>
+        </mat-step>
+
+        <mat-step label="Success" [editable]="false">
+          <div class="w-full flex justify-center items-center mt-5">
+            <div class="px-8 w-200">
+              <a (click)="resetStepper()"
+            class="cursor-pointer"
+            >Reset</a>
+            </div>
+          </div>
+          <app-payment-success></app-payment-success>
+        </mat-step>
+
+        <ng-template matStepperIcon="done">
+          <mat-icon>task_alt</mat-icon>
+        </ng-template>
+      </mat-stepper>
+    </mat-card-content>
+  </mat-card>
+</div>

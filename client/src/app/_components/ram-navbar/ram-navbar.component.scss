@@ -1,0 +1,28 @@
+.mat-icon {
+  font-size: 26px;
+  color: #4b4b4b;
+}
+
+svg {
+  animation: ram 600ms ease-in-out infinite alternate;
+}
+
+@keyframes ram {
+  from { transform: translateY(0); }
+  to { transform: translateY(5px);
+  }
+}
+
+.back {
+  stroke-width: 1px;
+  transition: all 200ms ease-in-out ;
+
+  &:hover {
+    stroke-width: 2px;
+    font-size: 13pt;
+  }
+
+  &:active {
+    font-size: 12pt;
+  }
+}

@@ -1,0 +1,657 @@
+/*
+*@author Ramadan Ismael
+*/
+
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
+using server.src.Data;
+using server.src.DTOs;
+using server.src.Interfaces;
+using server.src.Models;
+
+namespace server.src.Repositories
+{
+    public class StudentRepository : IStudentRepository
+    {
+        private readonly ServerDbContext _dbContext;
+        private readonly ILogger<StudentRepository> _logger;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public StudentRepository(ServerDbContext dbContext, ILogger<StudentRepository> logger, IHttpContextAccessor httpContextAccessor)
+        {
+            _dbContext = dbContext;
+            _logger = logger;
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        public async Task<ResponseDto> Create(StudentCreateDto studentCreateDto)
+        {
+            try
+            {
+                var trainerAuth = _httpContextAccessor.HttpContext?.User;
+                if (trainerAuth == null)
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "User not authenticated."
+                    };
+                }
+
+                var trainerId = trainerAuth.FindFirst(ClaimTypes.NameIdentifier);
+                if (trainerId == null)
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "User not found."
+                    };
+                }
+
+                var trainerIdValue = trainerId.Value;
+                var trainer = await _dbContext.Users
+                    .FirstOrDefaultAsync(u => u.Id == trainerIdValue);
+                if (trainer == null)
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "User not found."
+                    };
+                }
+
+                var userNameClaim = _httpContextAccessor.HttpContext?.User.FindFirst(JwtRegisteredClaimNames.Name);
+
+                var trainerName = userNameClaim?.Value;
+
+
+                var studentExistIdDoc = !string.IsNullOrEmpty(studentCreateDto.IdNumber) 
+                    && await _dbContext.StudentData.AnyAsync(s => s.IdNumber == studentCreateDto.IdNumber);
+
+                var studentExistFullName = !string.IsNullOrEmpty(studentCreateDto.FullName) 
+                    && await _dbContext.StudentData.AnyAsync(s => s.FullName == studentCreateDto.FullName);
+
+
+                if (studentExistIdDoc || studentExistFullName)
+                {
+                    return new ResponseDto {
+                        IsSuccess = false,
+                        Message = "Student already exist!"
+                    };
+                }
+
+                
+                var newId = GenerateStudentID();
+
+                if (newId is null)
+                {
+                    return new ResponseDto {
+                        IsSuccess = false,
+                        Message = "Failed to generate a new Student ID."
+                    };
+                }
+
+                //Console.WriteLine($"New Student ID: {newId}");   
+                decimal monthlyFee = GetSettingsMonthlyTuition($"{studentCreateDto.Level}-{studentCreateDto.Modality}", $"{studentCreateDto.Package}");
+
+                decimal courseFee = GetAmount("CourseFee");
+                decimal installment = GetAmount("Installments");
+
+                int age = DateTime.Now.Year - studentCreateDto.DateOfBirthCalc.Year;
+
+                var studentCourseInfo = new StudentCourseInfoModel
+                {
+                    StudentId = newId,
+
+                    CourseName = "Inglês",
+                    Package = studentCreateDto.Package,
+                    Level = studentCreateDto.Level,
+                    Modality = studentCreateDto.Modality,
+                    AcademicPeriod = studentCreateDto.AcademicPeriod,
+                    Schedule = studentCreateDto.Schedule,
+                    Duration = "3 Meses",
+                    MonthlyFee = monthlyFee,
+
+                    Status = "Active",
+                    TrainerName = trainerName!
+                };
+
+                var studentData = new StudentDataModel
+                {
+                    Id = newId,
+
+                    DocumentType = studentCreateDto.DocumentType,
+                    IdNumber = studentCreateDto.IdNumber,
+                    PlaceOfIssue = studentCreateDto.PlaceOfIssue,
+                    ExpirationDate = studentCreateDto.ExpirationDate,
+
+                    FullName = studentCreateDto.FullName,
+                    DateOfBirth = studentCreateDto.DateOfBirth,
+                    DateOfBirthCalc = studentCreateDto.DateOfBirthCalc,
+                    Gender = studentCreateDto.Gender,
+                    MaritalStatus = studentCreateDto.MaritalStatus,
+                    Nationality = studentCreateDto.Nationality,
+                    PlaceOfBirth = studentCreateDto.PlaceOfBirth,
+                    ResidentialAddress = studentCreateDto.ResidentialAddress,
+                    FirstPhoneNumber = studentCreateDto.FirstPhoneNumber,
+                    SecondPhoneNumber = studentCreateDto.SecondPhoneNumber,
+                    EmailAddress = studentCreateDto.EmailAddress,
+                    AdditionalNotes = studentCreateDto.AdditionalNotes,
+
+                    GuardFullName = studentCreateDto.GuardFullName,
+                    GuardRelationship = studentCreateDto.GuardRelationship,
+                    GuardResidentialAddress = studentCreateDto.GuardResidentialAddress,
+                    GuardFirstPhoneNumber = studentCreateDto.GuardFirstPhoneNumber,
+                    GuardSecondPhoneNumber = studentCreateDto.GuardSecondPhoneNumber,
+                    GuardEmailAddress = studentCreateDto.GuardEmailAddress,
+
+                    TrainerName = trainerName!
+                };
+                
+                var studentEnrollmentForm = new StudentEnrollmentFormModel {
+                    StudentId = newId,
+
+                    CourseName = "Inglês",
+                    Package = GetConvertCourse(studentCreateDto.Package),
+                    Level = studentCreateDto.Level,
+                    Modality = GetConvertCourse(studentCreateDto.Modality),
+                    AcademicPeriod = GetConvertCourse(studentCreateDto.AcademicPeriod),
+                    Schedule = studentCreateDto.Schedule,
+                    Duration = "3 Meses",
+                    MonthlyFee = monthlyFee,
+                    Age = age,
+
+                    CourseFee = courseFee,
+                    Installments = installment,
+
+                    Days = DateTime.Now.Day,
+                    //Months = DateTime.Now.ToString("MMMM"),
+                    Months = GetMonth(DateTime.Now.Month),
+                    Years = DateTime.Now.Year,
+                    Times = DateTime.Now,
+                    
+                    TrainerName = trainerName!
+                };
+
+                //Console.WriteLine($"Student ID = {newId}\nMonthly Fee = {monthlyFee} \nCourse Fee = {courseFee} \nInstallment = {installment} \nAge = {age}");
+                
+                using var transaction = await _dbContext.Database.BeginTransactionAsync();
+                try
+                {
+                    if (studentData != null) await _dbContext.StudentData.AddAsync(studentData);
+                    if (studentCourseInfo != null) await _dbContext.StudentCourseInfo.AddAsync(studentCourseInfo);
+                    if (studentEnrollmentForm != null) await _dbContext.StudentEnrollmentForm.AddAsync(studentEnrollmentForm);
+                    
+                    await _dbContext.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    Console.WriteLine($"[Error] Transaction failed: {ex.Message}");
+                    throw;
+                }
+                
+                return new ResponseDto
+                {
+                    IsSuccess = true,
+                    Message = "Student created successfully."
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating students.");
+                return new ResponseDto
+                {
+                    IsSuccess = false,
+                    Message = $"An unexpected error occurred while creating."
+                };
+            }
+        }
+
+        public async Task<List<StudentCourseInfoModel>> DetailStudentCourseInfo()
+        {
+            return await _dbContext.StudentCourseInfo
+                .AsNoTracking()
+                .Select(s => new StudentCourseInfoModel
+                {
+                    StudentId = s.StudentId,
+                    CourseName = s.CourseName,
+                    Package = s.Package,
+                    Level = s.Level,
+                    Modality = s.Modality,
+                    AcademicPeriod = s.AcademicPeriod,
+                    Schedule = s.Schedule,
+                    Duration = s.Duration,
+                    MonthlyFee = s.MonthlyFee,
+                    Status = s.Status,
+                    TrainerName = s.TrainerName,
+                    DateUpdate = s.DateUpdate         
+                })
+                .ToListAsync();
+        }
+
+        public async Task<List<StudentDataModel>> DetailStudentData()
+        {
+            return await _dbContext.StudentData
+                .AsNoTracking()
+                .Select(s => new StudentDataModel
+                {
+                    Order = s.Order,
+                    Id = s.Id,
+
+                    DocumentType = s.DocumentType,
+                    IdNumber = s.IdNumber,
+                    PlaceOfIssue = s.PlaceOfIssue,
+                    ExpirationDate = s.ExpirationDate,
+
+                    FullName = s.FullName,
+                    DateOfBirth = s.DateOfBirth,
+                    DateOfBirthCalc = s.DateOfBirthCalc,
+                    Gender = s.Gender,
+                    MaritalStatus = s.MaritalStatus,
+                    Nationality = s.Nationality,
+                    PlaceOfBirth = s.PlaceOfBirth,
+                    ResidentialAddress = s.ResidentialAddress,
+                    FirstPhoneNumber = s.FirstPhoneNumber,
+                    SecondPhoneNumber = s.SecondPhoneNumber,
+                    EmailAddress = s.EmailAddress,
+                    AdditionalNotes = s.AdditionalNotes,
+
+                    GuardFullName = s.GuardFullName,
+                    GuardRelationship = s.GuardRelationship,
+                    GuardFirstPhoneNumber = s.GuardFirstPhoneNumber,
+                    GuardSecondPhoneNumber = s.GuardSecondPhoneNumber,
+                    GuardEmailAddress = s.GuardEmailAddress,
+
+                    TrainerName = s.TrainerName,
+                    DateUpdate = s.DateUpdate,
+                    //Payments = s.Payments
+                })
+                .OrderBy(s => s.FullName)
+                .ToListAsync();
+        }
+
+        public async Task<string> GetStudentByLastId()
+        {
+            var studentId = await _dbContext.StudentData
+                .OrderByDescending(s => s.Order)
+                .Select(s => s.Id)
+                .FirstOrDefaultAsync();
+
+            if (studentId is null) return null!;
+
+            return studentId;
+        }
+
+        public async Task<List<StudentEnrollmentFormModel>> DetailStudentEnrollmentForm()
+        {
+            return await _dbContext.StudentEnrollmentForm
+                .AsNoTracking()
+                .Select(s => new StudentEnrollmentFormModel
+                {
+                    StudentId = s.StudentId,
+                    CourseName = s.CourseName,
+                    Package = s.Package,
+                    Level = s.Level,
+                    Modality = s.Modality,
+                    AcademicPeriod = s.AcademicPeriod,
+                    Schedule = s.Schedule,
+                    Duration = s.Duration,
+                    MonthlyFee = s.MonthlyFee,
+                    Age = s.Age,
+                    CourseFee = s.CourseFee,
+                    Installments = s.Installments,
+                    Days = s.Days,
+                    Months = s.Months,
+                    Years = s.Years,
+                    Times = s.Times,
+                    TrainerName = s.TrainerName,
+                    StudentData = s.StudentData  
+                })
+                .ToListAsync();
+        }
+
+        public async Task<StudentEnrollmentFormModel> GetStudentEnrollmentFormById(string id)
+        {
+            // Inclua StudentData e relacionamentos necessários
+            var student = await _dbContext.StudentEnrollmentForm
+                .Include(s => s.StudentData) // Carrega os dados relacionados
+                .ThenInclude(sd => sd!.Payments) // Se Payments for uma subpropriedade
+                .Include(s => s.StudentData!.CourseInfo) // Se CourseInfo existir
+                .FirstOrDefaultAsync(s => s.StudentId == id);
+
+            if (student == null) return null!;
+
+            // Mapeamento completo
+            return new StudentEnrollmentFormModel
+            {
+                StudentId = student.StudentId,
+                StudentData = new StudentDataModel // Crie o objeto StudentDataModel
+                {
+                    Order = student.StudentData!.Order,
+                    Id = student.StudentData.Id,
+                    DocumentType = student.StudentData.DocumentType,
+                    IdNumber = student.StudentData.IdNumber,
+                    PlaceOfIssue = student.StudentData.PlaceOfIssue,
+                    ExpirationDate = student.StudentData.ExpirationDate,
+                    FullName = student.StudentData.FullName,
+                    DateOfBirth = student.StudentData.DateOfBirth,
+                    DateOfBirthCalc = student.StudentData.DateOfBirthCalc,
+                    Gender = student.StudentData.Gender,
+                    MaritalStatus = student.StudentData.MaritalStatus,
+                    Nationality = student.StudentData.Nationality,
+                    PlaceOfBirth = student.StudentData.PlaceOfBirth,
+                    ResidentialAddress = student.StudentData.ResidentialAddress,
+                    FirstPhoneNumber = student.StudentData.FirstPhoneNumber,
+                    SecondPhoneNumber = student.StudentData.SecondPhoneNumber,
+                    EmailAddress = student.StudentData.EmailAddress,
+                    AdditionalNotes = student.StudentData.AdditionalNotes,
+                    GuardFullName = student.StudentData.GuardFullName,
+                    GuardRelationship = student.StudentData.GuardRelationship,
+                    GuardResidentialAddress = student.StudentData.GuardResidentialAddress,
+                    GuardFirstPhoneNumber = student.StudentData.GuardFirstPhoneNumber,
+                    GuardSecondPhoneNumber = student.StudentData.GuardSecondPhoneNumber,
+                    GuardEmailAddress = student.StudentData.GuardEmailAddress,
+                    TrainerName = student.StudentData.TrainerName,
+                    DateUpdate = student.StudentData.DateUpdate,
+                    CourseInfo = null,
+                    Payments = student.StudentData.Payments?.Select(p => new StudentPaymentModel
+                    {
+                        Order = p.Order,
+                        Id = p.Id,
+                        ReceivedFrom = p.ReceivedFrom,
+                        PaymentType = p.PaymentType,
+                        DescriptionEnglish = p.DescriptionEnglish,
+                        DescriptionPortuguese = p.DescriptionPortuguese,
+                        Method = p.Method,
+                        AmountMT = p.AmountMT,
+                        InWords = p.InWords,
+                        Status = p.Status,
+                        Days = p.Days,
+                        Months = p.Months,
+                        Years = p.Years,
+                        Times = p.Times,
+                        DateRegister = p.DateRegister,
+                        StudentId = p.StudentId,
+                        TrainerId = p.TrainerId,
+                        TrainerName = p.TrainerName
+                    }).ToList(),
+                    EnrollmentForm = null
+                },
+                CourseName = student.CourseName,
+                Package = student.Package,
+                Level = student.Level,
+                Modality = student.Modality,
+                AcademicPeriod = student.AcademicPeriod,
+                Schedule = student.Schedule,
+                Duration = student.Duration,
+                MonthlyFee = student.MonthlyFee,
+                Age = student.Age,
+                CourseFee = student.CourseFee,
+                Installments = student.Installments,
+                Days = student.Days,
+                Months = student.Months,
+                Years = student.Years,
+                Times = student.Times,
+                TrainerName = student.TrainerName
+            };
+        }
+
+        private string GenerateStudentID()
+        {
+            try
+            {
+                // Obter o último número de ordem ou 0 se não houver estudantes
+                long lastOrder = _dbContext.StudentData
+                        .OrderByDescending(s => s.Order)
+                        .Select(s => s.Order)
+                        .FirstOrDefault();
+
+                // var lastOrde = _dbContext.Students
+                //       .Max(s => (int?)s.Order) ?? 0;
+
+                // Incrementar para o próximo ID
+                long nextOrder = lastOrder + 1;
+
+                // Formatar data atual como AAAAMM
+                string year = $"{DateTime.Now.Year}";
+                string month = $"{DateTime.Now.Month}";
+
+                // Combinar todos os componentes (8 dígitos no total)
+                string newId = $"ETC{year}{month}{nextOrder:D2}";
+
+                return newId;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to generate Student ID.");
+
+                // Retornar um fallback ou lançar exceção dependendo da sua necessidade
+                throw new InvalidOperationException("Failed to generate Student ID.", ex);
+            }
+        }
+
+        private decimal GetSettingsMonthlyTuition(string id, string packageName)
+        {
+            var tuitionId = _dbContext.SettingsMonthlyTuition.FirstOrDefault(s => s.Id == id);
+
+            if (tuitionId is null) return 0;
+
+            return packageName switch
+            {
+                "Intensive" => tuitionId.Intensive,
+                "Private" => tuitionId.Private,
+                "Regular" => tuitionId.Regular,
+                _ => 0
+            };
+        }
+
+        private decimal GetAmount(string id)
+        {
+            var checkId = _dbContext.SettingsAmountMt.FirstOrDefault(s => s.Id == id);
+
+            if (checkId is null) return 0;
+
+            return checkId.AmountMT;
+        }
+
+        private static string GetMonth(int month)
+        {
+            if(month == 1)
+            { return "Janeiro"; }
+            else if(month == 2)
+            { return "Fevereiro"; }
+            else if(month == 3)
+            { return "Março"; }
+            else if(month == 4)
+            { return "Abril"; }
+            else if(month == 5)
+            { return "Maio"; }
+            else if(month == 6)
+            { return "Junho"; }
+            else if(month == 7)
+            { return "Julho"; }
+            else if(month == 8)
+            { return "Agosto"; }
+            else if(month == 9)
+            { return "Setembro"; }
+            else if(month == 10)
+            { return "Outubro"; }
+            else if(month == 11)
+            { return "Novembro"; }
+            else if(month == 12)
+            { return "Dezembro"; }
+
+            return "";
+        }
+
+        private static string GetConvertCourse(string modality)
+        {
+            if (modality == "In-Person")
+            { return "Presencial"; }
+            else if (modality == "Online")
+            { return "Online"; }
+            else if (modality == "Morning")
+            { return "Manhã"; }
+            else if (modality == "Noon")
+            { return "Tarde"; }
+            else if (modality == "Evening")
+            { return "Noite"; }
+            else if (modality == "Intensive")
+            { return "Intensivo"; }
+            else if (modality == "Private")
+            { return "Particular"; }
+            else if (modality == "Regular")
+            { return "Regular"; }
+
+            return modality;
+        }
+
+
+        /*
+        {
+  "package": "Regular",
+  "level": "A1",
+  "modality": "InPerson",
+  "academicPeriod": "Noon",
+  "schedule": "7h-9h",
+  "documentType": "BI",
+  "idNumber": "100123123321Q",
+  "placeOfIssue": "C. Matola",
+  "expirationDate": "11/12/2027",
+  "fullName": "Ramadan Ibraimo",
+  "dateOfBirth": "21/11/2001",
+  "dateOfBirthCalc": "2025-05-13T11:30:48.152Z",
+  "gender": "M",
+  "maritalStatus": "Single",
+  "nationality": "Mozambique",
+  "placeOfBirth": "Maputo",
+  "residentialAdress": "Machava Bedene",
+  "firstPhoneNumber": "3453245324",
+  "secondPhoneNumber": "",
+  "emailAddress": "string",
+  "additionalNotes": "string",
+  "guardFullName": "string",
+  "guardRelationship": "string",
+  "guardResidentialAddress": "string",
+  "guardFirstPhoneNumber": "string",
+  "guardSecondPhoneNumber": "string",
+  "guardEmailAddress": "string"
+}
+
+public async Task<ResponseDto> Update(StudentUpdateDto studentUpdateDto)
+{
+   try
+   {
+       var userPrincipal = _httpContextAccessor.HttpContext?.User;
+       if (userPrincipal == null)
+       {
+           return new ResponseDto
+           {
+               IsSuccess = false,
+               Message = "User not authenticated."
+           };
+       }
+       var userId = userPrincipal.FindFirst(ClaimTypes.NameIdentifier);
+       if (userId == null)
+       {
+           return new ResponseDto
+           {
+               IsSuccess = false,
+               Message = "User not found."
+           };
+       }
+
+       var userIdValue = userId.Value;
+       var user = await _dbContext.Users
+           .FirstOrDefaultAsync(u => u.Id == userIdValue);
+       if (user == null)
+       {
+           return new ResponseDto
+           {
+               IsSuccess = false,
+               Message = "User not found."
+           };
+       }
+
+       var userNameClaim = _httpContextAccessor.HttpContext?.User.FindFirst(JwtRegisteredClaimNames.Name);
+
+       var userName = userNameClaim?.Value;
+
+       var studentId = await _dbContext.Students
+           .FirstOrDefaultAsync(s => s.Id == studentUpdateDto.Id);
+
+       var studentExistIdDoc = await _dbContext.Students
+           .AnyAsync(s => s.IdNumber == studentUpdateDto.IdNumber && s.Id != studentUpdateDto.Id);
+
+       var studentExistFullName = await _dbContext.Students
+           .AnyAsync(s => s.FullName == studentUpdateDto.FullName && s.Id != studentUpdateDto.Id);
+
+
+       if (studentExistIdDoc || studentExistFullName)
+       {
+           return new ResponseDto {
+               IsSuccess = false,
+               Message = "Student already exists!"
+           };
+       }
+
+       if (studentId is not null)
+       {
+           studentId.Package = studentUpdateDto.Package;
+           studentId.Level = studentUpdateDto.Level;
+           studentId.Modality = studentUpdateDto.Modality;
+           studentId.AcademicPeriod = studentUpdateDto.AcademicPeriod;
+           studentId.Schedule = studentUpdateDto.Schedule;
+
+           studentId.DocumentType = studentUpdateDto.DocumentType;
+           studentId.IdNumber = studentUpdateDto.IdNumber;
+           studentId.PlaceOfIssue = studentUpdateDto.PlaceOfIssue;
+           studentId.ExpirationDate = studentUpdateDto.ExpirationDate;
+
+           studentId.FullName = studentUpdateDto.FullName;
+           studentId.DateOfBirth = studentUpdateDto.DateOfBirth;
+           studentId.Gender = studentUpdateDto.Gender;
+           studentId.MaritalStatus = studentUpdateDto.MaritalStatus;
+           studentId.Nationality = studentUpdateDto.Nationality;
+           studentId.PlaceOfBirth = studentUpdateDto.PlaceOfBirth;
+           studentId.ResidentialAdress = studentUpdateDto.ResidentialAdress;
+           studentId.PhoneNumber = studentUpdateDto.PhoneNumber;
+           studentId.EmailAddress = studentUpdateDto.EmailAddress;
+           studentId.AdditionalNotes = studentUpdateDto.AdditionalNotes;
+
+           studentId.GuardFullName = studentUpdateDto.GuardFullName;
+           studentId.GuardRelationship = studentUpdateDto.GuardRelationship;
+           studentId.GuardResidentialAddress = studentUpdateDto.ResidentialAdress;
+           studentId.GuardPhoneNumber = studentUpdateDto.GuardPhoneNumber;
+           studentId.GuardEmailAddress = studentUpdateDto.GuardEmailAddress;
+
+           studentId.TrainerId = user.Id;
+           studentId.TrainerName = userName!;
+
+           _dbContext.Students.Update(studentId);
+           await _dbContext.SaveChangesAsync();
+       }              
+
+       return new ResponseDto
+       {
+           IsSuccess = true,
+           Message = "Student updated successfully."
+       };
+   }
+   catch (Exception ex)
+   {
+       _logger.LogError(ex, "Error updating students.");
+       return new ResponseDto
+       {
+           IsSuccess = false,
+           Message = $"An unexpected error occurred while updating.{ex}"
+       };
+   }        
+}
+
+*/
+    }
+}

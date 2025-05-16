@@ -1,0 +1,33 @@
+{
+  "Files": [
+    {
+      "Id": "/home/ramadan/Documents/Projects/EnglishTrainingCenter/server/wwwroot/images/marca.png",
+      "PackagePath": "staticwebassets/images/marca.png"
+    },
+    {
+      "Id": "/home/ramadan/Documents/Projects/EnglishTrainingCenter/server/wwwroot/uploads/f08f876e-9a90-4451-9217-013ec92ffe8f.jpg",
+      "PackagePath": "staticwebassets/uploads/f08f876e-9a90-4451-9217-013ec92ffe8f.jpg"
+    },
+    {
+      "Id": "obj/Debug/net9.0/staticwebassets/msbuild.build.server.props",
+      "PackagePath": "build\\server.props"
+    },
+    {
+      "Id": "obj/Debug/net9.0/staticwebassets/msbuild.buildMultiTargeting.server.props",
+      "PackagePath": "buildMultiTargeting\\server.props"
+    },
+    {
+      "Id": "obj/Debug/net9.0/staticwebassets/msbuild.buildTransitive.server.props",
+      "PackagePath": "buildTransitive\\server.props"
+    },
+    {
+      "Id": "obj/Debug/net9.0/staticwebassets/msbuild.server.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssetEndpoints.props"
+    },
+    {
+      "Id": "obj/Debug/net9.0/staticwebassets/msbuild.server.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

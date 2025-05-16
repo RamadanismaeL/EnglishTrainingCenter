@@ -1,0 +1,152 @@
+<div class="flex flex-col gap-7 mb-1 w-140 p-5 overflow-hidden">
+  <div>
+    <h1
+     class="flex items-center justify-start text-lg text-gray-600 font-medium p-4">
+      UPDATE&nbsp;&nbsp;-&nbsp;&nbsp;<span class="font-bold">{{data.fullName}}</span>
+    </h1>
+    <hr class="border-slate-400">
+  </div>
+  <form
+    [formGroup]="form"
+    (ngSubmit)="update()"
+    >
+      <div class="flex gap-7 w-full">
+        <div class="profilePhoto w-45 h-45">
+          @if(checkurlImage)
+          {
+            <div class="bg-[#a8a8a8] shadow-md w-full h-35 w-full flex justify-center items-center">
+              <img src="{{ urlImage }}" alt="User" class="w-full h-full rounded-full">
+            </div>
+          }
+          @else
+          {
+            @if(initialLetter() === '')
+            {
+              <div class="bg-[#536DFE] text-white text-[16pt] font-light shadow-md w-full h-35 p-5 text-center flex items-center">
+                {{ noPhoto }}
+              </div>
+            }
+            @else
+            {
+              <div class="bg-[#536DFE] text-white text-[40pt] font-medium shadow-md w-full h-35 p-5 flex justify-center items-center">
+                {{ initialLetter() }}
+              </div>
+            }
+          }
+          <div class="flex gap-5 justify-center photo">
+            <button (click)="deleteImage()"
+            type="button"
+            class="flex items-center justify-center cursor-pointer">
+              <span class="material-icons" style="color: #d32f2f;"
+              matTooltip="Delete"
+              [matTooltipPosition]="position.value!"
+              matTooltipHideDelay="50"
+              >delete</span>
+            </button>
+
+            <button (click)="fileInput.click()"
+            type="button"
+            [disabled]="isUploading"
+            class="flex gap-2 items-center justify-center cursor-pointer">
+              <span class="material-icons"
+              matTooltip="Import"
+              [matTooltipPosition]="position.value!"
+              matTooltipHideDelay="50"
+              >photo_camera</span>
+            </button>
+          </div>
+          <!-- Input file escondido -->
+          <input #fileInput
+            type="file"
+            accept="image/*"
+            hidden
+            (change)="onFileSelected($event)">
+        </div>
+
+        <div class="flex w-full flex-col gap-x-7 gap-y-2 md:grid-column h-110">
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Full Name</mat-label>
+              <input matInput
+              formControlName="fullName"
+              type="text"
+              maxlength="50"/>
+              @if (getErrorForms('fullName')?.hasError('required')) {
+                <mat-error>FullName is required</mat-error>
+              }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Email</mat-label>
+              <input matInput
+              formControlName="email"
+              type="email"
+              placeholder="Enter email"
+              maxlength="50"/>
+              @if (getErrorForms('email')?.hasError('email')) {
+                <mat-error>Please enter a valid email address</mat-error>
+              }
+              @else if (getErrorForms('email')?.hasError('required')) {
+                <mat-error>Email is required</mat-error>
+              }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Phone Number</mat-label>
+            <input matInput type="tel" formControlName="phoneNumber" mask="00 000 0000">
+            @if (getErrorForms('phoneNumber')?.hasError('required')) {
+              <mat-error>Phone Number is required</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Position</mat-label>
+              <input matInput
+              type="text" formControlName="position"
+              maxlength="50"/>
+              @if (getErrorForms('position')?.hasError('required')) {
+                <mat-error>Position is required</mat-error>
+              }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Status</mat-label>
+            <mat-select formControlName="status" required>
+              <mat-option value="active">Active</mat-option>
+              <mat-option value="inactive">Inactive</mat-option>
+            </mat-select>
+            @if (getErrorForms('status')?.hasError('required')) {
+              <mat-error>Status is required</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Roles</mat-label>
+            <mat-select formControlName="roles" required="">
+              <mat-option value="admin">Admin</mat-option>
+              <mat-option value="user">User</mat-option>
+            </mat-select>
+            @if (getErrorForms('status')?.hasError('required')) {
+              <mat-error>Roles is required</mat-error>
+            }
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="flex items-center justify-end gap-2 w-full mt-2">
+        <button
+        (click)="onCancel()" type="reset" class="w-30 btnClear">
+          <span class="shadow"></span>
+          <span class="edge"></span>
+          <span class="front text"> Cancel
+          </span>
+        </button>
+        <button
+        type="submit"
+        class="w-30 btnAdd">
+          <span class="shadow"></span>
+          <span class="edge"></span>
+          <span class="front text"> Update
+          </span>
+        </button>
+      </div>
+  </form>
+</div>

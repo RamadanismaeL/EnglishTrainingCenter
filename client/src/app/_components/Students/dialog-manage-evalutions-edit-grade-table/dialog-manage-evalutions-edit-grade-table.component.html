@@ -1,0 +1,44 @@
+<form
+[formGroup]="form"
+(ngSubmit)="onSave()"
+class="flex flex-col gap-1 w-75 h-[115px] p-4 overflow-hidden"
+>
+  <div class="w-full flex justify-between items-center">
+    <mat-form-field appearance="outline" class="w-30">
+      <mat-label>Quiz 1</mat-label>
+        <input matInput
+        formControlName="quizOne"
+        type="text"
+        placeholder="0,00 %"
+        maxlength="6"
+        (input)="onAmount($event)"/>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="w-30">
+      <mat-label>Quiz 2</mat-label>
+        <input matInput
+        formControlName="quizTwo"
+        type="text"
+        placeholder="0,00 %"
+        maxlength="6"
+        (input)="onAmount($event)"/>
+    </mat-form-field>
+  </div>
+  <div class="flex  w-full items-center justify-end gap-5 px-2 w-full">
+    <button
+    (click)="onCancel()" type="reset"
+    class="button-share-cancel">
+      <span class="shadow"></span>
+      <span class="edge"></span>
+      <span class="front text"> Cancel
+      </span>
+    </button>
+    <button
+    type="submit"
+    class="button-share-send">
+      <span class="shadow"></span>
+      <span class="edge"></span>
+      <span class="front text"> Save
+      </span>
+    </button>
+  </div>
+</form>

@@ -1,0 +1,18 @@
+<div class="fixed top-4 right-4 space-y-3 z-50 text-base w-1/3">
+  <div  *ngFor="let snack of snackService.snacks"
+        class="p-4 rounded-lg shadow-lg text-white scale-95 transition-all duration-500 ease-in-out"
+        [ngClass]="{
+          'bg-green-600' : snack.type === 'success',
+          'bg-red-600' : snack.type === 'error',
+          'bg-blue-400' : snack.type === 'info',
+          'bg-yellow-500' : snack.type === 'warning'
+        }"
+        >
+        <div class="pr-6">{{ snack.message }}</div>
+
+        <button (click)="snackService.close(0)"
+                class="absolute top-1 right-1 p-2 text-white text-sm hover:text-gray-300 cursor-pointer">
+                <mat-icon>close</mat-icon>
+        </button>
+      </div>
+</div>

@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>server</name>
+    </assembly>
+    <members>
+        <member name="T:server.Migrations.InitializeMigraitons">
+            <inheritdoc />
+        </member>
+        <member name="M:server.Migrations.InitializeMigraitons.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:server.Migrations.InitializeMigraitons.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:server.Migrations.InitializeMigraitons.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:server.Migrations.InitializeMigraitonsUpdated">
+            <inheritdoc />
+        </member>
+        <member name="M:server.Migrations.InitializeMigraitonsUpdated.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:server.Migrations.InitializeMigraitonsUpdated.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:server.Migrations.InitializeMigraitonsUpdated.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:server.src.Configs.JWTConfig.AddJWTAuthentication(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration,Microsoft.Extensions.Logging.ILogger)">
+            <summary>
+            Configura a autenticação para a aplicação
+            </summary>
+            <param name="services"></param>
+            <param name="configuration"></param>
+            <param name="logger"></param>
+        </member>
+        <member name="F:server.src.Configs.SwaggerConfig.SchemeBearerFormat">
+            <summary>
+            Define o formato do token utilizado no esquema de segurança JWT.
+            Geralmente, o formato é "JWT" para indicar que a API usa JSON Web Tokens.
+            </summary>
+        </member>
+    </members>
+</doc>

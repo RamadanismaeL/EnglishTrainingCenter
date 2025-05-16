@@ -1,0 +1,31 @@
+<div class="bg-gray-100 max-w-sm mx-auto rounded shadow-md">
+  <div class="text-center p-6">
+    <p class="text-lg font-bold mb-0 pb-5 text-[#1c1c1c]">
+      Confirmation
+    </p>
+    <p class="text-md mb-0 text-[#2c2c2c]">
+      Are you sure you want to delete <span class="font-bold">{{ data.fullName }}</span> ?
+    </p>
+  </div>
+  <div class="border-t border-gray-300 flex justify-center p-0">
+    <div class="flex-1 text-center">
+      <button
+        (click)="onConfirm()"
+        class="text-blue-600 hover:bg-white hover:rounded-bl-md w-full py-2 cursor-pointer"
+        type="button"
+      >
+        Yes
+      </button>
+    </div>
+    <div class="border-l border-gray-300"></div>
+    <div class="flex-1 text-center">
+      <button
+        (click)="onCancel()"
+        class="text-blue-600 hover:bg-white hover:rounded-br-md w-full py-2 cursor-pointer"
+        type="button"
+      >
+        No
+      </button>
+    </div>
+  </div>
+</div>

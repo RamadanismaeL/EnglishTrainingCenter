@@ -1,0 +1,119 @@
+<div class="flex items-center justify-center truncate">
+  <div class="container max-auto bg-white shadow-md rounded-[15px] max-w-2xl">
+    <div class="my-5">
+      <div *ngIf="profileDetail$ | async as user">
+        <div class="flex flex-col items-center justify-center mb-4">
+          <div class="text-center">
+            @if( user.profileImage )
+            {
+              <img src="{{ user.profileImage }}" alt="User" class="rounded-full mb-4 w-50 h-50 inline-flex items-center justify-center">
+            }
+            @else
+            {
+              <div class="bg-[#536DFE] rounded-full text-white text-[40pt] font-medium shadow-md w-50 h-50 flex justify-center items-center">
+                {{ user.fullName.trim()[0].toUpperCase() }}
+              </div>
+            }
+          </div>
+
+          <!--
+          <div class="absolute -top-2 -right-2">
+            <span class="relative flex h-3 w-3">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
+                    [ngClass]="{'bg-green-400': isConnected, 'bg-red-400': !isConnected}"></span>
+              <span class="relative inline-flex rounded-full h-3 w-3"
+                    [ngClass]="{'bg-green-500': isConnected, 'bg-red-500': !isConnected}"></span>
+            </span>
+          </div>
+          -->
+
+          <!-- Botão estilizado que aciona o input file escondido -->
+          <div class="flex gap-3 items-center justify-center mt-5">
+            <button (click)="deleteImage()"
+              type="button"
+              class="w-30 delete"
+              [disabled]="isUploading"
+              >
+                <span class="shadow"></span>
+                <span class="edge"></span>
+                <span class="front">
+                  <span class="flex gap-2">
+                    <span class="material-icons">delete</span>
+                    Delete
+                  </span>
+                </span>
+            </button>
+
+            <button (click)="fileInput.click()"
+              type="button"
+              class="w-50 setPhoto"
+              [disabled]="isUploading"
+              >
+                <span class="shadow"></span>
+                <span class="edge"></span>
+                <span class="front">
+                  <span class="flex gap-2">
+                    <span class="material-icons">photo_camera</span>
+                    {{ isUploading ? 'Uploading...' : 'Set Profile Photo' }}
+                  </span>
+                </span>
+            </button>
+          </div>
+
+          <!-- Input file escondido -->
+          <input #fileInput
+                type="file"
+                accept="image/*"
+                hidden
+                (change)="handleFileUpload($event)">
+        </div>
+
+        <hr class="py-4 border-slate-400">
+        <div class="flex gap-15 justify-center">
+          <div class="grid gap-5">
+            <div class="flex items-center gap-4 text-gray-600 font-bold">
+              <span class="material-icons">person</span>
+              <span>Full Name</span>
+            </div>
+
+            <div class="flex items-center gap-4 text-gray-600 font-bold">
+              <span class="material-icons">email</span>
+              <span>Email</span>
+            </div>
+
+            <div class="flex items-center gap-4 text-gray-600 font-bold">
+              <span class="material-icons">work</span>
+              <span>Position</span>
+            </div>
+
+            <div class="flex items-center gap-4 text-gray-600 font-bold">
+              <span class="material-icons">security</span>
+              <span>Roles</span>
+            </div>
+
+            <div class="flex items-center gap-4 text-gray-600 font-bold">
+              <span class="material-icons">phone</span>
+              <span>Phone Number</span>
+            </div>
+          </div>
+
+          <div class="grid gap-5">
+            <div class="text-gray-600 font-medium">{{ user.fullName | titlecase }}</div>
+
+            <div class="text-gray-600 font-medium">{{ user.email }}</div>
+
+            <div class="text-gray-600 font-medium">{{ user.position }}</div>
+
+            <div>
+              <ul class="flex gap-1 text-xs">
+                <li class="bg-green-700 text-white rounded-md py-1 px-2">{{ user.roles }}</li>
+              </ul>
+            </div>
+
+            <div class="text-gray-600 font-medium">{{ user.phoneNumber }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

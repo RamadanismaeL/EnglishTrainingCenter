@@ -1,0 +1,17 @@
+<div class="flex justify-center items-center w-full">
+  <img src="images/marca.png" alt="Logo">
+</div>
+<div class="h-screen w-screen flex flex-col overflow-hidden">
+  <div class="relative">
+    <app-login-navbar></app-login-navbar>
+  </div>
+
+  <div class="overlay-content flex-1 overflow-hidden w-full h-full">
+    <main>
+      <app-login-main>
+        <router-outlet name="loginRouter"></router-outlet>
+      </app-login-main>
+    </main>
+  </div>
+  <app-login-footer></app-login-footer>
+</div>

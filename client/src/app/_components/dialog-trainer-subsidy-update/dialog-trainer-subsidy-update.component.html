@@ -1,0 +1,87 @@
+<div class="flex flex-col gap-7 mb-1 w-120 p-5 overflow-hidden">
+  <div>
+    <h1
+     class="flex items-center justify-start text-lg text-gray-600 font-medium p-4">
+      UPDATE&nbsp;&nbsp;SUBSIDY
+    </h1>
+    <hr class="border-slate-400">
+  </div>
+  <div class="flex items-center justify-center truncate">
+    <div class="container max-auto shadow-md rounded-[15px] max-w-2xl" style="background-color: #ddd;">
+      <div class="my-5">
+        <div class="flex flex-col items-center justify-center mb-4">
+          <div class="text-center">
+            @if(checkurlImage)
+            {
+              <img src="{{ data.profileImage }}" alt="User" class="rounded-full mb-4 w-50 h-50 inline-flex items-center justify-center">
+            }
+            @else
+            {
+              <div class="bg-[#536DFE] rounded-full text-white text-[40pt] font-medium shadow-md w-50 h-50 flex justify-center items-center">
+                {{ initialLetter() }}
+              </div>
+            }
+          </div>
+        </div>
+
+        <hr class="py-4 border-slate-400">
+        <div class="flex gap-15 justify-center">
+          <div class="grid gap-5">
+
+            <div class="flex items-center gap-4 text-gray-600 font-bold">
+              <span class="material-icons">person</span>
+              <span>Full Name</span>
+            </div>
+
+            <div class="flex items-center gap-4 text-gray-600 font-bold">
+              <span class="material-icons">work</span>
+              <span>Position</span>
+            </div>
+          </div>
+
+          <div class="grid gap-5">
+            <div class="text-gray-600 font-medium">{{ data.fullName }}</div>
+
+            <div class="text-gray-600 font-medium">{{ data.position }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <form
+    [formGroup]="form"
+    (ngSubmit)="update()"
+    >
+    <div class="flex justify-center">
+      <mat-form-field appearance="outline" class="w-1/2">
+        <mat-label>Subsidy (MT)</mat-label>
+          <input matInput
+          formControlName="subsidy"
+          type="text"
+          placeholder="0,00"
+          maxlength="1000000"
+          (input)="onAmount($event)"/>
+          @if (getErrorForms('subsidy')?.hasError('required')) {
+            <mat-error>Subsidy is required</mat-error>
+          }
+      </mat-form-field>
+    </div>
+    <div class="flex items-center justify-end gap-2 w-full mt-5">
+      <button
+      (click)="onCancel()" type="reset" class="w-30 btnClear">
+        <span class="shadow"></span>
+        <span class="edge"></span>
+        <span class="front text"> Cancel
+        </span>
+      </button>
+      <button
+      type="submit"
+      class="w-30 btnAdd">
+        <span class="shadow"></span>
+        <span class="edge"></span>
+        <span class="front text"> Update
+        </span>
+      </button>
+    </div>
+  </form>
+</div>

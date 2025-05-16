@@ -1,0 +1,75 @@
+.gradient-button {
+  //background: linear-gradient(45deg, #007bff, #6610f2);
+
+  /* Estilo do texto */
+  //color: white;
+  font-size: 1rem;
+  font-weight: bold;
+
+  /* Bordas e espaçamento */
+  border: none;
+  border-radius: 8px;
+  //padding: 12px;
+
+  /* Sombra para efeito de profundidade */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+
+  /* Transição suave para hover */
+  transition: all 0.3s ease-in-out;
+
+  /* Efeito ao passar o mouse */
+  &:hover {
+    background: linear-gradient(45deg, #007bff, #6610f2);
+    color: white;
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.5);
+    transform: translateY(-3px);
+  }
+
+  /* Efeito ao clicar */
+  &:active {
+    transform: translateY(0); /* Volta à posição original */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra normal */
+  }
+
+  /* Responsividade
+  @media (max-width: 600px) {
+    font-size: 0.9rem;
+    padding: 10px 20px;
+    .card {
+      min-width: 700px;
+      max-width: 100%;
+    }
+  }
+  */
+}
+
+button {
+  border: none;
+  display: block;
+  position: relative;
+  padding: 0.7em 2.4em;
+  background: transparent;
+  //cursor: pointer;
+  user-select: none;
+  overflow: hidden;
+  color: royalblue;
+  z-index: 1;
+}
+
+button span {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  z-index: -1;
+  border: 1px solid royalblue;
+}
+
+a {
+  color: royalblue;
+}
+a:hover {
+  text-decoration: underline;
+}

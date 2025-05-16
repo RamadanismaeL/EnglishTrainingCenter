@@ -1,0 +1,141 @@
+.min {
+  color: #5b5b66;
+  font-size: 9pt;
+}
+
+span {
+  font-size: 12pt;
+}
+
+.btnLeft {
+  height: 3rem;
+  font-size: 11pt;
+  border: none;
+  color: #918f9b;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    background: linear-gradient(45deg, #1b002d, #482071, #643887);
+    border-radius: 5px;
+    color: white;
+  }
+}
+
+.active-btn {
+  background: linear-gradient(45deg, #1b002d, #482071, #643887);
+  border-radius: 5px;
+  color: white;
+  border-left: 2px solid #f3ad0f;
+}
+
+.active-btn-help {
+  background: linear-gradient(45deg, #1b002d3b, #4820713f, #6338873d);
+  border-radius: 5px;
+  color: white;
+  border-left: 2px solid #f3ad0f;
+}
+
+.verticalLineBtn {
+  height: 3rem;
+  font-size: 12pt;
+  border: none;
+  color: #918f9b;
+  cursor: pointer;
+
+  &:hover {
+    background: linear-gradient(45deg, #1b002d, #482071, #643887);
+    color: white;
+
+    .verticalLine {
+      border-left: 2px solid #fff;
+    }
+  }
+}
+
+.active-verticalLineBtn {
+  background: linear-gradient(45deg, #1b002d, #482071, #643887);
+  border-radius: 5px;
+  color: white;
+  border: none;
+
+  .verticalLine {
+    border-left: 2px solid #00ff80;
+  }
+
+  &:hover {
+    .verticalLine {
+      border-left: 2px solid #00ff80;
+    }
+  }
+}
+
+.verticalLine {
+  height: 1.5rem;
+  border-left: 2px solid #918f9b;
+  cursor: pointer;
+}
+
+.etc {
+  position: relative;
+  border: none;
+  background: transparent;
+  --stroke-color: #ffffff7c;
+  --ani-color: rgba(95, 3, 244, 0);
+  --color-gar: linear-gradient(90deg,#03a9f4,#f441a5,#ffeb3b,#03a9f4);
+  letter-spacing: 3px;
+  font-size: 26pt;
+  font-family: "Arial";
+  text-transform: uppercase;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--stroke-color);
+  cursor: default;
+}
+
+.front-text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0%;
+  background: var(--color-gar);
+  -webkit-background-clip: text;
+  background-clip: text;
+  background-size: 200%;
+  overflow: hidden;
+  transition: all 1s;
+  animation: 8s ani ease-in-out infinite;
+  border-bottom: 2px solid transparent;
+}
+
+.etc:hover .front-text {
+  width: 100%;
+  border-bottom: 2px solid #03a9f4;
+  -webkit-text-stroke: 1px var(--ani-color);
+}
+
+@keyframes ani {
+  0% {
+    background-position: 0%;
+  }
+
+  50% {
+    background-position: 400%;
+  }
+
+  100% {
+    background-position: 0%;
+  }
+}
+
+svg {
+  animation: arrowLeft 500ms ease-in-out infinite alternate;
+}
+
+@keyframes arrowLeft {
+  from {
+    transform: translateY(-2px);
+  }
+  to {
+    transform: translateY(2px);
+  }
+}

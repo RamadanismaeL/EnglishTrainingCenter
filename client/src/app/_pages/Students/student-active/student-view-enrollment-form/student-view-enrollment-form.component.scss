@@ -1,0 +1,85 @@
+.ficha-container {
+  width: 210mm;
+  min-height: 297mm;
+  margin: auto;
+  background: white;
+  padding: 0mm;
+  font-family: 'Arial', sans-serif;
+  color: #161616;
+}
+
+.retang {
+  border: 1px solid #555;
+  border-radius: 8px;
+}
+
+h1, h2, h3 {
+  font-weight: bold;
+  text-align: center;
+}
+
+h1 {
+  font-size: 18pt;
+}
+
+h2 {
+  font-size: 14pt;
+}
+
+h3 {
+  font-size: 12pt;
+  text-align: start;
+}
+
+span {
+  font-size: 12pt;
+}
+
+.pont {
+  width: 1px;
+  height: 1px;
+  border: 3px solid #2f2f2f;
+  border-radius: 100%;
+  margin-right: 10px;
+}
+
+.pontNoVisible {
+  width: 1px;
+  height: 1px;
+  border: 3px solid transparent;
+  border-radius: 100%;
+  margin-right: 10px;
+}
+
+.input-line {
+  border-bottom: 1px solid #555;
+  padding: 1px 8px;
+}
+
+.assinatura-participante-line {
+  border-bottom: 1px solid #555;
+  padding: 0px 203px 1px 203px;
+}
+
+.assinatura-responsavel-line {
+  border-bottom: 1px solid #555;
+  padding: 0 150px 1px 150px;
+}
+
+.assinatura-recebido-line {
+  border-bottom: 1px solid #555;
+  padding: 0px 203px 13px 203px;
+}
+
+@media print {
+  body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+}

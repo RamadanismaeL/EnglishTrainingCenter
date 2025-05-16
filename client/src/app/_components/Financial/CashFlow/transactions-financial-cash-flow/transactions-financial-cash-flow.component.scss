@@ -1,0 +1,25 @@
+table {
+  width: 100%;
+  background: transparent;
+}
+
+.mat-mdc-row .mat-mdc-cell {
+  color: #2f2f2f;
+  font-size: 12pt;
+  border-bottom: 1px solid transparent;
+  border-top: 1px solid transparent;
+  cursor: pointer;
+}
+
+.mat-mdc-row:hover .mat-mdc-cell {
+  background-color: rgba(156, 138, 255, 0.288);
+}
+
+.demo-row-is-clicked {
+  font-weight: bold;
+}
+
+tr {
+  color: #2f2f2f;
+  font-size: 12pt;
+}

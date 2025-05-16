@@ -1,0 +1,38 @@
+<form
+[formGroup]="form"
+(ngSubmit)="onSend()"
+class="flex flex-col gap-1 w-90 h-[115px] p-4 overflow-hidden"
+>
+  <mat-form-field appearance="outline" class="w-full">
+    <mat-label>Email</mat-label>
+      <input matInput
+      formControlName="email"
+      type="email"
+      placeholder="Enter email"
+      maxlength="50"/>
+      @if (getErrorForms('email')?.hasError('email')) {
+        <mat-error>Please enter a valid email address</mat-error>
+      }
+      @else if (getErrorForms('email')?.hasError('required')) {
+        <mat-error>Email is required</mat-error>
+      }
+  </mat-form-field>
+  <div class="flex  w-full items-center justify-end gap-5 px-2 w-full">
+    <button
+    (click)="onCancel()" type="reset"
+    class="button-share-cancel">
+      <span class="shadow"></span>
+      <span class="edge"></span>
+      <span class="front text"> Cancel
+      </span>
+    </button>
+    <button
+    type="submit"
+    class="button-share-send">
+      <span class="shadow"></span>
+      <span class="edge"></span>
+      <span class="front text"> Send
+      </span>
+    </button>
+  </div>
+</form>
