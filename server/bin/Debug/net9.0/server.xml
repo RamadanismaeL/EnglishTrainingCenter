@@ -28,6 +28,18 @@
         <member name="M:server.Migrations.InitializeMigraitonsUpdated.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
             <inheritdoc />
         </member>
+        <member name="T:server.Migrations.InitializeMigraitonsUpdatedCourseInfo">
+            <inheritdoc />
+        </member>
+        <member name="M:server.Migrations.InitializeMigraitonsUpdatedCourseInfo.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:server.Migrations.InitializeMigraitonsUpdatedCourseInfo.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:server.Migrations.InitializeMigraitonsUpdatedCourseInfo.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
         <member name="M:server.src.Configs.JWTConfig.AddJWTAuthentication(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration,Microsoft.Extensions.Logging.ILogger)">
             <summary>
             Configura a autenticação para a aplicação

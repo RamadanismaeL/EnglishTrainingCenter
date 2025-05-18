@@ -147,23 +147,26 @@ namespace server.src.Data.Maps
                 .HasColumnName("DateUpdate")
                 .HasColumnType("datetime");
 
-
-            builder.HasOne(s => s.CourseInfo)
-                .WithOne(c => c.StudentData)
-                .HasPrincipalKey<StudentDataModel>(s => s.Id)
-                .HasForeignKey<StudentCourseInfoModel>(c => c.StudentId)
-                .OnDelete(DeleteBehavior.Cascade); // Se o StudentDataModel for deletado, o CourseInfo associado também será automaticamente removida. (Delete em cascata - Remove os dependentes)
+            
 
             builder.HasOne(s => s.EnrollmentForm)
                 .WithOne(e => e.StudentData)
                 .HasPrincipalKey<StudentDataModel>(s => s.Id)
                 .HasForeignKey<StudentEnrollmentFormModel>(e => e.StudentId)
+                .OnDelete(DeleteBehavior.Cascade);  // Se o StudentDataModel for deletado, o CourseInfo associado também será automaticamente removida. (Delete em cascata - Remove os dependentes)
+
+
+            builder.HasMany(s => s.CourseInfo)
+                .WithOne(c => c.StudentData)
+                .HasPrincipalKey(s => s.Id)
+                .HasForeignKey(c => c.StudentId)
                 .OnDelete(DeleteBehavior.Cascade);
+
 
             builder.HasMany(s => s.Payments)
                 .WithOne(p => p.StudentData)
-                .HasForeignKey(p => p.StudentId)
                 .HasPrincipalKey(s => s.Id)
+                .HasForeignKey(p => p.StudentId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

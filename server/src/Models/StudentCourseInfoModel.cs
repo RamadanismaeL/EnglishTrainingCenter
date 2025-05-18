@@ -3,14 +3,14 @@
 */
 
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace server.src.Models
 {
     public class StudentCourseInfoModel
     {
-        [Key, ForeignKey("StudentData")]
-        public string StudentId { get; set; } = string.Empty;          
+        public long Order { get; set; }
+        [Key]
+        public string Id { get; set; } = string.Empty; // Course ID - A12025401    
 
         // COURSE INFORMATION
         public string CourseName { get; set; } = string.Empty;
@@ -22,11 +22,17 @@ namespace server.src.Models
         public string Duration { get; set; } = string.Empty;
         public decimal MonthlyFee { get; set; }
 
+        public decimal QuizOne { get; set; } = 0;
+        public decimal QuizTwo { get; set; } = 0;
+        public decimal Exam { get; set; } = 0;
+        public decimal FinalAverage { get; set; } = 0;
 
-        public string Status { get; set; } = string.Empty; // Active, Inactive, Completed, and Dropped
+
+        public string Status { get; set; } = string.Empty; // Failed, Pass, In Progress
         public string TrainerName { get; set; } = string.Empty;
         public DateTime DateUpdate { get; set; }
 
+        public string StudentId { get; set; } = string.Empty;
         public StudentDataModel? StudentData { get; set; } // Navigation property to StudentDataModel
     }
 }

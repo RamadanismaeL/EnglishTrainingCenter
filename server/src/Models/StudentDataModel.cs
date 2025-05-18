@@ -47,9 +47,9 @@ namespace server.src.Models
         public string TrainerName { get; set; } = string.Empty;
         public DateTime DateUpdate { get; set; }
 
-
-        public StudentCourseInfoModel? CourseInfo { get; set; }
+        
         public StudentEnrollmentFormModel? EnrollmentForm { get; set; }
+        public ICollection<StudentCourseInfoModel>? CourseInfo { get; set; }
         public ICollection<StudentPaymentModel>? Payments { get; set; }
     }
 }

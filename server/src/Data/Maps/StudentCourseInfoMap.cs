@@ -14,11 +14,19 @@ namespace server.src.Data.Maps
         {
             builder.ToTable("tbStudentCourseInfo");
 
-            builder.Property(s => s.StudentId)
+            builder.Property(s => s.Order)
+                .HasColumnName("Order")
+                .HasColumnType("bigint unsigned")
+                .ValueGeneratedOnAdd()
+                .IsRequired();
+            builder.HasKey(s => s.Order);
+
+            builder.Property(s => s.Id)
                 .HasColumnName("Id")
                 .HasColumnType("varchar(50)") 
                 .IsRequired();
-            builder.HasKey(s => s.StudentId);         
+            builder.HasIndex(s => s.Id)
+                .IsUnique();       
 
             // COURSE INFORMATION
             builder.Property(s => s.CourseName)
@@ -61,6 +69,26 @@ namespace server.src.Data.Maps
                 .HasColumnType("decimal(10,2)")                
                 .IsRequired();
 
+            builder.Property(s => s.QuizOne)
+                .HasColumnName("QuizOne")
+                .HasColumnType("decimal(10,2)")                
+                .IsRequired();
+
+            builder.Property(s => s.QuizTwo)
+                .HasColumnName("QuitTwo")
+                .HasColumnType("decimal(10,2)")                
+                .IsRequired();
+
+            builder.Property(s => s.Exam)
+                .HasColumnName("Exam")
+                .HasColumnType("decimal(10,2)")                
+                .IsRequired();
+
+            builder.Property(s => s.FinalAverage)
+                .HasColumnName("FinalAverage")
+                .HasColumnType("decimal(10,2)")                
+                .IsRequired();
+
             builder.Property(s => s.Status)
                 .HasColumnName("Status")
                 .HasColumnType("varchar(50)")                
@@ -75,10 +103,15 @@ namespace server.src.Data.Maps
                 .HasColumnName("DateUpdate")
                 .HasColumnType("datetime");
 
+            builder.Property(s => s.StudentId)
+                .HasColumnName("StudentId")
+                .HasColumnType("varchar(50)") 
+                .IsRequired();
+
             builder.HasOne(s => s.StudentData)
-                .WithOne(s => s.CourseInfo)
-                .HasPrincipalKey<StudentDataModel>(s => s.Id)
-                .HasForeignKey<StudentCourseInfoModel>(s => s.StudentId);
+                .WithMany(s => s.CourseInfo)
+                .HasForeignKey(s => s.StudentId)
+                .HasPrincipalKey(s => s.Id);                
         }
     }
 }

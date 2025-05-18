@@ -447,22 +447,27 @@ namespace server.src.Repositories
                 TrainerName = student.TrainerName,
                 DateUpdate = student.DateUpdate,
 
-                CourseInfo = new StudentCourseInfoModel
+                CourseInfo = [.. student.CourseInfo!.Select(s => new StudentCourseInfoModel
                 {
-                    StudentId = student.CourseInfo!.StudentId,
-                    CourseName = student.CourseInfo!.CourseName,
-                    Package = student.CourseInfo!.Package,
-                    Level = student.CourseInfo!.Level,
-                    Modality = student.CourseInfo!.Modality,
-                    AcademicPeriod = student.CourseInfo!.AcademicPeriod,
-                    Schedule = student.CourseInfo!.Schedule,
-                    Duration = student.CourseInfo!.Duration,
-                    MonthlyFee = student.CourseInfo!.MonthlyFee,
-                    Status = student.CourseInfo!.Status,
-                    TrainerName = student.CourseInfo!.TrainerName,
-                    DateUpdate = student.CourseInfo!.DateUpdate,
+                    StudentId = s.StudentId,
+                    CourseName = s.CourseName,
+                    Package = s.Package,
+                    Level = s.Level,
+                    Modality = s.Modality,
+                    AcademicPeriod = s.AcademicPeriod,
+                    Schedule = s.Schedule,
+                    Duration = s.Duration,
+                    MonthlyFee = s.MonthlyFee,
+                    QuizOne = s.QuizOne,
+                    QuizTwo = s.QuizTwo,
+                    Exam = s.Exam,
+                    FinalAverage = s.FinalAverage,
+                    Status = s.Status,
+                    TrainerName = s.TrainerName,
+                    DateUpdate = s.DateUpdate,
                     StudentData = null
-                }                
+
+                }).OrderBy(s => s.Level)]
             };
         }
 

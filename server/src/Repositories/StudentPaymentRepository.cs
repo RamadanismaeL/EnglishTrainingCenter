@@ -13,18 +13,11 @@ using server.src.Models;
 
 namespace server.src.Repositories
 {
-    public class StudentPaymentRepository : IStudentPaymentRepository
+    public class StudentPaymentRepository(ServerDbContext dbContext, ILogger<StudentPaymentRepository> logger, IHttpContextAccessor httpContextAccessor) : IStudentPaymentRepository
     {
-        private readonly ServerDbContext _dbContext;
-        private readonly ILogger<StudentPaymentRepository> _logger;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-
-        public StudentPaymentRepository(ServerDbContext dbContext, ILogger<StudentPaymentRepository> logger, IHttpContextAccessor httpContextAccessor)
-        {
-            _dbContext = dbContext;
-            _logger = logger;
-            _httpContextAccessor = httpContextAccessor;
-        }
+        private readonly ServerDbContext _dbContext = dbContext;
+        private readonly ILogger<StudentPaymentRepository> _logger = logger;
+        private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
 
         public async Task<ResponseDto> Create(StudentPaymentCreateDto paymentCreateDto)
         {
