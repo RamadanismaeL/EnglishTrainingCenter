@@ -22,10 +22,10 @@ namespace server.src.Models
         public string Duration { get; set; } = string.Empty;
         public decimal MonthlyFee { get; set; }
 
-        public decimal QuizOne { get; set; } = 0;
-        public decimal QuizTwo { get; set; } = 0;
-        public decimal Exam { get; set; } = 0;
-        public decimal FinalAverage { get; set; } = 0;
+        public decimal QuizOne { get; set; } = 0.0M;
+        public decimal QuizTwo { get; set; } = 0.0M;
+        public decimal Exam { get; set; } = 0.0M;
+        public decimal FinalAverage { get; set; } = 0.0M;
 
 
         public string Status { get; set; } = string.Empty; // Failed, Pass, In Progress

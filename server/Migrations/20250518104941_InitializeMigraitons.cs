@@ -200,7 +200,7 @@ namespace server.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     PlaceOfBirth = table.Column<string>(type: "varchar(50)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    ResidentialAdress = table.Column<string>(type: "varchar(50)", nullable: false)
+                    ResidentialAddress = table.Column<string>(type: "varchar(50)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     FirstPhoneNumber = table.Column<string>(type: "varchar(50)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
@@ -364,6 +364,8 @@ namespace server.Migrations
                 name: "tbStudentCourseInfo",
                 columns: table => new
                 {
+                    Order = table.Column<ulong>(type: "bigint unsigned", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Id = table.Column<string>(type: "varchar(50)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     CourseName = table.Column<string>(type: "varchar(50)", nullable: false)
@@ -381,18 +383,24 @@ namespace server.Migrations
                     Duration = table.Column<string>(type: "varchar(50)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     MonthlyFee = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    QuizOne = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    QuitTwo = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    Exam = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    FinalAverage = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     Status = table.Column<string>(type: "varchar(50)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     TrainerName = table.Column<string>(type: "varchar(50)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    DateUpdate = table.Column<DateTime>(type: "datetime", nullable: false)
+                    DateUpdate = table.Column<DateTime>(type: "datetime", nullable: false),
+                    StudentId = table.Column<string>(type: "varchar(50)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_tbStudentCourseInfo", x => x.Id);
+                    table.PrimaryKey("PK_tbStudentCourseInfo", x => x.Order);
                     table.ForeignKey(
-                        name: "FK_tbStudentCourseInfo_tbStudentData_Id",
-                        column: x => x.Id,
+                        name: "FK_tbStudentCourseInfo_tbStudentData_StudentId",
+                        column: x => x.StudentId,
                         principalTable: "tbStudentData",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -549,6 +557,17 @@ namespace server.Migrations
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tbStudentCourseInfo_Id",
+                table: "tbStudentCourseInfo",
+                column: "Id",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tbStudentCourseInfo_StudentId",
+                table: "tbStudentCourseInfo",
+                column: "StudentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_tbStudentData_FullName",

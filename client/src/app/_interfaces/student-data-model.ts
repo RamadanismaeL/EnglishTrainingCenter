@@ -28,7 +28,7 @@ export interface StudentDataModel {
   guardEmailAddress: string;
   trainerName: string;
   dateUpdate: Date;
-  courseInfo: CourseInfoModel;
+  courseInfo: [];
   enrollmentForm: string;
   payments: StudentPaymentModel[];
 }

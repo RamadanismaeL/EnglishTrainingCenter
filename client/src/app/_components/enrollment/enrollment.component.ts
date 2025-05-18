@@ -14,9 +14,10 @@ import { StudentPaymentCreateDto } from '../../_interfaces/student-payment-creat
 import { SnackBarService } from '../../_services/snack-bar.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { StudentsService } from '../../_services/students.service';
-import { Subscription, switchMap } from 'rxjs';
+import { Subscription, switchMap, tap } from 'rxjs';
 import { NotificationHubService } from '../../_services/notification-hub.service';
 import { EnrollmentPaymentService } from '../../_services/enrollment-payment.service';
+import { CourseInfoModel } from '../../_interfaces/course-info-model';
 
 @Component({
   selector: 'app-enrollment',
@@ -139,45 +140,19 @@ export class EnrollmentComponent implements OnInit, OnDestroy {
     //console.log("Student Data = ",this.enrollmentStudentService.currentEnrollment)
 
     this.subs.add(
-      this.studentService.create(this.enrollmentStudentService.currentEnrollment).pipe(
-        switchMap(() => this.studentService.getStudentById()),
-        switchMap((studentId: string) => {
-          //console.log("ID do estudante obtido:", studentId);
+    this.studentService.create(this.enrollmentStudentService.currentEnrollment).pipe(
+      switchMap(() => this.studentService.getStudentById()),
+      tap((studentId: string) => {
+        const paymentDetails = this.createPaymentDetails(studentId);
+        const courseInfo = this.createCourseInfo(studentId);
 
-          const today = new Date();
-          const paymentDetails: StudentPaymentCreateDto = {
-            studentId,
-            receivedFrom: this.form.value.receivedFrom,
-            paymentType: 'Enrollment',
-            description: 'Enrollment',
-            method: this.form.value.paymentMethod,
-            amountMT: this.parseNumber(this.enrollmentFee),
-            times: today.toLocaleTimeString('en-US', {
-              hour: '2-digit',
-              minute: '2-digit',
-              second: '2-digit',
-              hour12: false
-            })
-          };
-
-          this.enrollmentPaymentService.setEnrollmentStudent({
-            studentId: studentId,
-            receivedFrom: this.form.value.receivedFrom,
-            paymentType: 'Enrollment',
-            description: 'Enrollment',
-            method: this.form.value.paymentMethod,
-            amountMT: this.parseNumber(this.enrollmentFee),
-            times: today.toLocaleTimeString('en-US', {
-              hour: '2-digit',
-              minute: '2-digit',
-              second: '2-digit',
-              hour12: false
-            })
-          });
-
-          return this.studentService.createStudentPayment(paymentDetails);
-        })
-      ).subscribe({
+        this.enrollmentPaymentService.setEnrollmentStudent(paymentDetails);
+        this.studentService.createStudentCourseInfo(courseInfo);
+      }),
+      switchMap((studentId: string) => {
+        return this.studentService.createStudentPayment(this.createPaymentDetails(studentId));
+      })
+    ).subscribe({
         next: () => {
           this.studentComponent.resetForm();
           this.form.reset();
@@ -192,6 +167,35 @@ export class EnrollmentComponent implements OnInit, OnDestroy {
         }
       })
     );
+  }
+
+  private createCourseInfo(studentId: string): CourseInfoModel {
+    return {
+      studentId: studentId,
+      package: this.enrollmentStudentService.currentEnrollment.package,
+      level: this.enrollmentStudentService.currentEnrollment.level,
+      modality: this.enrollmentStudentService.currentEnrollment.modality,
+      academicPeriod: this.enrollmentStudentService.currentEnrollment.academicPeriod,
+      schedule: this.enrollmentStudentService.currentEnrollment.schedule
+    };
+  }
+
+  private createPaymentDetails(studentId: string): StudentPaymentCreateDto {
+    const today = new Date();
+    return {
+      studentId: studentId,
+      receivedFrom: this.form.value.receivedFrom,
+      paymentType: 'Enrollment',
+      description: 'Enrollment',
+      method: this.form.value.paymentMethod,
+      amountMT: this.parseNumber(this.enrollmentFee),
+      times: today.toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      })
+    };
   }
 
   private handleError(error: HttpErrorResponse) {

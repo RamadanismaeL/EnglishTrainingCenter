@@ -11,7 +11,5 @@ namespace server.src.Interfaces
     {
         Task<ResponseDto> Create(StudentCourseInfoCreateDto studentCourseCreateDto);
         Task<List<StudentCourseInfoModel>> Details();
-        Task<string> GetStudentCourseByLastId();
-        Task<StudentCourseInfoModel> GetStudentCourseById(string id);
     }
 }

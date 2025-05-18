@@ -37,14 +37,6 @@ namespace server.src.Controllers
             return response.IsSuccess ? Ok(response) : BadRequest(response);
         }
 
-        [HttpGet("detail-student-course-info")]
-        public async Task<ActionResult<List<StudentCourseInfoModel>>> DetailStudentCourseInfo()
-        {
-            var listStudent = await _studentRepository.DetailStudentCourseInfo();
-
-            return Ok(listStudent);
-        }
-
         [HttpGet("detail-student-data")]
         public async Task<ActionResult<List<StudentDataModel>>> DetailStudentData()
         {

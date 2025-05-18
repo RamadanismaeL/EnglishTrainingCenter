@@ -12,7 +12,6 @@ namespace server.src.Interfaces
     {
         Task<IActionResult> Create([FromBody] StudentCreateDto studentCreateDto);
         Task<ActionResult<List<StudentDataModel>>> DetailStudentData();
-        Task<ActionResult<List<StudentCourseInfoModel>>> DetailStudentCourseInfo();
         Task<ActionResult<List<StudentEnrollmentFormModel>>> DetailStudentEnrollmentForm();
         Task<ActionResult<string>> GetStudentByLastId();
         Task<ActionResult<StudentEnrollmentFormModel>> GetStudentEnrollmentFormById(string id);

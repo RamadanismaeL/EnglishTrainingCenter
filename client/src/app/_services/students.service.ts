@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment.development';
 import { HttpClient } from '@angular/common/http';
-import { map, Observable, shareReplay } from 'rxjs';
+import { Observable } from 'rxjs';
 import { ResponseDto } from '../_interfaces/response-dto';
 import { StudentPaymentCreateDto } from '../_interfaces/student-payment-create-dto';
 import { StudentsCreateDto } from '../_interfaces/students-create-dto';
 import { StudentEnrollmentFormModel } from '../_interfaces/student-enrollment-form-model';
 import { StudentPaymentModel } from '../_interfaces/student-payment-model';
 import { StudentDataModel } from '../_interfaces/student-data-model';
-import { StateGroup } from '../_pages/Payments/payment-pay/payment-pay.component';
+import { CourseInfoModel } from '../_interfaces/course-info-model';
 
 @Injectable({
   providedIn: 'root'
@@ -49,4 +49,7 @@ export class StudentsService {
 
   getStudentDataByFullName = (fullName: string) : Observable<StudentDataModel> => this.http
     .post<StudentDataModel>(`${this.myUrl}/Students/detail-student-data-by-fullName/${fullName}`, {headers : { 'Allow-Offline' : 'true' }});
+
+  createStudentCourseInfo = (data : CourseInfoModel) : Observable<ResponseDto> => this.http
+    .post<ResponseDto>(`${this.myUrl}/StudentCourseInfo/create`, data, {headers : { 'Allow-Offline' : 'true' }});
 }

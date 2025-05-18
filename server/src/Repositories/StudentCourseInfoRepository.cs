@@ -2,6 +2,10 @@
 *@author Ramadan Ismael
 */
 
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
+using PuppeteerSharp;
 using server.src.Data;
 using server.src.DTOs;
 
@@ -26,7 +30,94 @@ namespace server.src.Repositories
             {
                 var userPrincipal = _httpContextAccessor.HttpContext?.User;
                 if (userPrincipal is null)
-                { }                   
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "User not authenticated."
+                    };
+                }
+
+                var userId = userPrincipal.FindFirst(ClaimTypes.NameIdentifier);
+                if (userId is null)
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "User not found."
+                    };
+                }
+
+                var userIdValue = userId.Value;
+                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userIdValue);
+                if (user is null)
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "User not found."
+                    };
+                }
+
+                var usernameClaim = _httpContextAccessor.HttpContext?.User.FindFirst(JwtRegisteredClaimNames.Name);
+
+                var trainerName = usernameClaim?.Value;
+
+                var newID = GenerateCourseId(studentCourseCreateDto.Level);
+                if (newID is null)
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "Failed to generate a new Student ID."
+                    };
+                }
+
+                decimal monthlyFee = GetSettingsMonthlyTuition($"{studentCourseCreateDto.Level}-{studentCourseCreateDto.Modality}", $"{studentCourseCreateDto.Package}");
+
+                /*
+                decimal finalAverage = (((studentCourseCreateDto.QuizOne + studentCourseCreateDto.QuizTwo) / 2) * 0.6M) + (studentCourseCreateDto.Exam * 0.4M);
+
+                string status = "";
+                if (studentCourseCreateDto.Exam == 0.0M)
+                { status = "In Progress"; }
+                else if (finalAverage >= 0.0M && finalAverage <= 50.0M)
+                { status = "Failed"; }
+                else if (finalAverage >= 50.0M && finalAverage <= 100.0M)
+                { status = "Pass"; }
+                else
+                { status = "Error"; }
+                */
+
+                var courseInfoData = new StudentCourseInfoModel
+                {
+                    Id = newID,
+                    StudentId = studentCourseCreateDto.StudentId,
+                    CourseName = "Inglês",
+                    Package = studentCourseCreateDto.Package,
+                    Level = studentCourseCreateDto.Level,
+                    Modality = studentCourseCreateDto.Modality,
+                    AcademicPeriod = studentCourseCreateDto.AcademicPeriod,
+                    Schedule = studentCourseCreateDto.Schedule,
+                    Duration = "3 Meses",
+                    MonthlyFee = monthlyFee,
+                    QuizOne = 0.0M,
+                    QuizTwo = 0.0M,
+                    Exam = 0.0M,
+                    FinalAverage = 0.0M,
+                    Status = "In Progress",
+                    TrainerName = trainerName!,
+                    DateUpdate = DateTime.UtcNow
+                };
+
+                await _dbContext.StudentCourseInfo.AddAsync(courseInfoData);
+                await _dbContext.SaveChangesAsync();
+
+                return new ResponseDto
+                {
+                    IsSuccess = true,
+                    Message = "Course created successfuly."
+                };
             }
             catch (Exception ex)
             {
@@ -39,19 +130,11 @@ namespace server.src.Repositories
             }
         }
 
-        public Task<List<StudentCourseInfoModel>> Details()
+        public async Task<List<StudentCourseInfoModel>> Details()
         {
-            throw new NotImplementedException();
-        }
+            var courseData = await _dbContext.StudentCourseInfo.AsNoTracking().ToListAsync();
 
-        public Task<StudentCourseInfoModel> GetStudentCourseById(string id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<string> GetStudentCourseByLastId()
-        {
-            throw new NotImplementedException();
+            return [.. courseData.OrderBy(c => c.Level)];
         }
 
         private string GenerateCourseId(string level)

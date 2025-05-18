@@ -115,12 +115,14 @@ export class PaymentPayComponent implements OnInit, OnDestroy {
   private updateStudentInfo(student: StudentDataModel): void {
     this.studentInfo_id = student.id || '--';
     this.studentInfo_fullName = student.fullName || '--';
+    /*
     this.studentInfo_package = student.courseInfo.package || '--';
     this.studentInfo_level = student.courseInfo.level || '--';
     this.studentInfo_modality = student.courseInfo.modality || '--';
     this.studentInfo_academicPeriod = student.courseInfo.academicPeriod || '--';
     this.studentInfo_schedule = student.courseInfo.schedule || '--';
     //this.studentInfo_amountMT = student.courseInfo.am ? `MT ${student.amountMT}` : '--';
+    */
   }
 
   private clearStudentInfo(): void {

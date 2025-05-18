@@ -11,7 +11,6 @@ namespace server.src.Interfaces
     {
         Task<ResponseDto> Create(StudentCreateDto studentCreateDto);
         Task<List<StudentDataModel>> DetailStudentData();
-        Task<List<StudentCourseInfoModel>> DetailStudentCourseInfo();
         Task<List<StudentEnrollmentFormModel>> DetailStudentEnrollmentForm();
         Task<string> GetStudentByLastId();
         Task<StudentEnrollmentFormModel> GetStudentEnrollmentFormById(string id);

@@ -102,23 +102,6 @@ namespace server.src.Repositories
 
                 int age = DateTime.Now.Year - studentCreateDto.DateOfBirthCalc.Year;
 
-                var studentCourseInfo = new StudentCourseInfoModel
-                {
-                    StudentId = newId,
-
-                    CourseName = "Inglês",
-                    Package = studentCreateDto.Package,
-                    Level = studentCreateDto.Level,
-                    Modality = studentCreateDto.Modality,
-                    AcademicPeriod = studentCreateDto.AcademicPeriod,
-                    Schedule = studentCreateDto.Schedule,
-                    Duration = "3 Meses",
-                    MonthlyFee = monthlyFee,
-
-                    Status = "Active",
-                    TrainerName = trainerName!
-                };
-
                 var studentData = new StudentDataModel
                 {
                     Id = newId,
@@ -183,7 +166,6 @@ namespace server.src.Repositories
                 try
                 {
                     if (studentData != null) await _dbContext.StudentData.AddAsync(studentData);
-                    if (studentCourseInfo != null) await _dbContext.StudentCourseInfo.AddAsync(studentCourseInfo);
                     if (studentEnrollmentForm != null) await _dbContext.StudentEnrollmentForm.AddAsync(studentEnrollmentForm);
 
                     await _dbContext.SaveChangesAsync();
@@ -213,32 +195,13 @@ namespace server.src.Repositories
             }
         }
 
-        public async Task<List<StudentCourseInfoModel>> DetailStudentCourseInfo()
-        {
-            return await _dbContext.StudentCourseInfo
-                .AsNoTracking()
-                .Select(s => new StudentCourseInfoModel
-                {
-                    StudentId = s.StudentId,
-                    CourseName = s.CourseName,
-                    Package = s.Package,
-                    Level = s.Level,
-                    Modality = s.Modality,
-                    AcademicPeriod = s.AcademicPeriod,
-                    Schedule = s.Schedule,
-                    Duration = s.Duration,
-                    MonthlyFee = s.MonthlyFee,
-                    Status = s.Status,
-                    TrainerName = s.TrainerName,
-                    DateUpdate = s.DateUpdate
-                })
-                .ToListAsync();
-        }
-
         public async Task<List<StudentDataModel>> DetailStudentData()
         {
             return await _dbContext.StudentData
                 .AsNoTracking()
+                .Include(sf => sf.EnrollmentForm)
+                .Include(sc => sc.CourseInfo)
+                .Include(sp => sp.Payments)
                 .Select(s => new StudentDataModel
                 {
                     Order = s.Order,
@@ -270,7 +233,10 @@ namespace server.src.Repositories
 
                     TrainerName = s.TrainerName,
                     DateUpdate = s.DateUpdate,
-                    //Payments = s.Payments
+
+                    EnrollmentForm = s.EnrollmentForm,
+                    CourseInfo = s.CourseInfo,
+                    Payments = s.Payments
                 })
                 .OrderBy(s => s.FullName)
                 .ToListAsync();

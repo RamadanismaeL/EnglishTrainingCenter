@@ -12,8 +12,8 @@ using server.src.Data;
 namespace server.Migrations
 {
     [DbContext(typeof(ServerDbContext))]
-    [Migration("20250515150242_InitializeMigraitonsUpdated")]
-    partial class InitializeMigraitonsUpdated
+    [Migration("20250518104941_InitializeMigraitons")]
+    partial class InitializeMigraitons
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -359,9 +359,12 @@ namespace server.Migrations
 
             modelBuilder.Entity("server.src.Models.StudentCourseInfoModel", b =>
                 {
-                    b.Property<string>("StudentId")
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("Id");
+                    b.Property<ulong>("Order")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint unsigned")
+                        .HasColumnName("Order");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<ulong>("Order"));
 
                     b.Property<string>("AcademicPeriod")
                         .IsRequired()
@@ -382,6 +385,19 @@ namespace server.Migrations
                         .HasColumnType("varchar(50)")
                         .HasColumnName("Duration");
 
+                    b.Property<decimal>("Exam")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("Exam");
+
+                    b.Property<decimal>("FinalAverage")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("FinalAverage");
+
+                    b.Property<string>("Id")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("Id");
+
                     b.Property<string>("Level")
                         .IsRequired()
                         .HasColumnType("varchar(50)")
@@ -401,6 +417,14 @@ namespace server.Migrations
                         .HasColumnType("varchar(50)")
                         .HasColumnName("Package");
 
+                    b.Property<decimal>("QuizOne")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("QuizOne");
+
+                    b.Property<decimal>("QuizTwo")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("QuitTwo");
+
                     b.Property<string>("Schedule")
                         .IsRequired()
                         .HasColumnType("varchar(50)")
@@ -411,12 +435,22 @@ namespace server.Migrations
                         .HasColumnType("varchar(50)")
                         .HasColumnName("Status");
 
+                    b.Property<string>("StudentId")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("StudentId");
+
                     b.Property<string>("TrainerName")
                         .IsRequired()
                         .HasColumnType("varchar(50)")
                         .HasColumnName("TrainerName");
 
-                    b.HasKey("StudentId");
+                    b.HasKey("Order");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("StudentId");
 
                     b.ToTable("tbStudentCourseInfo", (string)null);
                 });
@@ -856,9 +890,9 @@ namespace server.Migrations
             modelBuilder.Entity("server.src.Models.StudentCourseInfoModel", b =>
                 {
                     b.HasOne("server.src.Models.StudentDataModel", "StudentData")
-                        .WithOne("CourseInfo")
-                        .HasForeignKey("server.src.Models.StudentCourseInfoModel", "StudentId")
-                        .HasPrincipalKey("server.src.Models.StudentDataModel", "Id")
+                        .WithMany("CourseInfo")
+                        .HasForeignKey("StudentId")
+                        .HasPrincipalKey("Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
