@@ -7,6 +7,8 @@ import { PaymentPayComponent } from "../../_pages/Payments/payment-pay/payment-p
 import { StepperPaymentService } from '../../_services/stepper-payment.service';
 import { Subscription } from 'rxjs';
 import { NotificationHubService } from '../../_services/notification-hub.service';
+import { PaymentPayNowCreateService } from '../../_services/payment-pay-now-create.service';
+import { PaymentPayNowService } from '../../_services/payment-pay-now.service';
 
 @Component({
   selector: 'app-payment',
@@ -25,7 +27,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
   @ViewChild('stepperPayment') stepper!: MatStepper;
   private subs = new Subscription();
 
-  constructor(private stepperService: StepperPaymentService, private notificationHub: NotificationHubService) {
+  constructor(private stepperService: StepperPaymentService, private notificationHub: NotificationHubService, private paymentPayNowCreate: PaymentPayNowCreateService, private paymentPayNow: PaymentPayNowService) {
     this.subs.add(
       this.stepperService.activeStep$.subscribe(step => {
         this.currentStep = step;
@@ -51,8 +53,13 @@ export class PaymentComponent implements OnInit, OnDestroy {
     this.subs.unsubscribe();
   }
 
+  @ViewChild(PaymentPayComponent) paymentComponent!: PaymentPayComponent;
+
   resetStepper() {
+    this.paymentComponent.resetForm();
+    this.paymentPayNow.clear();
+    this.paymentPayNowCreate.clear();
     this.stepper.reset();
-    this.stepperService.setActiveStep(0);
+    this.stepperService.setActiveStep(0);    
   }
 }

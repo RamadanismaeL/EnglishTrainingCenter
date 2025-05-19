@@ -250,7 +250,7 @@ namespace server.src.Controllers
         }
 
         // Get
-        [HttpPost("get-settings-monthly-tuition")]
+        [HttpPost("get-monthly-by-id")]
         public async Task<ActionResult<decimal>> GetSettingsMonthlyTuition(string id, string packageName)
         {
             if(!ModelState.IsValid) return BadRequest(ModelState);

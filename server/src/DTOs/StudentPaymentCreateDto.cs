@@ -12,6 +12,5 @@ namespace server.src.DTOs
         public string Description { get; set; } = string.Empty; // Inscrição, Mensalidade de Abril,...
         public string Method { get; set; } = string.Empty; // Banco, E-Mola, M-Pesa,...
         public int AmountMT { get; set; }
-        public string Times { get; set; } = string.Empty;
     }
 }

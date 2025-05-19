@@ -5,7 +5,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
-using PuppeteerSharp;
 using server.src.Data;
 using server.src.DTOs;
 
@@ -75,20 +74,6 @@ namespace server.src.Repositories
 
                 decimal monthlyFee = GetSettingsMonthlyTuition($"{studentCourseCreateDto.Level}-{studentCourseCreateDto.Modality}", $"{studentCourseCreateDto.Package}");
 
-                /*
-                decimal finalAverage = (((studentCourseCreateDto.QuizOne + studentCourseCreateDto.QuizTwo) / 2) * 0.6M) + (studentCourseCreateDto.Exam * 0.4M);
-
-                string status = "";
-                if (studentCourseCreateDto.Exam == 0.0M)
-                { status = "In Progress"; }
-                else if (finalAverage >= 0.0M && finalAverage <= 50.0M)
-                { status = "Failed"; }
-                else if (finalAverage >= 50.0M && finalAverage <= 100.0M)
-                { status = "Pass"; }
-                else
-                { status = "Error"; }
-                */
-
                 var courseInfoData = new StudentCourseInfoModel
                 {
                     Id = newID,
@@ -107,7 +92,7 @@ namespace server.src.Repositories
                     FinalAverage = 0.0M,
                     Status = "In Progress",
                     TrainerName = trainerName!,
-                    DateUpdate = DateTime.UtcNow
+                    DateUpdate = DateTime.Now
                 };
 
                 await _dbContext.StudentCourseInfo.AddAsync(courseInfoData);
@@ -135,6 +120,99 @@ namespace server.src.Repositories
             var courseData = await _dbContext.StudentCourseInfo.AsNoTracking().ToListAsync();
 
             return [.. courseData.OrderBy(c => c.Level)];
+        }
+
+        public async Task<ResponseDto> UpdateQuiz(StudentCourseInfoUpdateQuizDto courseInfoUpdateQuizDto)
+        {
+            try
+            {
+                var userPrincipal = _httpContextAccessor.HttpContext?.User;
+                if (userPrincipal is null)
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "User not authenticated."
+                    };
+                }
+
+                var userId = userPrincipal.FindFirst(ClaimTypes.NameIdentifier);
+                if (userId is null)
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "User not found."
+                    };
+                }
+
+                var userIdValue = userId.Value;
+                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userIdValue);
+                if (user is null)
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "User not found."
+                    };
+                }
+
+                var usernameClaim = _httpContextAccessor.HttpContext?.User.FindFirst(JwtRegisteredClaimNames.Name);
+
+                var trainerName = usernameClaim?.Value;
+
+                var courseId = await _dbContext.StudentCourseInfo.FindAsync(courseInfoUpdateQuizDto.Order);
+                if (courseId is null)
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "Course ID not found."
+                    };
+                }
+                
+                decimal finalAverage = 
+                (((courseInfoUpdateQuizDto.QuizOne + courseInfoUpdateQuizDto.QuizTwo) / 2) * 0.6M) + (courseInfoUpdateQuizDto.Exam * 0.4M);
+
+                string status = "";
+                if (courseInfoUpdateQuizDto.Exam == 0.0M)
+                { status = "In Progress"; }
+                else
+                {
+                    if (finalAverage >= 0.0M && finalAverage < 50.0M)
+                    { status = "Failed"; }
+                    else if (finalAverage >= 50.0M && finalAverage <= 100.0M)
+                    { status = "Pass"; }
+                    else
+                    { status = "Error"; }
+                }
+
+                courseId.QuizOne = courseInfoUpdateQuizDto.QuizOne;
+                courseId.QuizTwo = courseInfoUpdateQuizDto.QuizTwo;
+                courseId.Exam = courseInfoUpdateQuizDto.Exam;
+                courseId.FinalAverage = finalAverage;
+                courseId.Status = status;
+                courseId.TrainerName = trainerName!;
+                courseId.DateUpdate = DateTime.Now;
+                
+                _dbContext.StudentCourseInfo.Update(courseId);
+                await _dbContext.SaveChangesAsync();
+
+                return new ResponseDto
+                {
+                    IsSuccess = true,
+                    Message = "Course updated successfuly."
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to update course.");
+                return new ResponseDto
+                {
+                    IsSuccess = false,
+                    Message = "Failed to update course."
+                };
+            }
         }
 
         private string GenerateCourseId(string level)

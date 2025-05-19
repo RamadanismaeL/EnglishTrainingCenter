@@ -63,8 +63,8 @@ export class SettingService {
     .patch<ResponseDto>(`${this.myUrl}/Settings/update-monthly`, data, {headers : { 'Allow-Offline' : 'true' }});
 
   // No seu setting.service.ts
-  getMonthlyTuitionsByIds(ids: number[]): Observable<MonthlyTuition[]> {
-    return this.http.post<MonthlyTuition[]>(`${this.myUrl}/Settings/get-monthly-by-id`, { ids }, {headers : { 'Allow-Offline' : 'true' }});
+  getMonthlyTuitionsByIds(ids : {id: string, packageName: string}): Observable<number> {
+    return this.http.post<number>(`${this.myUrl}/Settings/get-monthly-by-id`, { ids }, {headers : { 'Allow-Offline' : 'true' }});
   }
 
 

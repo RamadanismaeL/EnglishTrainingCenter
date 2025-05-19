@@ -12,7 +12,7 @@ export class LoginFooterComponent {
   private country = "Mozambique";
   private institution = "English Training Center";
 
-  footer = `Generated for ${this.institution} · Made in ${this.country} by ${this.author} · © ${this.currentYear} · All rights reserved.`;
+  footer = `Licence: ${this.institution} · Made in ${this.country} by ${this.author} · © ${this.currentYear} · All rights reserved.`;
 
   // eg.: Copyright © 2025 Made in Mozambique by Ramadan IsmaeL · All rights reserved.
 }

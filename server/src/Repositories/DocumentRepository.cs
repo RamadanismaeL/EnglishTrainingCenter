@@ -438,7 +438,7 @@ namespace server.src.Repositories
                             </tbody>
                         </table>
                         <footer style='width: 100%; text-align: center; margin-top: 720px;'>
-                            <small>Developed by Ramadan Ibraimo A. Ismael | &copy; 2025</small>
+                            <small>&copy; 2025 | Developed by Ramadan Ibraimo A. Ismael · License: English Training Center</small>
                         </footer>
                     </body>
                 </html>
@@ -684,7 +684,7 @@ namespace server.src.Repositories
                         </div>
                     </div>
                     <div style='width: 100%; text-align: center;'>
-                        <small>Developed by Ramadan Ibraimo A. Ismael | &copy; 2025</small>
+                        <small>&copy; 2025 | Developed by Ramadan Ibraimo A. Ismael · License: English Training Center</small>
                     </div>
                 </body>
                 </html>
@@ -930,7 +930,7 @@ namespace server.src.Repositories
                             </div>
                         </div>
                         <div style='width: 100%; text-align: center;'>
-                            <small>Developed by Ramadan Ibraimo A. Ismael | &copy; 2025</small>
+                            <small>&copy; 2025 | Developed by Ramadan Ibraimo A. Ismael · License: English Training Center</small>
                         </div>
 
                         <div style='border-top: 1px dashed #2f2f2f; margin: 35px 0;'></div>
@@ -1040,7 +1040,7 @@ namespace server.src.Repositories
                             </div>
                         </div>
                         <div style='width: 100%; text-align: center;'>
-                            <small>Developed by Ramadan Ibraimo A. Ismael | &copy; 2025</small>
+                            <small>&copy; 2025 | Developed by Ramadan Ibraimo A. Ismael · License: English Training Center</small>
                         </div>
                     </div>                    
                 </body>

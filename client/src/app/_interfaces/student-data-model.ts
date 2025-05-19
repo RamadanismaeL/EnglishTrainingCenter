@@ -1,4 +1,4 @@
-import { CourseInfoModel } from "./course-info-model";
+import { StudentCourseInfoDetails } from "./student-course-info-details";
 import { StudentPaymentModel } from "./student-payment-model";
 
 export interface StudentDataModel {
@@ -28,7 +28,7 @@ export interface StudentDataModel {
   guardEmailAddress: string;
   trainerName: string;
   dateUpdate: Date;
-  courseInfo: [];
+  courseInfo: StudentCourseInfoDetails [];
   enrollmentForm: string;
   payments: StudentPaymentModel[];
 }

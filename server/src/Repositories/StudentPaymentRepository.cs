@@ -80,7 +80,7 @@ namespace server.src.Repositories
                     Days = DateTime.Now.Day,
                     Months = GetMonth(DateTime.Now.Month),
                     Years = DateTime.Now.Year,
-                    Times = paymentCreateDto.Times,
+                    Times = DateTime.Now.ToString("HH:mm:ss"),
                     
                     TrainerId = user.Id,
                     TrainerName = userName!

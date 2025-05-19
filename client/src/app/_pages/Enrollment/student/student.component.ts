@@ -438,7 +438,7 @@ export class StudentComponent implements OnInit, OnDestroy {
         distinctUntilChanged() // Só emite se o valor mudou
       )
       .subscribe(value => {
-        console.log("Hello Data = ",value)
+        //console.log("Hello Data = ",value)
         this.form.get('guardianResidentialAddress')?.patchValue(value);
       })
     )

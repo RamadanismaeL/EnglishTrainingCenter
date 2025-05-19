@@ -9,7 +9,7 @@
       <form
         [formGroup]="form"
         (ngSubmit)="confirm()"
-        #studentPaymentFormRef>
+        #studentPaymentPayNowFormRef>
         <div class="w-full shadow-xl rounded-3xl p-8 bg-white w-1/2 h-105"
         >
         <mat-form-field appearance="outline" class="w-full">
@@ -54,7 +54,7 @@
               <mat-option value="Examination">Examination</mat-option>
               <mat-option value="Tuition">Tuition</mat-option>
             </mat-select>
-            @if (getErrorForms('paymentMethod')?.hasError('required')) {
+            @if (getErrorForms('transactionType')?.hasError('required')) {
               <mat-error>Payment Method is required</mat-error>
             }
           </mat-form-field>

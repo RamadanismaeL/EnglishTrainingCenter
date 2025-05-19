@@ -481,17 +481,6 @@ export class SettingsComponent implements OnInit, OnDestroy
   onEditMonthlyTuition ()
   {
     this.editMonthlyTuition = !this.editMonthlyTuition;
-
-    /*
-    this.formMonthlyTuition.patchValue({
-      levelA : this.a,
-      levelAA : this.aa,
-      levelB : this.b,
-      levelBB : this.bb,
-      levelC : this.c,
-      levelCC : this.cc
-    });
-    */
   }
 
   onSaveMonthlyTuition() {

@@ -14,7 +14,7 @@ import { StudentPaymentCreateDto } from '../../_interfaces/student-payment-creat
 import { SnackBarService } from '../../_services/snack-bar.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { StudentsService } from '../../_services/students.service';
-import { Subscription, switchMap, tap } from 'rxjs';
+import { Subscription, switchMap } from 'rxjs';
 import { NotificationHubService } from '../../_services/notification-hub.service';
 import { EnrollmentPaymentService } from '../../_services/enrollment-payment.service';
 import { CourseInfoModel } from '../../_interfaces/course-info-model';
@@ -140,19 +140,23 @@ export class EnrollmentComponent implements OnInit, OnDestroy {
     //console.log("Student Data = ",this.enrollmentStudentService.currentEnrollment)
 
     this.subs.add(
-    this.studentService.create(this.enrollmentStudentService.currentEnrollment).pipe(
-      switchMap(() => this.studentService.getStudentById()),
-      tap((studentId: string) => {
-        const paymentDetails = this.createPaymentDetails(studentId);
-        const courseInfo = this.createCourseInfo(studentId);
+      this.studentService.create(this.enrollmentStudentService.currentEnrollment).pipe(
+        switchMap(() => this.studentService.getStudentById()),
+        switchMap((studentId: string) => {
+          const paymentDetails = this.createPaymentDetails(studentId);
+          const courseInfo = this.createCourseInfo(studentId);
 
-        this.enrollmentPaymentService.setEnrollmentStudent(paymentDetails);
-        this.studentService.createStudentCourseInfo(courseInfo);
-      }),
-      switchMap((studentId: string) => {
-        return this.studentService.createStudentPayment(this.createPaymentDetails(studentId));
-      })
-    ).subscribe({
+          this.enrollmentPaymentService.setEnrollmentStudent(paymentDetails);
+
+          // Chamada para salvar o Course Info — Agora garantida no fluxo
+          return this.studentService.createStudentCourseInfo(courseInfo).pipe(
+            switchMap(() => {
+              // Só após salvar o Course Info, ele cria o pagamento
+              return this.studentService.createStudentPayment(this.createPaymentDetails(studentId));
+            })
+          );
+        })
+      ).subscribe({
         next: () => {
           this.studentComponent.resetForm();
           this.form.reset();
@@ -181,20 +185,22 @@ export class EnrollmentComponent implements OnInit, OnDestroy {
   }
 
   private createPaymentDetails(studentId: string): StudentPaymentCreateDto {
-    const today = new Date();
+    //const today = new Date();
     return {
       studentId: studentId,
       receivedFrom: this.form.value.receivedFrom,
       paymentType: 'Enrollment',
       description: 'Enrollment',
       method: this.form.value.paymentMethod,
-      amountMT: this.parseNumber(this.enrollmentFee),
+      amountMT: this.parseNumber(this.enrollmentFee)
+      /*
       times: today.toLocaleTimeString('en-US', {
         hour: '2-digit',
         minute: '2-digit',
         second: '2-digit',
         hour12: false
       })
+        */
     };
   }
 

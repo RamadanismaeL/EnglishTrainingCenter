@@ -1,10 +1,9 @@
 export interface StudentPaymentCreateDto
 {
-  "studentId": string
+  "studentId": string | undefined
   "receivedFrom": string
   "paymentType": string
   "description": string
   "method": string
-  "amountMT": number
-  "times": string
+  "amountMT": number | undefined
 }

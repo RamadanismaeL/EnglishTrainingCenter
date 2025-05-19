@@ -1,9 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ICellRendererAngularComp } from 'ag-grid-angular';
-import { Subscription } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 import { SnackBarService } from '../../../_services/snack-bar.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogSharePaymentComponent } from '../../../_components/payment/dialog-share-payment/dialog-share-payment.component';
+import { PaymentPayNowCreateService } from '../../../_services/payment-pay-now-create.service';
+import { StudentPaymentCreateDto } from '../../../_interfaces/student-payment-create-dto';
 
 @Component({
   selector: 'app-payment-success',
@@ -15,26 +17,25 @@ export class PaymentSuccessComponent implements OnInit, OnDestroy, ICellRenderer
   private subs = new Subscription();
   amountMT : string | undefined = '--';
   method : string | undefined = '--';
-  transactionType : string | undefined = '--';
+  transaction : string | undefined = '--';
   receivedFrom : string | undefined = '--';
 
   params: any;
 
-  constructor(private alert: SnackBarService, private dialog: MatDialog)
+  constructor(private paymentPayNowCreate: PaymentPayNowCreateService)
   {}
 
   ngOnInit(): void {
-    /*
-      this.subs.add(
-        this.enrollmentPaymentService.enrollment$.pipe(
-          filter((enrollment): enrollment is StudentPaymentCreateDto => !!enrollment)
-        ).subscribe(enrollment => {
-          this.amountMT = `${this.formatAmount(enrollment.amountMT)} MT`;
-          this.receivedFrom = enrollment.receivedFrom;
-          this.method = enrollment.method;
+    this.subs.add(
+      this.paymentPayNowCreate.enrollment$.pipe(
+        filter((enrollment): enrollment is StudentPaymentCreateDto => !!enrollment)
+      ).subscribe(enrollment => {
+        this.amountMT = `${this.formatAmount(enrollment.amountMT)} MT`;
+        this.receivedFrom = enrollment.receivedFrom;
+        this.method = enrollment.method;
+        this.transaction = enrollment.description;
         })
       );
-      */
     }
 
     ngOnDestroy(): void {
@@ -71,6 +72,6 @@ export class PaymentSuccessComponent implements OnInit, OnDestroy, ICellRenderer
 
     onShare()
     {
-      this.dialog.open(DialogSharePaymentComponent)
+      //this.dialog.open(DialogSharePaymentComponent)
     }
 }

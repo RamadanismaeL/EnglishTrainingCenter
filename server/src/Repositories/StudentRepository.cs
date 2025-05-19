@@ -12,18 +12,11 @@ using server.src.Models;
 
 namespace server.src.Repositories
 {
-    public class StudentRepository : IStudentRepository
+    public class StudentRepository(ServerDbContext dbContext, ILogger<StudentRepository> logger, IHttpContextAccessor httpContextAccessor) : IStudentRepository
     {
-        private readonly ServerDbContext _dbContext;
-        private readonly ILogger<StudentRepository> _logger;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-
-        public StudentRepository(ServerDbContext dbContext, ILogger<StudentRepository> logger, IHttpContextAccessor httpContextAccessor)
-        {
-            _dbContext = dbContext;
-            _logger = logger;
-            _httpContextAccessor = httpContextAccessor;
-        }
+        private readonly ServerDbContext _dbContext = dbContext;
+        private readonly ILogger<StudentRepository> _logger = logger;
+        private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
 
         public async Task<ResponseDto> Create(StudentCreateDto studentCreateDto)
         {
@@ -283,6 +276,49 @@ namespace server.src.Repositories
                 .ToListAsync();
         }
 
+        /*public async Task<List<StudentDataModel>> DetailStudentCourseInProgress()
+        {
+            return await _dbContext.StudentData
+                .AsNoTracking()
+                .Include(sc => sc.CourseInfo!.Where(c => c.Status == "In Progress"))
+                .Select(s => new StudentDataModel
+                {
+                    Order = s.Order,
+                    Id = s.Id,
+
+                    DocumentType = s.DocumentType,
+                    IdNumber = s.IdNumber,
+                    PlaceOfIssue = s.PlaceOfIssue,
+                    ExpirationDate = s.ExpirationDate,
+
+                    FullName = s.FullName,
+                    DateOfBirth = s.DateOfBirth,
+                    DateOfBirthCalc = s.DateOfBirthCalc,
+                    Gender = s.Gender,
+                    MaritalStatus = s.MaritalStatus,
+                    Nationality = s.Nationality,
+                    PlaceOfBirth = s.PlaceOfBirth,
+                    ResidentialAddress = s.ResidentialAddress,
+                    FirstPhoneNumber = s.FirstPhoneNumber,
+                    SecondPhoneNumber = s.SecondPhoneNumber,
+                    EmailAddress = s.EmailAddress,
+                    AdditionalNotes = s.AdditionalNotes,
+
+                    GuardFullName = s.GuardFullName,
+                    GuardRelationship = s.GuardRelationship,
+                    GuardFirstPhoneNumber = s.GuardFirstPhoneNumber,
+                    GuardSecondPhoneNumber = s.GuardSecondPhoneNumber,
+                    GuardEmailAddress = s.GuardEmailAddress,
+
+                    TrainerName = s.TrainerName,
+                    DateUpdate = s.DateUpdate,
+
+                    CourseInfo = s.CourseInfo!.Where(c => c.Status == "In Progress").ToList()
+                })
+                .OrderBy(s => s.FullName)
+                .ToListAsync();
+        }*/
+
         public async Task<StudentEnrollmentFormModel> GetStudentEnrollmentFormById(string id)
         {
             // Inclua StudentData e relacionamentos necessários
@@ -375,7 +411,7 @@ namespace server.src.Repositories
             // Inclua StudentData e relacionamentos necessários
             var student = await _dbContext.StudentData
                 .AsNoTracking()
-                .Include(s => s.CourseInfo)
+                .Include(s => s.CourseInfo!.Where(c => c.Status == "In Progress"))
                 .FirstOrDefaultAsync(s => s.FullName == fullName);
 
             if (student == null) return null!;
@@ -413,7 +449,7 @@ namespace server.src.Repositories
                 TrainerName = student.TrainerName,
                 DateUpdate = student.DateUpdate,
 
-                CourseInfo = [.. student.CourseInfo!.Select(s => new StudentCourseInfoModel
+                CourseInfo = [.. student.CourseInfo!.Where(c => c.Status == "In Progress").Select(s => new StudentCourseInfoModel
                 {
                     StudentId = s.StudentId,
                     CourseName = s.CourseName,
@@ -432,8 +468,7 @@ namespace server.src.Repositories
                     TrainerName = s.TrainerName,
                     DateUpdate = s.DateUpdate,
                     StudentData = null
-
-                }).OrderBy(s => s.Level)]
+                })]
             };
         }
 

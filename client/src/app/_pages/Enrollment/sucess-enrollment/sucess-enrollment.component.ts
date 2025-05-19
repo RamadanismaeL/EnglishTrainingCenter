@@ -1,6 +1,6 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit } from '@angular/core';
 import { SnackBarService } from '../../../_services/snack-bar.service';
-import { filter, forkJoin, Observable, Subscription, switchMap } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 import { StudentPaymentCreateDto } from '../../../_interfaces/student-payment-create-dto';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogShareEnrollmentComponent } from '../../../_components/enrollment/dialog-share-enrollment/dialog-share-enrollment.component';
