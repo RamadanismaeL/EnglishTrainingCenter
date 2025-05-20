@@ -17,7 +17,7 @@ namespace server.src.Models
         public string DocumentType { get; set; } = string.Empty;
         public string IdNumber { get; set; } = string.Empty;
         public string PlaceOfIssue { get; set; } = string.Empty;
-        public string ExpirationDate { get; set; } = string.Empty;        
+        public string ExpirationDate { get; set; } = string.Empty;
 
 
         // PERSONAL DATA
@@ -44,12 +44,14 @@ namespace server.src.Models
         public string GuardEmailAddress { get; set; } = string.Empty;
 
 
+        public string Status { get; set; } = string.Empty; // Active, Inactive, Completed
         public string TrainerName { get; set; } = string.Empty;
         public DateTime DateUpdate { get; set; }
 
-        
+
         public StudentEnrollmentFormModel? EnrollmentForm { get; set; }
         public ICollection<StudentCourseInfoModel>? CourseInfo { get; set; }
         public ICollection<StudentPaymentModel>? Payments { get; set; }
+        public ICollection<StudentMonthlyTuitionModel>? MonthlyTuition { get; set; }
     }
 }

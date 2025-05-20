@@ -73,9 +73,12 @@ namespace server.src.Configs
                 services.AddScoped<ITrainerRepository, TrainerRepository>();
                 services.AddScoped<IRoleRepository, RoleRepository>();
                 services.AddScoped<ILoginRepositoy, LoginRepository>();
+
+                // Students
                 services.AddScoped<IStudentRepository, StudentRepository>();
                 services.AddScoped<IStudentPaymentRepository, StudentPaymentRepository>();
-                services.AddScoped<IStudentCourseInfoRepository, StudentCourseInfoRepository>();          
+                services.AddScoped<IStudentCourseInfoRepository, StudentCourseInfoRepository>();
+                services.AddScoped<IStudentMonthlyTuitionRepository, StudentMonthlyTuitionRepository>();      
 
                 // Settings
                 services.AddScoped<ISettingRepository, SettingRepository>();

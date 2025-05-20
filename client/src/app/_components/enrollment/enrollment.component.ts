@@ -189,7 +189,6 @@ export class EnrollmentComponent implements OnInit, OnDestroy {
     return {
       studentId: studentId,
       receivedFrom: this.form.value.receivedFrom,
-      paymentType: 'Enrollment',
       description: 'Enrollment',
       method: this.form.value.paymentMethod,
       amountMT: this.parseNumber(this.enrollmentFee)

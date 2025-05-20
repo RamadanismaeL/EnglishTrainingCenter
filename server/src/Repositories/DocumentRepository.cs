@@ -13,7 +13,6 @@ using server.src.Interfaces;
 using server.src.Models;
 using ImageMagick;
 using PuppeteerSharp;
-using System.Diagnostics;
 
 namespace server.src.Repositories
 {

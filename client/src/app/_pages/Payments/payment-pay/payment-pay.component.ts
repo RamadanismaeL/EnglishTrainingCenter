@@ -272,7 +272,6 @@ export class PaymentPayComponent implements OnInit, OnDestroy {
       this.paymentPayNowCreate.setEnrollmentStudent({
         studentId: this.paymentPayNow.currentEnrollment.studentId,
         receivedFrom: this.form.value.receivedFrom,
-        paymentType: this.form.value.transactionType,
         description: this.GetReferent(this.form.value.transactionType),
         method: this.form.value.paymentMethod,
         amountMT: this.paymentPayNow.currentEnrollment.amountToPay

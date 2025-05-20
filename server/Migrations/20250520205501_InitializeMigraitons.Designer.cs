@@ -12,7 +12,7 @@ using server.src.Data;
 namespace server.Migrations
 {
     [DbContext(typeof(ServerDbContext))]
-    [Migration("20250518104941_InitializeMigraitons")]
+    [Migration("20250520205501_InitializeMigraitons")]
     partial class InitializeMigraitons
     {
         /// <inheritdoc />
@@ -582,6 +582,11 @@ namespace server.Migrations
                         .HasColumnType("varchar(50)")
                         .HasColumnName("SecondPhoneNumber");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("Status");
+
                     b.Property<string>("TrainerName")
                         .IsRequired()
                         .HasColumnType("varchar(50)")
@@ -685,6 +690,80 @@ namespace server.Migrations
                     b.ToTable("tbStudentEnrollmentForm", (string)null);
                 });
 
+            modelBuilder.Entity("server.src.Models.StudentMonthlyTuitionModel", b =>
+                {
+                    b.Property<ulong>("Order")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint unsigned")
+                        .HasColumnName("Order");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<ulong>("Order"));
+
+                    b.Property<string>("CourseInfoId")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("CourseInfoId");
+
+                    b.Property<DateTime>("DateRegister")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime")
+                        .HasColumnName("DateRegister")
+                        .HasDefaultValueSql("current_timestamp");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("Description");
+
+                    b.Property<DateTime?>("DueDate")
+                        .HasColumnType("datetime")
+                        .HasColumnName("DueDate");
+
+                    b.Property<string>("Id")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("Id");
+
+                    b.Property<string>("PaymentId")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("PaymentId");
+
+                    b.Property<DateTime?>("ReferenceMonthDate")
+                        .HasColumnType("datetime")
+                        .HasColumnName("ReferenceMonthDate");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("Status");
+
+                    b.Property<string>("StudentId")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("StudentId");
+
+                    b.Property<string>("TrainerName")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("TrainerName");
+
+                    b.HasKey("Order");
+
+                    b.HasIndex("CourseInfoId");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("PaymentId")
+                        .IsUnique();
+
+                    b.HasIndex("StudentId", "ReferenceMonthDate")
+                        .IsUnique();
+
+                    b.ToTable("tbStudentMonthlyTuition", (string)null);
+                });
+
             modelBuilder.Entity("server.src.Models.StudentPaymentModel", b =>
                 {
                     b.Property<ulong>("Order")
@@ -738,11 +817,6 @@ namespace server.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(50)")
                         .HasColumnName("Months");
-
-                    b.Property<string>("PaymentType")
-                        .IsRequired()
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("PaymentType");
 
                     b.Property<string>("ReceivedFrom")
                         .IsRequired()
@@ -911,6 +985,36 @@ namespace server.Migrations
                     b.Navigation("StudentData");
                 });
 
+            modelBuilder.Entity("server.src.Models.StudentMonthlyTuitionModel", b =>
+                {
+                    b.HasOne("server.src.Models.StudentCourseInfoModel", "CourseInfoData")
+                        .WithMany("MonthlyTuition")
+                        .HasForeignKey("CourseInfoId")
+                        .HasPrincipalKey("Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("server.src.Models.StudentPaymentModel", "PaymentData")
+                        .WithOne("MonthlyTuitionData")
+                        .HasForeignKey("server.src.Models.StudentMonthlyTuitionModel", "PaymentId")
+                        .HasPrincipalKey("server.src.Models.StudentPaymentModel", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("server.src.Models.StudentDataModel", "StudentData")
+                        .WithMany("MonthlyTuition")
+                        .HasForeignKey("StudentId")
+                        .HasPrincipalKey("Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("CourseInfoData");
+
+                    b.Navigation("PaymentData");
+
+                    b.Navigation("StudentData");
+                });
+
             modelBuilder.Entity("server.src.Models.StudentPaymentModel", b =>
                 {
                     b.HasOne("server.src.Models.StudentDataModel", "StudentData")
@@ -931,13 +1035,25 @@ namespace server.Migrations
                     b.Navigation("Trainer");
                 });
 
+            modelBuilder.Entity("server.src.Models.StudentCourseInfoModel", b =>
+                {
+                    b.Navigation("MonthlyTuition");
+                });
+
             modelBuilder.Entity("server.src.Models.StudentDataModel", b =>
                 {
                     b.Navigation("CourseInfo");
 
                     b.Navigation("EnrollmentForm");
 
+                    b.Navigation("MonthlyTuition");
+
                     b.Navigation("Payments");
+                });
+
+            modelBuilder.Entity("server.src.Models.StudentPaymentModel", b =>
+                {
+                    b.Navigation("MonthlyTuitionData");
                 });
 
             modelBuilder.Entity("server.src.Models.TrainerModel", b =>

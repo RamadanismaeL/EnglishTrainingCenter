@@ -495,9 +495,6 @@ export class SettingsComponent implements OnInit, OnDestroy
     this.subs.add(
       this.modifiedRows.forEach((tuition) => {
         this.settingService.updateMonthly(tuition).subscribe({
-          next: () => {
-            this.alert.show('Monthly Tuition updated successfully!!', 'success');
-          },
           error: (error) => {
             console.error('Error:', error);
             this.alert.show('An error occurred while updating.', 'error');

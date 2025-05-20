@@ -68,11 +68,19 @@ namespace server.src.Controllers
 
             return Ok(student);
         }
-        
+
         [HttpPost("detail-student-data-by-fullName/{fullName}")]
         public async Task<ActionResult<StudentDataModel>> GetStudentDataByName(string fullName)
         {
             var student = await _studentRepository.GetStudentDataByName(fullName);
+
+            return Ok(student);
+        }
+        
+        [HttpGet("get-student-list-principal-view-active")]
+        public async  Task<ActionResult<IEnumerable<StudentListPrincipalViewDto>>> GetStudentListPrincipalViewActive()
+        {
+            var student = await _studentRepository.GetStudentListPrincipalViewActive();
 
             return Ok(student);
         }

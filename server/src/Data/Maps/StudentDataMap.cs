@@ -17,33 +17,33 @@ namespace server.src.Data.Maps
 
             builder.Property(s => s.Order)
                 .HasColumnName("Order")
-                .HasColumnType("bigint unsigned")                
+                .HasColumnType("bigint unsigned")
                 .IsRequired()
                 .ValueGeneratedOnAdd();
-            builder.HasKey(s => s.Order);            
+            builder.HasKey(s => s.Order);
 
             builder.Property(s => s.Id)
                 .HasColumnName("Id")
-                .HasColumnType("varchar(50)") 
+                .HasColumnType("varchar(50)")
                 .IsRequired();
             builder.HasIndex(s => s.Id)
-                .IsUnique();            
+                .IsUnique();
 
 
             // IDENTIFICATION DOCUMENT
             builder.Property(s => s.DocumentType)
                 .HasColumnName("DocumentType")
-                .HasColumnType("varchar(50)")                
+                .HasColumnType("varchar(50)")
                 .IsRequired();
 
             builder.Property(s => s.IdNumber)
                 .HasColumnName("IdNumber")
-                .HasColumnType("varchar(50)")                
+                .HasColumnType("varchar(50)")
                 .IsRequired();
 
             builder.Property(s => s.PlaceOfIssue)
                 .HasColumnName("PlaceOfIssue")
-                .HasColumnType("varchar(50)")                
+                .HasColumnType("varchar(50)")
                 .IsRequired();
 
             builder.Property(s => s.ExpirationDate)
@@ -54,44 +54,44 @@ namespace server.src.Data.Maps
             // PERSONAL DATA
             builder.Property(s => s.FullName)
                 .HasColumnName("FullName")
-                .HasColumnType("varchar(50)")                
+                .HasColumnType("varchar(50)")
                 .IsRequired();
             builder.HasIndex(s => s.FullName)
                 .IsUnique();
 
             builder.Property(s => s.DateOfBirth)
                 .HasColumnName("DateOfBirth")
-                .HasColumnType("varchar(50)")                
+                .HasColumnType("varchar(50)")
                 .IsRequired();
-            
+
             builder.Property(s => s.DateOfBirthCalc)
                 .HasColumnName("DateOfBirthCalc")
-                .HasColumnType("datetime")                
+                .HasColumnType("datetime")
                 .IsRequired();
 
             builder.Property(s => s.Gender)
                 .HasColumnName("Gender")
-                .HasColumnType("varchar(50)")                
+                .HasColumnType("varchar(50)")
                 .IsRequired();
 
             builder.Property(s => s.MaritalStatus)
                 .HasColumnName("MaritalStatus")
-                .HasColumnType("varchar(50)")                
+                .HasColumnType("varchar(50)")
                 .IsRequired();
 
             builder.Property(s => s.Nationality)
                 .HasColumnName("Nationality")
-                .HasColumnType("varchar(50)")                
+                .HasColumnType("varchar(50)")
                 .IsRequired();
 
             builder.Property(s => s.PlaceOfBirth)
                 .HasColumnName("PlaceOfBirth")
-                .HasColumnType("varchar(50)")                
+                .HasColumnType("varchar(50)")
                 .IsRequired();
 
             builder.Property(s => s.ResidentialAddress)
                 .HasColumnName("ResidentialAddress")
-                .HasColumnType("varchar(50)")                
+                .HasColumnType("varchar(50)")
                 .IsRequired();
 
             builder.Property(s => s.FirstPhoneNumber)
@@ -109,7 +109,7 @@ namespace server.src.Data.Maps
             builder.Property(s => s.AdditionalNotes)
                 .HasColumnName("AdditionalNotes")
                 .HasColumnType("varchar(120)");
-                
+
 
             // EMERGENCY CONTACT / GUARDIAN
             builder.Property(s => s.GuardFullName)
@@ -138,16 +138,21 @@ namespace server.src.Data.Maps
 
 
 
+            builder.Property(s => s.Status)
+                .HasColumnName("Status")
+                .HasColumnType("varchar(50)")
+                .IsRequired();
+
             builder.Property(s => s.TrainerName)
                 .HasColumnName("TrainerName")
-                .HasColumnType("varchar(50)") 
+                .HasColumnType("varchar(50)")
                 .IsRequired();
 
             builder.Property(s => s.DateUpdate)
                 .HasColumnName("DateUpdate")
                 .HasColumnType("datetime");
 
-            
+
 
             builder.HasOne(s => s.EnrollmentForm)
                 .WithOne(e => e.StudentData)
@@ -168,6 +173,12 @@ namespace server.src.Data.Maps
                 .HasPrincipalKey(s => s.Id)
                 .HasForeignKey(p => p.StudentId)
                 .OnDelete(DeleteBehavior.Cascade);
+                
+            builder.HasMany(s => s.MonthlyTuition)
+                .WithOne(p => p.StudentData)
+                .HasPrincipalKey(s => s.Id)
+                .HasForeignKey(p => p.StudentId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

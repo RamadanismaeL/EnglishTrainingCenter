@@ -3,6 +3,7 @@
 */
 
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace server.src.Models
 {
@@ -13,8 +14,7 @@ namespace server.src.Models
         public string Id { get; set; } = string.Empty; // Receipt ID
 
         public string ReceivedFrom { get; set; } = string.Empty;
-        public string PaymentType { get; set; } = string.Empty; // Certificate Fee, Enrollment, Exam Fee, MonthlyFee  
-        public string DescriptionEnglish { get; set; } = string.Empty; // Enrollment, April Tuition,...
+        public string DescriptionEnglish { get; set; } = string.Empty; // Certificate Fee, Enrollment, Exam Fee, MonthlyFee  
 
         public string DescriptionPortuguese { get; set; } = string.Empty; // Inscrição, Mensalidade de Abril,...
 
@@ -30,6 +30,9 @@ namespace server.src.Models
 
         public string StudentId { get; set; } = string.Empty;
         public StudentDataModel? StudentData { get; set; }
+
+        // Referência para a mensalidade (opcional - só para pagamentos de mensalidade)
+        public StudentMonthlyTuitionModel? MonthlyTuitionData { get; set; }
 
         public string TrainerId { get; set; } = string.Empty;
         public string TrainerName { get; set; } = string.Empty;

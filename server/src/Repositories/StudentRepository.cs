@@ -124,6 +124,7 @@ namespace server.src.Repositories
                     GuardSecondPhoneNumber = studentCreateDto.GuardSecondPhoneNumber,
                     GuardEmailAddress = studentCreateDto.GuardEmailAddress,
 
+                    Status = "Active",
                     TrainerName = trainerName!
                 };
 
@@ -224,6 +225,7 @@ namespace server.src.Repositories
                     GuardSecondPhoneNumber = s.GuardSecondPhoneNumber,
                     GuardEmailAddress = s.GuardEmailAddress,
 
+                    Status = s.Status,
                     TrainerName = s.TrainerName,
                     DateUpdate = s.DateUpdate,
 
@@ -361,6 +363,7 @@ namespace server.src.Repositories
                     GuardFirstPhoneNumber = student.StudentData.GuardFirstPhoneNumber,
                     GuardSecondPhoneNumber = student.StudentData.GuardSecondPhoneNumber,
                     GuardEmailAddress = student.StudentData.GuardEmailAddress,
+                    Status = student.StudentData.Status,
                     TrainerName = student.StudentData.TrainerName,
                     DateUpdate = student.StudentData.DateUpdate,
                     CourseInfo = null,
@@ -369,7 +372,6 @@ namespace server.src.Repositories
                         Order = p.Order,
                         Id = p.Id,
                         ReceivedFrom = p.ReceivedFrom,
-                        PaymentType = p.PaymentType,
                         DescriptionEnglish = p.DescriptionEnglish,
                         DescriptionPortuguese = p.DescriptionPortuguese,
                         Method = p.Method,
@@ -446,6 +448,7 @@ namespace server.src.Repositories
                 GuardSecondPhoneNumber = student.GuardSecondPhoneNumber,
                 GuardEmailAddress = student.GuardEmailAddress,
 
+                Status = student.Status,
                 TrainerName = student.TrainerName,
                 DateUpdate = student.DateUpdate,
 
@@ -470,6 +473,48 @@ namespace server.src.Repositories
                     StudentData = null
                 })]
             };
+        }
+
+        public async Task<IEnumerable<StudentListPrincipalViewDto>> GetStudentListPrincipalViewActive()
+        {
+            try
+            {
+                var currentDate = DateTime.Now;
+                
+                var query = _dbContext.StudentData
+                    .AsNoTracking()
+                    .Where(s => s.Status == "Active")
+                    .Select(s => new 
+                    {
+                        Student = s,
+                        ActiveCourse = s.CourseInfo!.FirstOrDefault(c => c.Status == "In Progress")
+                    })
+                    .Where(x => x.ActiveCourse != null)
+                    .Select(x => new StudentListPrincipalViewDto
+                    {
+                        Order = x.Student.Order,
+                        Id = x.Student.Id,
+                        FullName = x.Student.FullName,
+                        Gender = x.Student.Gender,
+                        Age = currentDate.Year - x.Student.DateOfBirthCalc.Year,
+                        Package = x.ActiveCourse!.Package,
+                        Level = x.ActiveCourse.Level,
+                        Modality = x.ActiveCourse.Modality,
+                        AcademicPeriod = x.ActiveCourse.AcademicPeriod,
+                        Schedule = x.ActiveCourse.Schedule
+                    })
+                    .OrderBy(s => s.FullName);
+
+                var result = await query.ToListAsync();
+                
+                //_logger.LogInformation("Successfully retrieved {Count} active students with their courses", result.Count);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving active student list");
+                throw;
+            }
         }
 
         private string GenerateStudentID()

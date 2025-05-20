@@ -88,22 +88,22 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
       },
       {
         headerName: 'Modality',
-        field: 'position', minWidth: 150, flex: 1,
+        field: 'position', minWidth: 140, flex: 1,
         cellClass: 'custom-cell-center'
       },
       {
         headerName: 'Period',
-        field: 'position', minWidth: 150, flex: 1,
+        field: 'position', minWidth: 140, flex: 1,
         cellClass: 'custom-cell-center'
       },
       {
         headerName: 'Schedule',
-        field: 'position', minWidth: 150, flex: 1,
+        field: 'position', minWidth: 140, flex: 1,
         cellClass: 'custom-cell-center'
       },
       {
         headerName: 'Actions',
-        minWidth: 110, flex: 1,
+        minWidth: 100, flex: 1,
         cellRenderer: BtnStudentActiveActionTableComponent,
         cellClass: 'custom-cell-center'
       }

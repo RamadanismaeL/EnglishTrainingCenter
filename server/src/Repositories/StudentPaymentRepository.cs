@@ -63,14 +63,13 @@ namespace server.src.Repositories
                 
                 var inwords = ValorPorExtenso.ConverterParaExtenso(paymentCreateDto.AmountMT);
 
-                Console.WriteLine($"Receipt ID = {newID} \nInWords = {inwords}");
+                //Console.WriteLine($"Receipt ID = {newID} \nInWords = {inwords}");
 
                 var receiptData = new StudentPaymentModel
                 {
                     Id = newID,
                     StudentId = paymentCreateDto.StudentId,
                     ReceivedFrom = paymentCreateDto.ReceivedFrom,
-                    PaymentType = paymentCreateDto.PaymentType,
                     DescriptionEnglish = paymentCreateDto.Description,
                     DescriptionPortuguese = GetReferent(paymentCreateDto.Description),
                     Method = paymentCreateDto.Method,
@@ -112,7 +111,6 @@ namespace server.src.Repositories
                 Id = p.Id,
                 StudentId = p.StudentId,
                 ReceivedFrom = p.ReceivedFrom,
-                PaymentType = p.PaymentType,
                 DescriptionEnglish = p.DescriptionEnglish,
                 DescriptionPortuguese = p.DescriptionPortuguese,
                 Method = p.Method,
@@ -157,7 +155,6 @@ namespace server.src.Repositories
                 Order = student.Order,
                 Id = student.Id,
                 ReceivedFrom = student.ReceivedFrom,
-                PaymentType = student.PaymentType,
                 DescriptionEnglish = student.DescriptionEnglish,
                 DescriptionPortuguese = student.DescriptionPortuguese,
                 Method = student.Method,

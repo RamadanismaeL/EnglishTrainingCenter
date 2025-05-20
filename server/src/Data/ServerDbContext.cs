@@ -9,10 +9,8 @@ using server.src.Models;
 
 namespace server.src.Data
 {
-    public class ServerDbContext : IdentityDbContext
+    public class ServerDbContext(DbContextOptions<ServerDbContext> options) : IdentityDbContext(options)
     {
-        public ServerDbContext(DbContextOptions<ServerDbContext> options) : base(options)
-        {}
 
         // Trainer
         public required DbSet<TrainerModel> Trainers { get; set; }
@@ -24,6 +22,7 @@ namespace server.src.Data
         public required DbSet<StudentCourseInfoModel> StudentCourseInfo { get; set; }
         public required DbSet<StudentEnrollmentFormModel> StudentEnrollmentForm { get; set; }
         public required DbSet<StudentPaymentModel> StudentPayments { get; set; }
+        public required DbSet<StudentMonthlyTuitionModel> StudentMonthlyTuition { get; set; }
  
 
         // Settings
@@ -45,6 +44,7 @@ namespace server.src.Data
             builder.ApplyConfiguration(new StudentCourseInfoMap());
             builder.ApplyConfiguration(new StudentEnrollmentFormMap());
             builder.ApplyConfiguration(new StudentPaymentMap());
+            builder.ApplyConfiguration(new StudentMonthlyTuitionMap());
             
 
             // Settings

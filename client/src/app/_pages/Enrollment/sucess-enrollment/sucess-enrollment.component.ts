@@ -82,7 +82,6 @@ export class SucessEnrollmentComponent implements OnInit, OnDestroy, ICellRender
     order: 0,
     id: '',
     receivedFrom: '',
-    paymentType: '',
     descriptionEnglish: '',
     descriptionPortuguese: '',
     method: '',

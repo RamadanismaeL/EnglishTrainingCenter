@@ -2,7 +2,6 @@ export interface StudentPaymentModel {
   order: number;
   id: string;
   receivedFrom: string;
-  paymentType: string;
   descriptionEnglish: string;
   descriptionPortuguese: string;
   method: string;
