@@ -60,9 +60,6 @@ export class EnrollmentComponent implements OnInit, OnDestroy {
   resetStepper() {
     this.stepper.reset();
     this.stepperService.setActiveStep(0);
-
-    this.enrollmentStudentService.clear();
-    this.enrollmentPaymentService.clear();
   }
 
   ngOnInit(): void {
@@ -163,6 +160,7 @@ export class EnrollmentComponent implements OnInit, OnDestroy {
           this.studentPaymentFormRef.nativeElement.reset();
           this.enrollmentStudentService.clear();
           this.alert.show('Registration completed successfully!', 'success');
+          this.notificationHub.sendMessage("Initialize enrollment form.");
           this.stepperService.setActiveStep(2);
         },
         error: (error) => {

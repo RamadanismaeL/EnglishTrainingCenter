@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace server.Migrations
 {
     /// <inheritdoc />
-    public partial class InitializeMigraitons : Migration
+    public partial class InitializeMigrations : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -202,25 +202,25 @@ namespace server.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     ResidentialAddress = table.Column<string>(type: "varchar(50)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    FirstPhoneNumber = table.Column<string>(type: "varchar(50)", nullable: false)
+                    FirstPhoneNumber = table.Column<string>(type: "varchar(50)", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    SecondPhoneNumber = table.Column<string>(type: "varchar(50)", nullable: false)
+                    SecondPhoneNumber = table.Column<string>(type: "varchar(50)", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    EmailAdress = table.Column<string>(type: "varchar(50)", nullable: false)
+                    EmailAdress = table.Column<string>(type: "varchar(50)", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    AdditionalNotes = table.Column<string>(type: "varchar(120)", nullable: false)
+                    AdditionalNotes = table.Column<string>(type: "varchar(120)", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    GuardFullName = table.Column<string>(type: "varchar(50)", nullable: false)
+                    GuardFullName = table.Column<string>(type: "varchar(50)", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    GuardRelationship = table.Column<string>(type: "varchar(50)", nullable: false)
+                    GuardRelationship = table.Column<string>(type: "varchar(50)", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    GuardResidentialAddress = table.Column<string>(type: "varchar(50)", nullable: false)
+                    GuardResidentialAddress = table.Column<string>(type: "varchar(50)", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    GuardFirstPhoneNumber = table.Column<string>(type: "varchar(50)", nullable: false)
+                    GuardFirstPhoneNumber = table.Column<string>(type: "varchar(50)", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    GuardSecondPhoneNumber = table.Column<string>(type: "varchar(50)", nullable: false)
+                    GuardSecondPhoneNumber = table.Column<string>(type: "varchar(50)", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    GuardEmailAddress = table.Column<string>(type: "varchar(50)", nullable: false)
+                    GuardEmailAddress = table.Column<string>(type: "varchar(50)", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Status = table.Column<string>(type: "varchar(50)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
@@ -530,11 +530,12 @@ namespace server.Migrations
                     TrainerName = table.Column<string>(type: "varchar(50)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     DateRegister = table.Column<DateTime>(type: "datetime", nullable: false, defaultValueSql: "current_timestamp"),
+                    DateUpdate = table.Column<DateTime>(type: "datetime", nullable: true),
                     StudentId = table.Column<string>(type: "varchar(50)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     CourseInfoId = table.Column<string>(type: "varchar(50)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    PaymentId = table.Column<string>(type: "varchar(50)", nullable: false)
+                    PaymentId = table.Column<string>(type: "varchar(50)", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
@@ -557,7 +558,7 @@ namespace server.Migrations
                         column: x => x.PaymentId,
                         principalTable: "tbStudentPayment",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 

@@ -18,6 +18,7 @@ namespace server.src.Models
         public string Status { get; set; } = string.Empty; // Cancelled, Not Paid, Paid, Overdue
         public string TrainerName { get; set; } = string.Empty;
         public DateTime? DateRegister { get; set; }
+        public DateTime? DateUpdate { get; set; }
         
         public string StudentId { get; set; } = string.Empty;
         public StudentDataModel? StudentData { get; set; }
@@ -25,7 +26,7 @@ namespace server.src.Models
         // Relacionamento com CourseInfo (opcional)
         public string CourseInfoId { get; set; } = string.Empty;
         public StudentCourseInfoModel? CourseInfoData { get; set; }
-        public string PaymentId { get; set; } = string.Empty;
+        public string? PaymentId { get; set; }
         public StudentPaymentModel? PaymentData { get; set; }
     }
 }

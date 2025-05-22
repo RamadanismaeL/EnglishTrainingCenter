@@ -103,7 +103,10 @@ namespace server.src.Repositories
 
         public async Task<List<StudentPaymentModel>> Details()
         {
-            var paymentData = await _dbContext.StudentPayments.AsNoTracking().ToListAsync();
+            var paymentData = await _dbContext.StudentPayments
+                .AsNoTracking()
+                .Include(sm => sm.MonthlyTuitionData)
+                .ToListAsync();
 
             return [.. paymentData.Select(p => new StudentPaymentModel
             {
@@ -124,7 +127,8 @@ namespace server.src.Repositories
                 DateRegister = p.DateRegister,
                 StudentData = p.StudentData,
                 TrainerId = p.TrainerId,
-                TrainerName = p.TrainerName
+                TrainerName = p.TrainerName,
+                MonthlyTuitionData = p.MonthlyTuitionData
             }).OrderByDescending(p => p.Order)];
         }
 

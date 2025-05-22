@@ -4,16 +4,16 @@
         <name>server</name>
     </assembly>
     <members>
-        <member name="T:server.Migrations.InitializeMigraitons">
+        <member name="T:server.Migrations.InitializeMigrations">
             <inheritdoc />
         </member>
-        <member name="M:server.Migrations.InitializeMigraitons.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+        <member name="M:server.Migrations.InitializeMigrations.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
             <inheritdoc />
         </member>
-        <member name="M:server.Migrations.InitializeMigraitons.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+        <member name="M:server.Migrations.InitializeMigrations.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
             <inheritdoc />
         </member>
-        <member name="M:server.Migrations.InitializeMigraitons.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+        <member name="M:server.Migrations.InitializeMigrations.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
             <inheritdoc />
         </member>
         <member name="M:server.src.Configs.JWTConfig.AddJWTAuthentication(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration,Microsoft.Extensions.Logging.ILogger)">

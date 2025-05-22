@@ -8,7 +8,7 @@ import { StepperPaymentService } from '../../../_services/stepper-payment.servic
 import { StudentDataModel } from '../../../_interfaces/student-data-model';
 import { StudentsService } from '../../../_services/students.service';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, CommonModule } from '@angular/common';
 import { SettingAmountMtDetailsDto } from '../../../_interfaces/setting-amount-mt-details-dto';
 import { SettingService } from '../../../_services/setting.service';
 import { PaymentPayNowService } from '../../../_services/payment-pay-now.service';
@@ -27,7 +27,8 @@ export interface StateGroup {
     MatInputModule,
     MatSelectModule,
     MatAutocompleteModule,
-    AsyncPipe
+    AsyncPipe,
+    CommonModule
   ],
   templateUrl: './payment-pay.component.html',
   styleUrl: './payment-pay.component.scss'
@@ -49,6 +50,11 @@ export class PaymentPayComponent implements OnInit, OnDestroy {
   studentInfo_academicPeriod : string | undefined = '--';
   studentInfo_schedule : string | undefined = '--';
   studentInfo_amountMT : string | undefined = '--';
+  private storageKey = 'amountMtToPay';
+  amountMtToPay : number | undefined;
+
+  previousAmountValue: string = '';
+  courseFeeActive: boolean = false;
 
   private subs = new Subscription();
 
@@ -114,15 +120,52 @@ export class PaymentPayComponent implements OnInit, OnDestroy {
       })
     );
 
+    if (this.form.get('transactionType')?.value == "CourseFee")
+    { this.courseFeeActive = true; }
+    else
+    { this.courseFeeActive = false; }
+
+    this.subs.add(
+      this.form.get('courseFee')?.valueChanges
+      .pipe(
+        debounceTime(50), // Espera 300ms após a digitação
+        distinctUntilChanged() // Só emite se o valor mudou
+      )
+      .subscribe(value => {
+        //console.log("Hello Data = ",value)
+        if(this.courseFeeActive == true)
+        {
+          if (value == 0 || value == null)
+          { this.studentInfo_amountMT = "--" }
+          else
+          {
+            this.studentInfo_amountMT = `${this.formatAmount(value)} MT`;
+          }
+          sessionStorage.setItem(this.storageKey, JSON.stringify(value));
+        }
+      })
+    );
+
     this.subs.add(
       this.form.get('transactionType')!.valueChanges.pipe(
-        debounceTime(200),
+        debounceTime(50),
         distinctUntilChanged(),
-        switchMap(transactionType => this.handleTransactionTypeChange(transactionType))
+        switchMap(transactionType => {
+          return this.handleTransactionTypeChange(transactionType)
+        })
       ).subscribe({
         next: (result) => {
-          if (result) {
-            this.studentInfo_amountMT = `${this.formatAmount(result.amount)} MT`;
+          console.warn("CourseFee = ",this.courseFeeActive)
+          this.updateCourseFeeValidation();
+          if(this.courseFeeActive == false)
+          {
+            if (result.amount == 0 || result.amount == null)
+            { this.studentInfo_amountMT = "--" }
+            else
+            {
+              this.studentInfo_amountMT = `${this.formatAmount(result.amount)} MT`;
+            }
+            sessionStorage.setItem(this.storageKey, JSON.stringify(result.amount));
           }
         },
         error: (err) => {
@@ -133,23 +176,26 @@ export class PaymentPayComponent implements OnInit, OnDestroy {
     );
   }
 
-  private handleTransactionTypeChange(transactionType: string): Observable<{amount: number | undefined | string}> {
+  private handleTransactionTypeChange(transactionType: string): Observable<{amount: number | undefined }> {
     switch (transactionType) {
       case 'Certificate':
+        this.courseFeeActive = false;
         return this.amountMt$.pipe(
           map(data => ({ amount: data.find(d => d.id === "CertificateFee")?.amountMT }))
         );
 
       case 'Examination':
+        this.courseFeeActive = false;
         return this.amountMt$.pipe(
           map(data => ({ amount: data.find(d => d.id === "ExamFee")?.amountMT }))
         );
 
-      case 'Tuition':
-        return of({ amount: this.paymentPayNow.currentEnrollment.amountToPay });
+      case 'CourseFee':
+        this.courseFeeActive = true;
+        return of({ amount: this.form.value.courseFee });
 
       default:
-        return of({ amount: '--' });
+        return of({ amount: 0 });
     }
   }
 
@@ -179,7 +225,7 @@ export class PaymentPayComponent implements OnInit, OnDestroy {
       modality: activeCourse?.modality ?? '--',
       academicPeriod: activeCourse?.academicPeriod ?? '--',
       schedule: activeCourse?.schedule ?? '--',
-      amountToPay: activeCourse?.monthlyFee ?? '--'
+      amountToPay: this.getStoredAmount()
     });
 
     this.studentInfo_package = this.paymentPayNow.currentEnrollment.package;
@@ -190,15 +236,32 @@ export class PaymentPayComponent implements OnInit, OnDestroy {
 
     this.studentInfo_id = this.paymentPayNow.currentEnrollment.studentId;
     this.studentInfo_fullName = this.paymentPayNow.currentEnrollment.fullName;
+  }
 
-    const transaction = this.form.get('transactionType')?.value;
-    if (transaction == 'Tuition')
-    {
-      this.studentInfo_amountMT = `${this.formatAmount(this.paymentPayNow.currentEnrollment.amountToPay)} MT`;
+  getStoredAmount(): number | undefined {
+    try {
+      const storedValue = sessionStorage.getItem(this.storageKey);
+
+      if (storedValue === null || storedValue.trim() === '') {
+        return undefined;
+      }
+
+      const parsedNumber = Number(storedValue);
+
+      // Check if the conversion resulted in a valid finite number
+      if (!isNaN(parsedNumber) && isFinite(parsedNumber)) {
+        return parsedNumber;
+      }
+
+      return undefined;
+    } catch (error) {
+      console.error('Error reading from sessionStorage:', error);
+      return undefined;
     }
   }
 
-  private clearStudentInfo(): void {
+  public clearStudentInfo(): void {
+    this.courseFeeActive = false;
     this.studentInfo_id = '--';
     this.studentInfo_fullName = '--';
     this.studentInfo_package = '--';
@@ -219,6 +282,7 @@ export class PaymentPayComponent implements OnInit, OnDestroy {
       studentName : ['', [Validators.required, Validators.nullValidator]],
       receivedFrom : ['', [Validators.required, Validators.nullValidator]],
       transactionType : ['', [Validators.required, Validators.nullValidator]],
+      courseFee : [''],
       paymentMethod : ['', [Validators.required, Validators.nullValidator]]
     });
   }
@@ -226,6 +290,24 @@ export class PaymentPayComponent implements OnInit, OnDestroy {
   getErrorForms(controlName: string)
   {
     return this.form.get(controlName);
+  }
+
+  updateCourseFeeValidation() {
+    const courseFeeControl = this.form.get('courseFee');
+
+    if (this.courseFeeActive) {
+      // Add validators when active
+      courseFeeControl?.setValidators([Validators.required, Validators.nullValidator]);
+      courseFeeControl?.enable(); // Ensure control is enabled
+    } else {
+      // Remove validators when inactive
+      courseFeeControl?.clearValidators();
+      courseFeeControl?.disable(); // Disable the control
+      courseFeeControl?.setValue(null); // Clear the value
+      courseFeeControl?.updateValueAndValidity(); // Update validation state
+    }
+
+    this.form.updateValueAndValidity(); // Update the entire form's validity
   }
 
   formatAmount(value: number | undefined | string): string {
@@ -254,6 +336,8 @@ export class PaymentPayComponent implements OnInit, OnDestroy {
     { return "Certificate" }
     else if (transactionType == "Examination")
     { return "Examination" }
+    else if (transactionType == "CourseFee")
+    { return "Course Fee" }
 
     return ""
   }
@@ -279,5 +363,65 @@ export class PaymentPayComponent implements OnInit, OnDestroy {
 
       console.log("Payment = ",this.paymentPayNowCreate.currentEnrollment)
     }
+  }
+
+  onAmount(event: any) {
+    const input = event.target;
+    let value = input.value;
+
+    // Permite dígitos e vírgula (mas não permite vírgula no início sozinha)
+    const numericValue = value.replace(/[^\d,]/g, '');
+
+    // Se for apenas uma vírgula, não faz nada (aguarda dígitos)
+    if (numericValue === ',') {
+      return;
+    }
+
+    // Se após limpeza estiver vazio, define como vazio
+    if (numericValue === '') {
+      input.value = '';
+      return;
+    }
+
+    // Converte para número e verifica o valor máximo
+    const numberValue = this.parseNumber(numericValue);
+    if (numberValue > 10000000) {
+      input.value = this.previousAmountValue || '';
+    } else {
+      input.value = this.formatNumber(numericValue);
+      this.previousAmountValue = input.value;
+    }
+  }
+
+  formatNumber(value: string): string {
+      // Caso especial: quando o usuário está digitando um decimal (ex: "0," ou "123,")
+      if (value.endsWith(',')) {
+          let integerPart = value.replace(/\D/g, '');
+          integerPart = integerPart.replace(/^0+/, '') || '0';
+          integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+          return integerPart + ',';
+      }
+
+      // Processamento normal para valores completos
+      let [integerPart, decimalPart] = value.split(',');
+
+      // Limpa parte inteira
+      integerPart = integerPart.replace(/\D/g, '');
+      integerPart = integerPart.replace(/^0+/, '') || '0';
+      integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+      // Processa parte decimal (se existir)
+      if (decimalPart !== undefined) {
+          decimalPart = decimalPart.replace(/\D/g, '').substring(0, 2);
+          return integerPart + ',' + decimalPart;
+      }
+
+      return integerPart;
+  }
+
+  parseNumber(formattedValue: string): number {
+      // Converte "1.234,56" para 1234.56
+      const numberString = formattedValue.replace(/\./g, '').replace(',', '.');
+      return parseFloat(numberString) || 0;
   }
 }

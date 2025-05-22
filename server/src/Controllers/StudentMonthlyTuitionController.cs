@@ -37,5 +37,17 @@ namespace server.src.Controllers
 
             return Ok(listStudent);
         }
+
+        [HttpPut("update")]
+        public async Task<IActionResult> Update(StudentMonthlyTuitionUpdateDto monthlyTuitionUpdateDto)
+        {            
+            if(!ModelState.IsValid) return BadRequest(ModelState);
+
+            var response = await _studentMonthlyTuitionRepository.Update(monthlyTuitionUpdateDto);
+            // Notifica todos os clientes conectados
+            await _hubContext.Clients.All.SendAsync("ReceiveMessage", "Monthly tuition updated successfully."); 
+
+            return response.IsSuccess ? Ok(response) : BadRequest(response);
+        }
     }
 }

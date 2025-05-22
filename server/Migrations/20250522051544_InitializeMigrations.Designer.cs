@@ -12,8 +12,8 @@ using server.src.Data;
 namespace server.Migrations
 {
     [DbContext(typeof(ServerDbContext))]
-    [Migration("20250520205501_InitializeMigraitons")]
-    partial class InitializeMigraitons
+    [Migration("20250522051544_InitializeMigrations")]
+    partial class InitializeMigrations
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -465,7 +465,6 @@ namespace server.Migrations
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<ulong>("Order"));
 
                     b.Property<string>("AdditionalNotes")
-                        .IsRequired()
                         .HasColumnType("varchar(120)")
                         .HasColumnName("AdditionalNotes");
 
@@ -488,7 +487,6 @@ namespace server.Migrations
                         .HasColumnName("DocumentType");
 
                     b.Property<string>("EmailAddress")
-                        .IsRequired()
                         .HasColumnType("varchar(50)")
                         .HasColumnName("EmailAdress");
 
@@ -498,7 +496,6 @@ namespace server.Migrations
                         .HasColumnName("ExpirationDate");
 
                     b.Property<string>("FirstPhoneNumber")
-                        .IsRequired()
                         .HasColumnType("varchar(50)")
                         .HasColumnName("FirstPhoneNumber");
 
@@ -513,32 +510,26 @@ namespace server.Migrations
                         .HasColumnName("Gender");
 
                     b.Property<string>("GuardEmailAddress")
-                        .IsRequired()
                         .HasColumnType("varchar(50)")
                         .HasColumnName("GuardEmailAddress");
 
                     b.Property<string>("GuardFirstPhoneNumber")
-                        .IsRequired()
                         .HasColumnType("varchar(50)")
                         .HasColumnName("GuardFirstPhoneNumber");
 
                     b.Property<string>("GuardFullName")
-                        .IsRequired()
                         .HasColumnType("varchar(50)")
                         .HasColumnName("GuardFullName");
 
                     b.Property<string>("GuardRelationship")
-                        .IsRequired()
                         .HasColumnType("varchar(50)")
                         .HasColumnName("GuardRelationship");
 
                     b.Property<string>("GuardResidentialAddress")
-                        .IsRequired()
                         .HasColumnType("varchar(50)")
                         .HasColumnName("GuardResidentialAddress");
 
                     b.Property<string>("GuardSecondPhoneNumber")
-                        .IsRequired()
                         .HasColumnType("varchar(50)")
                         .HasColumnName("GuardSecondPhoneNumber");
 
@@ -578,7 +569,6 @@ namespace server.Migrations
                         .HasColumnName("ResidentialAddress");
 
                     b.Property<string>("SecondPhoneNumber")
-                        .IsRequired()
                         .HasColumnType("varchar(50)")
                         .HasColumnName("SecondPhoneNumber");
 
@@ -710,6 +700,10 @@ namespace server.Migrations
                         .HasColumnName("DateRegister")
                         .HasDefaultValueSql("current_timestamp");
 
+                    b.Property<DateTime?>("DateUpdate")
+                        .HasColumnType("datetime")
+                        .HasColumnName("DateUpdate");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("varchar(50)")
@@ -725,7 +719,6 @@ namespace server.Migrations
                         .HasColumnName("Id");
 
                     b.Property<string>("PaymentId")
-                        .IsRequired()
                         .HasColumnType("varchar(50)")
                         .HasColumnName("PaymentId");
 
@@ -998,8 +991,7 @@ namespace server.Migrations
                         .WithOne("MonthlyTuitionData")
                         .HasForeignKey("server.src.Models.StudentMonthlyTuitionModel", "PaymentId")
                         .HasPrincipalKey("server.src.Models.StudentPaymentModel", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("server.src.Models.StudentDataModel", "StudentData")
                         .WithMany("MonthlyTuition")

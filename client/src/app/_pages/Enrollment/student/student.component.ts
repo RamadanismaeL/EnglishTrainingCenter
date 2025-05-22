@@ -13,6 +13,7 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import { AsyncPipe } from '@angular/common';
 import { debounceTime, distinctUntilChanged, map, Observable, startWith, Subscription } from 'rxjs';
 import { EnrollmentStudentService } from '../../../_services/enrollment-student.service';
+import { NotificationHubService } from '../../../_services/notification-hub.service';
 
 export interface StateGroup {
   letter: string;
@@ -56,7 +57,7 @@ export class StudentComponent implements OnInit, OnDestroy {
 
   form! : FormGroup;
 
-  constructor (private dateAdapter: DateAdapter<Date>, private enrollmentStudentService: EnrollmentStudentService)
+  constructor (private dateAdapter: DateAdapter<Date>, private enrollmentStudentService: EnrollmentStudentService, private notificationHub: NotificationHubService)
   {
     this.dateAdapter.setLocale('en-GB'); // Use 'en-GB' for dd/mm/yyyy format
     this.expirationDate = this.dateAdapter;
@@ -362,33 +363,14 @@ export class StudentComponent implements OnInit, OnDestroy {
   ];
 
   ngOnInit(): void {
+    this.subs.add(
+      this.notificationHub.receiveMessage().subscribe(() => {
+        this.initializeForm();
+        this.setupAddressSync();
+      })
+    );
     this.initializeForm();
     this.setupAddressSync();
-
-    this.stateGroupOptions = this.form.get('residentialAddress')!.valueChanges.pipe(
-      startWith(''),
-      map(value => this._filterGroup(value || '')),
-    );
-
-    this.statePlaceOfIssue = this.form.get('placeOfIssue')!.valueChanges.pipe(
-      startWith(''),
-      map(value => this._filterGroupPlaceOfIssue(value || '')),
-    );
-
-    this.stateNationality = this.form.get('nationality')!.valueChanges.pipe(
-      startWith(''),
-      map(value => this._filterGroupNationality(value || '')),
-    );
-
-    this.statePlaceOfBirth = this.form.get('placeOfBirth')!.valueChanges.pipe(
-      startWith(''),
-      map(value => this._filterGroupPlaceOfBirth(value || '')),
-    );
-
-    this.stateGroupOptionsGuardian = this.form.get('guardianResidentialAddress')!.valueChanges.pipe(
-      startWith(''),
-      map(value => this._filterGroupGuardian(value || '')),
-    );
   }
 
   ngOnDestroy(): void {
@@ -441,7 +423,32 @@ export class StudentComponent implements OnInit, OnDestroy {
         //console.log("Hello Data = ",value)
         this.form.get('guardianResidentialAddress')?.patchValue(value);
       })
-    )
+    );
+
+    this.stateGroupOptions = this.form.get('residentialAddress')!.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterGroup(value || '')),
+    );
+
+    this.statePlaceOfIssue = this.form.get('placeOfIssue')!.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterGroupPlaceOfIssue(value || '')),
+    );
+
+    this.stateNationality = this.form.get('nationality')!.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterGroupNationality(value || '')),
+    );
+
+    this.statePlaceOfBirth = this.form.get('placeOfBirth')!.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterGroupPlaceOfBirth(value || '')),
+    );
+
+    this.stateGroupOptionsGuardian = this.form.get('guardianResidentialAddress')!.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterGroupGuardian(value || '')),
+    );
   }
 
   private _filterGroup(value: string): StateGroup[] {
@@ -560,7 +567,7 @@ export class StudentComponent implements OnInit, OnDestroy {
         residentialAddress: this.capitalizeWords(this.form.value.residentialAddress),
         firstPhoneNumber: this.form.value.primaryPhoneNumber,
         secondPhoneNumber: this.form.value.alternativePhoneNumber,
-        emailAddress: this.form.value.emailAddress!.toLowerCase(),
+        emailAddress: this.form.value.emailAddress.toLowerCase(),
         additionalNotes: this.form.value.additionalNotes,
 
         guardFullName: this.capitalizeWords(this.form.value.guardianFullName),
@@ -568,7 +575,7 @@ export class StudentComponent implements OnInit, OnDestroy {
         guardResidentialAddress: this.capitalizeWords(this.form.value.guardianResidentialAddress),
         guardFirstPhoneNumber: this.form.value.guardianPrimaryPhoneNumber,
         guardSecondPhoneNumber: this.form.value.guardianAlternativePhoneNumber,
-        guardEmailAddress: this.form.value.guardianEmailAddress!.toLowerCase()
+        guardEmailAddress: this.form.value.guardianEmailAddress.toLowerCase()
       });
 
       this.stepperService.setActiveStep(1);

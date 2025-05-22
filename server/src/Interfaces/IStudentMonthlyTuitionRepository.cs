@@ -11,5 +11,7 @@ namespace server.src.Interfaces
     {
         Task<ResponseDto> Create(StudentMonthlyTuitionCreateDto monthlyTuitionCreateDto);
         Task<IEnumerable<StudentMonthlyTuitionModel>> GetAllMonthlyTuition();
+
+        Task<ResponseDto> Update(StudentMonthlyTuitionUpdateDto monthlyTuitionUpdateDto);
     }
 }

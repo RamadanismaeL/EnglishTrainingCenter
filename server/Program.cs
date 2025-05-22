@@ -24,6 +24,7 @@ if (app.Environment.IsDevelopment())
 
 //app.UseHttpsRedirection();
 app.UseWebSockets();
+app.UseDefaultFiles();
 app.UseStaticFiles(); // Habilita o uso de arquivos estáticos
 app.UseStaticFiles(new StaticFileOptions
 {

@@ -80,11 +80,11 @@ namespace server.src.Repositories
                     Description = monthlyTuitionCreateDto.Description,
                     ReferenceMonthDate = referenceMonthDate,
                     DueDate = dueDate,
-                    Status = GetStatus(dueDate),
+                    Status = GetStatus(dueDate, monthlyTuitionCreateDto.PaymentId!),
                     TrainerName = userName!,
                     StudentId = monthlyTuitionCreateDto.StudentId,
                     CourseInfoId = courseId!,
-                    PaymentId = null!,
+                    PaymentId = monthlyTuitionCreateDto.PaymentId!,
                 };
 
                 await _dbContext.StudentMonthlyTuition.AddAsync(receiptData);
@@ -105,11 +105,122 @@ namespace server.src.Repositories
 
         public async Task<IEnumerable<StudentMonthlyTuitionModel>> GetAllMonthlyTuition()
         {
-            var query = await _dbContext.StudentMonthlyTuition
+            return await _dbContext.StudentMonthlyTuition
                 .AsNoTracking()
+                .Select(sm => new StudentMonthlyTuitionModel
+                {
+                    Order = sm.Order,
+                    Id = sm.Id,
+                    Description = sm.Description,
+                    ReferenceMonthDate = sm.ReferenceMonthDate,
+                    DueDate = sm.DueDate,
+                    Status = sm.Status,
+                    TrainerName = sm.TrainerName,
+                    DateRegister = sm.DateRegister,
+                    DateUpdate = sm.DateUpdate,
+                    StudentId = sm.StudentId,
+                    //StudentData = sm.StudentData,
+                    CourseInfoId = sm.CourseInfoId,
+                    CourseInfoData = sm.CourseInfoData,
+                    PaymentId = sm.PaymentId,
+                    PaymentData = sm.PaymentData
+                })
+                .OrderByDescending(s => s.Order)
                 .ToListAsync();
+        }
 
-            return [.. query];
+        public async Task<ResponseDto> Update(StudentMonthlyTuitionUpdateDto monthlyTuitionUpdateDto)
+        {
+            try
+            {
+                var userPrincipal = _httpContextAccessor.HttpContext?.User;
+                if (userPrincipal is null)
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "User not authenticated."
+                    };
+                }
+
+                var userId = userPrincipal.FindFirst(ClaimTypes.NameIdentifier);
+                if (userId is null)
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "User not found."
+                    };
+                }
+
+                var userIdValue = userId.Value;
+                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userIdValue);
+                if (user is null)
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "User not found."
+                    };
+                }
+
+                var usernameClaim = _httpContextAccessor.HttpContext?.User.FindFirst(JwtRegisteredClaimNames.Name);
+
+                var trainerName = usernameClaim?.Value;
+
+                if (string.IsNullOrEmpty(monthlyTuitionUpdateDto.PaymentId))
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "Payment id not found."
+                    };
+                }
+
+                var paymentExists = await _dbContext.StudentPayments.AnyAsync(p => p.Id == monthlyTuitionUpdateDto.PaymentId);
+                if (!paymentExists)
+                {
+                    return new ResponseDto { IsSuccess = false, Message = "Payment id  not found." };
+                }
+
+                var monthlyId = await _dbContext.StudentMonthlyTuition.FindAsync(monthlyTuitionUpdateDto.Order);
+                if (monthlyId is null)
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "Monthly tuition id not found."
+                    };
+                }
+
+                monthlyId.PaymentId = monthlyTuitionUpdateDto.PaymentId;
+                monthlyId.Status = GetStatusUpdate(monthlyTuitionUpdateDto.PaymentId);
+                monthlyId.TrainerName = trainerName!;
+                monthlyId.DateUpdate = DateTime.Now;
+
+                //_dbContext.StudentMonthlyTuition.Update(monthlyId);
+                await _dbContext.SaveChangesAsync();
+
+                return new ResponseDto
+                {
+                    IsSuccess = true,
+                    Message = "Monthly tuition updated successfuly."
+                };
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Database error while updating monthly tuition.");
+                return new ResponseDto { IsSuccess = false, Message = "Database error occurred." };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to update monthly tuition.");
+                return new ResponseDto
+                {
+                    IsSuccess = false,
+                    Message = "Failed to update monthly tuition."
+                };
+            }
         }
 
         private string GenerateMonthlyId()
@@ -125,7 +236,7 @@ namespace server.src.Repositories
                 int year = DateTime.Now.Year;
                 int month = DateTime.Now.Month;
 
-                return $"{month}{year}-{nextOrder}";
+                return $"{year}{month}{nextOrder}";
             }
             catch (Exception ex)
             {
@@ -134,13 +245,23 @@ namespace server.src.Repositories
             }
         }
 
-        private static string GetStatus(DateTime dueDate)
+        private static string GetStatus(DateTime dueDate, string paymentId)
         {
             int currentDay = DateTime.Now.Day;
-            if (dueDate.Day >= currentDay)
+            if (string.IsNullOrEmpty(paymentId) && (dueDate.Day >= currentDay))
             { return "Not Paid"; }
-            else if (dueDate.Day < currentDay)
+            else if (string.IsNullOrEmpty(paymentId) && (dueDate.Day < currentDay))
             { return "Overdue"; }
+            else if (!string.IsNullOrEmpty(paymentId))
+            { return "Paid"; }
+            else
+            { return "Error"; }
+        }
+        
+        private static string GetStatusUpdate(string paymentId)
+        {
+            if (!string.IsNullOrEmpty(paymentId))
+            { return "Paid"; }
             else
             { return "Error"; }
         }

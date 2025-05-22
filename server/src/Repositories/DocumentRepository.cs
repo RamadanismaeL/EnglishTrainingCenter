@@ -268,13 +268,13 @@ namespace server.src.Repositories
                                     </tr>
                                     <tr>
                                         <td valign='middle' align='center' style='padding: 0px 0px 15px 0px'>
-                                            Telefone:&nbsp;(+258) <span class='input-line'>{OnCheckSpace(ficha.StudentData!.FirstPhoneNumber)}</span>&nbsp;/&nbsp;<span class='input-line'>{OnCheckSpace(ficha.StudentData!.SecondPhoneNumber)}</span>,&nbsp;&nbsp;
-                                            E-mail: <span class='input-line'>{OnCheckSpace(ficha.StudentData!.EmailAddress)}</span>,&nbsp;&nbsp;
+                                            Telefone:&nbsp;(+258) <span class='input-line'>{OnCheckSpace(ficha.StudentData.FirstPhoneNumber!)}</span>&nbsp;/&nbsp;<span class='input-line'>{OnCheckSpace(ficha.StudentData.SecondPhoneNumber!)}</span>,&nbsp;&nbsp;
+                                            E-mail: <span class='input-line'>{OnCheckSpace(ficha.StudentData.EmailAddress!)}</span>,&nbsp;&nbsp;
                                         </td>
                                     </tr>
                                     <tr>
                                         <td valign='middle' align='center' style='padding: 0px 0px 15px 0px'>
-                                            Observações: <span class='input-line'>{OnCheckSpace(ficha.StudentData!.AdditionalNotes)}</span>
+                                            Observações: <span class='input-line'>{OnCheckSpace(ficha.StudentData.AdditionalNotes!)}</span>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -287,19 +287,19 @@ namespace server.src.Repositories
                                     <tr>
                                         <td valign='middle' align='center' class='space-line'>
                                             <h3>CONTACTO DE EMERGÊNCIA / RESPONSÁVEL</h3>
-                                            Nome&nbsp;Completo: <span class='input-line'>{OnCheckSpace(ficha.StudentData!.GuardFullName)}</span>,&nbsp;&nbsp;
-                                            Parentesco: <span class='input-line'>{OnCheckSpace(OnConvertData(ficha.StudentData!.GuardRelationship))}</span>,&nbsp;&nbsp;                                        
+                                            Nome&nbsp;Completo: <span class='input-line'>{OnCheckSpace(ficha.StudentData.GuardFullName!)}</span>,&nbsp;&nbsp;
+                                            Parentesco: <span class='input-line'>{OnCheckSpace(OnConvertData(ficha.StudentData.GuardRelationship!))}</span>,&nbsp;&nbsp;                                        
                                         </td>
                                     </tr>
                                     <tr>
                                         <td valign='middle' align='center' class='space-line'>
-                                            Endereço&nbsp;Residencial: <span class='input-line'>{OnCheckSpace(ficha.StudentData!.GuardResidentialAddress)}</span>,&nbsp;&nbsp;
-                                            Telefone:&nbsp;(+258) <span class='input-line'>{OnCheckSpace(ficha.StudentData!.GuardFirstPhoneNumber)}</span>&nbsp;/&nbsp<span class='input-line'>{OnCheckSpace(ficha.StudentData!.GuardSecondPhoneNumber)}</span>,&nbsp;&nbsp;
+                                            Endereço&nbsp;Residencial: <span class='input-line'>{OnCheckSpace(ficha.StudentData.GuardResidentialAddress!)}</span>,&nbsp;&nbsp;
+                                            Telefone:&nbsp;(+258) <span class='input-line'>{OnCheckSpace(ficha.StudentData.GuardFirstPhoneNumber!)}</span>&nbsp;/&nbsp<span class='input-line'>{OnCheckSpace(ficha.StudentData.GuardSecondPhoneNumber!)}</span>,&nbsp;&nbsp;
                                         </td>
                                     </tr>
                                     <tr>
                                         <td valign='middle' align='center' style='padding: 0px 0px 15px 0px'>
-                                            E-mail: <span class='input-line'>{OnCheckSpace(ficha.StudentData!.GuardEmailAddress)}</span>
+                                            E-mail: <span class='input-line'>{OnCheckSpace(ficha.StudentData.GuardEmailAddress!)}</span>
                                         </td>
                                     </tr>
                                 </tbody>

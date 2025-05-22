@@ -57,6 +57,10 @@ namespace server.src.Data.Maps
                 .HasDefaultValueSql("current_timestamp")
                 .IsRequired();
 
+            builder.Property(s => s.DateUpdate)
+                .HasColumnName("DateUpdate")
+                .HasColumnType("datetime");
+
 
             builder.HasIndex(s => new { s.StudentId, s.ReferenceMonthDate })
                 .IsUnique();
@@ -85,13 +89,13 @@ namespace server.src.Data.Maps
 
             builder.Property(s => s.PaymentId)
                 .HasColumnName("PaymentId")
-                .HasColumnType("varchar(50)")
-                .IsRequired();
+                .HasColumnType("varchar(50)");
 
             builder.HasOne(sp => sp.PaymentData)
                 .WithOne(sm => sm.MonthlyTuitionData)
                 .HasForeignKey<StudentMonthlyTuitionModel>(sm => sm.PaymentId)
-                .HasPrincipalKey<StudentPaymentModel>(p => p.Id);
+                .HasPrincipalKey<StudentPaymentModel>(p => p.Id)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

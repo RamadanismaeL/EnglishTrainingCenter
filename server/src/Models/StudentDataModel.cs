@@ -29,19 +29,19 @@ namespace server.src.Models
         public string Nationality { get; set; } = string.Empty;
         public string PlaceOfBirth { get; set; } = string.Empty;
         public string ResidentialAddress { get; set; } = string.Empty;
-        public string FirstPhoneNumber { get; set; } = string.Empty;
-        public string SecondPhoneNumber { get; set; } = string.Empty;
-        public string EmailAddress { get; set; } = string.Empty;
-        public string AdditionalNotes { get; set; } = string.Empty;
+        public string? FirstPhoneNumber { get; set; }
+        public string? SecondPhoneNumber { get; set; }
+        public string? EmailAddress { get; set; }
+        public string? AdditionalNotes { get; set; }
 
 
         // EMERGENCY CONTACT / GUARDIAN
-        public string GuardFullName { get; set; } = string.Empty;
-        public string GuardRelationship { get; set; } = string.Empty;
-        public string GuardResidentialAddress { get; set; } = string.Empty;
-        public string GuardFirstPhoneNumber { get; set; } = string.Empty;
-        public string GuardSecondPhoneNumber { get; set; } = string.Empty;
-        public string GuardEmailAddress { get; set; } = string.Empty;
+        public string? GuardFullName { get; set; }
+        public string? GuardRelationship { get; set; }
+        public string? GuardResidentialAddress { get; set; }
+        public string? GuardFirstPhoneNumber { get; set; }
+        public string? GuardSecondPhoneNumber { get; set; }
+        public string? GuardEmailAddress { get; set; }
 
 
         public string Status { get; set; } = string.Empty; // Active, Inactive, Completed
