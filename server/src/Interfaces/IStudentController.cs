@@ -14,6 +14,8 @@ namespace server.src.Interfaces
         Task<ActionResult<List<StudentDataModel>>> DetailStudentData();
         Task<ActionResult<List<StudentEnrollmentFormModel>>> DetailStudentEnrollmentForm();
         Task<ActionResult<string>> GetStudentByLastId();
+        Task<ActionResult> GetStudentCourseFeeByLastId();
+        Task<ActionResult<IEnumerable<StudentCourseFeeModel>>> GetStudentListCourseFee();
         Task<ActionResult<StudentEnrollmentFormModel>> GetStudentEnrollmentFormById(string id);
         Task<ActionResult<StudentDataModel>> GetStudentDataByName(string fullName);
         Task<ActionResult<IEnumerable<StudentListPrincipalViewDto>>> GetStudentListPrincipalViewActive();

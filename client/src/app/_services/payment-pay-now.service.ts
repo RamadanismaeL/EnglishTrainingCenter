@@ -34,4 +34,23 @@ export class PaymentPayNowService {
         const data = sessionStorage.getItem(this.storageKey);
         return data ? JSON.parse(data) as PaymentPayNow : null;
       }
+
+  updateAttribute<K extends keyof PaymentPayNow>(key: K, value: PaymentPayNow[K]): void {
+    const current = this._enrollment$.value;
+
+    if (current) {
+      // Create a new object with the updated property
+      const updated = {
+        ...current,
+        [key]: value
+      };
+
+      this.setEnrollmentStudent(updated);
+    } else {
+      // If there's no current enrollment, create a new one with just this property
+      // Note: You might want to handle this case differently depending on your needs
+      const newEnrollment = { [key]: value } as unknown as PaymentPayNow;
+      this.setEnrollmentStudent(newEnrollment);
+    }
+  }
 }

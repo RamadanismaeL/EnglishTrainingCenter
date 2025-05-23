@@ -160,6 +160,11 @@ namespace server.src.Data.Maps
                 .HasForeignKey<StudentEnrollmentFormModel>(e => e.StudentId)
                 .OnDelete(DeleteBehavior.Cascade);  // Se o StudentDataModel for deletado, o CourseInfo associado também será automaticamente removida. (Delete em cascata - Remove os dependentes)
 
+            builder.HasOne(sd => sd.StudentCourseFee)
+                .WithOne(sc => sc.StudentData)
+                .HasPrincipalKey<StudentDataModel>(sd => sd.Id)
+                .HasForeignKey<StudentCourseFeeModel>(sc => sc.StudentId);
+
 
             builder.HasMany(s => s.CourseInfo)
                 .WithOne(c => c.StudentData)
@@ -168,9 +173,9 @@ namespace server.src.Data.Maps
                 .OnDelete(DeleteBehavior.Cascade);
 
 
-            builder.HasMany(s => s.Payments)
+            builder.HasMany(sd => sd.Payments)
                 .WithOne(p => p.StudentData)
-                .HasPrincipalKey(s => s.Id)
+                .HasPrincipalKey(sd => sd.Id)
                 .HasForeignKey(p => p.StudentId)
                 .OnDelete(DeleteBehavior.Cascade);
                 

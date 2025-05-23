@@ -27,6 +27,11 @@ export class StudentsService {
       responseType: 'text'
   });
 
+  getCourseFeeByLastId = () : Observable<string> => this.http
+    .get(`${this.myUrl}/Students/getCourseFeeById`, { headers: { 'Allow-Offline': 'true' },
+      responseType: 'text'
+  });
+
   getStudentPaymentByLastId = () : Observable<string> => this.http
     .get(`${this.myUrl}/StudentPayment/getStudentPaymentByLastId`, { headers: { 'Allow-Offline': 'true' },
       responseType: 'text'

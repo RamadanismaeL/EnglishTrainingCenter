@@ -363,6 +363,36 @@ namespace server.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "StudentCourseFee",
+                columns: table => new
+                {
+                    Order = table.Column<ulong>(type: "bigint unsigned", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Id = table.Column<string>(type: "varchar(50)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    PriceTotal = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    PricePaid = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    PriceDue = table.Column<decimal>(type: "decimal(10,2)", nullable: false, computedColumnSql: "PriceTotal - PricePaid", stored: true),
+                    Status = table.Column<string>(type: "varchar(50)", nullable: false, computedColumnSql: "CASE WHEN PriceTotal - PricePaid = 0 THEN 'Paid' ELSE 'Not Paid' END", stored: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    DateUpdate = table.Column<DateTime>(type: "datetime", nullable: true),
+                    StudentId = table.Column<string>(type: "varchar(50)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StudentCourseFee", x => x.Order);
+                    table.UniqueConstraint("AK_StudentCourseFee_Id", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_StudentCourseFee_tbStudentData_StudentId",
+                        column: x => x.StudentId,
+                        principalTable: "tbStudentData",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "tbStudentCourseInfo",
                 columns: table => new
                 {
@@ -467,9 +497,9 @@ namespace server.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     ReceivedFrom = table.Column<string>(type: "varchar(50)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    DescriptionEnglish = table.Column<string>(type: "varchar(50)", nullable: false)
+                    DescriptionEnglish = table.Column<string>(type: "varchar(500)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    DescriptionPortuguese = table.Column<string>(type: "varchar(50)", nullable: false)
+                    DescriptionPortuguese = table.Column<string>(type: "varchar(500)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Method = table.Column<string>(type: "varchar(50)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
@@ -489,6 +519,8 @@ namespace server.Migrations
                     DateRegister = table.Column<DateTime>(type: "datetime", nullable: false, defaultValueSql: "current_timestamp"),
                     StudentId = table.Column<string>(type: "varchar(50)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
+                    CourseFeeId = table.Column<string>(type: "varchar(50)", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     TrainerId = table.Column<string>(type: "varchar(50)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     TrainerName = table.Column<string>(type: "varchar(50)", nullable: false)
@@ -502,6 +534,12 @@ namespace server.Migrations
                         name: "FK_tbStudentPayment_AspNetUsers_TrainerId",
                         column: x => x.TrainerId,
                         principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_tbStudentPayment_StudentCourseFee_CourseFeeId",
+                        column: x => x.CourseFeeId,
+                        principalTable: "StudentCourseFee",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -610,6 +648,18 @@ namespace server.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_StudentCourseFee_Id",
+                table: "StudentCourseFee",
+                column: "Id",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StudentCourseFee_StudentId",
+                table: "StudentCourseFee",
+                column: "StudentId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_tbStudentCourseInfo_Id",
                 table: "tbStudentCourseInfo",
                 column: "Id",
@@ -654,6 +704,11 @@ namespace server.Migrations
                 table: "tbStudentMonthlyTuition",
                 columns: new[] { "StudentId", "ReferenceMonthDate" },
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tbStudentPayment_CourseFeeId",
+                table: "tbStudentPayment",
+                column: "CourseFeeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_tbStudentPayment_Id",
@@ -722,6 +777,9 @@ namespace server.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "StudentCourseFee");
 
             migrationBuilder.DropTable(
                 name: "tbStudentData");

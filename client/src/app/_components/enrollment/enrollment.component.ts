@@ -171,6 +171,50 @@ export class EnrollmentComponent implements OnInit, OnDestroy {
     );
   }
 
+  /*
+  confirm() {
+    if (!this.form.valid) {
+      return;
+    }
+
+    this.subs.add(
+      this.studentService.create(this.enrollmentStudentService.currentEnrollment).pipe(
+        switchMap(() => this.studentService.getStudentById()),
+        switchMap((studentId: string) =>
+          this.studentService.getCourseFeeByLastId().pipe(
+            switchMap((courseFeeId: string) => {
+              const paymentDetails = this.createPaymentDetails(studentId, courseFeeId);
+              const courseInfo = this.createCourseInfo(studentId);
+
+              this.enrollmentPaymentService.setEnrollmentStudent(paymentDetails);
+
+              return this.studentService.createStudentCourseInfo(courseInfo).pipe(
+                switchMap(() =>
+                  this.studentService.createStudentPayment(paymentDetails)
+                )
+              );
+            })
+          )
+        )
+      ).subscribe({
+        next: () => {
+          this.studentComponent.resetForm();
+          this.form.reset();
+          this.studentPaymentFormRef.nativeElement.reset();
+          this.enrollmentStudentService.clear();
+          this.alert.show('Registration completed successfully!', 'success');
+          this.notificationHub.sendMessage("Initialize enrollment form.");
+          this.stepperService.setActiveStep(2);
+        },
+        error: (error) => {
+          console.error("Erro no processo:", error);
+          this.handleError(error);
+        }
+      })
+    );
+  }
+    */
+
   private createCourseInfo(studentId: string): CourseInfoModel {
     return {
       studentId: studentId,
@@ -186,6 +230,7 @@ export class EnrollmentComponent implements OnInit, OnDestroy {
     //const today = new Date();
     return {
       studentId: studentId,
+      courseFeeId: null,
       receivedFrom: this.form.value.receivedFrom,
       description: 'Enrollment',
       method: this.form.value.paymentMethod,

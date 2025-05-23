@@ -12,7 +12,7 @@ using server.src.Data;
 namespace server.Migrations
 {
     [DbContext(typeof(ServerDbContext))]
-    [Migration("20250522051544_InitializeMigrations")]
+    [Migration("20250523070622_InitializeMigrations")]
     partial class InitializeMigrations
     {
         /// <inheritdoc />
@@ -355,6 +355,61 @@ namespace server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("tbSettingsWeeklySchedule", (string)null);
+                });
+
+            modelBuilder.Entity("server.src.Models.StudentCourseFeeModel", b =>
+                {
+                    b.Property<ulong>("Order")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint unsigned")
+                        .HasColumnName("Order");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<ulong>("Order"));
+
+                    b.Property<DateTime?>("DateUpdate")
+                        .HasColumnType("datetime")
+                        .HasColumnName("DateUpdate");
+
+                    b.Property<string>("Id")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("Id");
+
+                    b.Property<decimal>("PriceDue")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("PriceDue")
+                        .HasComputedColumnSql("PriceTotal - PricePaid", true);
+
+                    b.Property<decimal>("PricePaid")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("PricePaid");
+
+                    b.Property<decimal>("PriceTotal")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("PriceTotal");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("Status")
+                        .HasComputedColumnSql("CASE WHEN PriceTotal - PricePaid = 0 THEN 'Paid' ELSE 'Not Paid' END", false);
+
+                    b.Property<string>("StudentId")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("StudentId");
+
+                    b.HasKey("Order");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("StudentId")
+                        .IsUnique();
+
+                    b.ToTable("StudentCourseFee");
                 });
 
             modelBuilder.Entity("server.src.Models.StudentCourseInfoModel", b =>
@@ -770,6 +825,9 @@ namespace server.Migrations
                         .HasColumnType("decimal(10,2)")
                         .HasColumnName("AmountMT");
 
+                    b.Property<string>("CourseFeeId")
+                        .HasColumnType("varchar(50)");
+
                     b.Property<DateTime>("DateRegister")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime")
@@ -783,12 +841,12 @@ namespace server.Migrations
 
                     b.Property<string>("DescriptionEnglish")
                         .IsRequired()
-                        .HasColumnType("varchar(50)")
+                        .HasColumnType("varchar(500)")
                         .HasColumnName("DescriptionEnglish");
 
                     b.Property<string>("DescriptionPortuguese")
                         .IsRequired()
-                        .HasColumnType("varchar(50)")
+                        .HasColumnType("varchar(500)")
                         .HasColumnName("DescriptionPortuguese");
 
                     b.Property<string>("Id")
@@ -847,6 +905,8 @@ namespace server.Migrations
                         .HasColumnName("Years");
 
                     b.HasKey("Order");
+
+                    b.HasIndex("CourseFeeId");
 
                     b.HasIndex("Id")
                         .IsUnique();
@@ -954,6 +1014,18 @@ namespace server.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("server.src.Models.StudentCourseFeeModel", b =>
+                {
+                    b.HasOne("server.src.Models.StudentDataModel", "StudentData")
+                        .WithOne("StudentCourseFee")
+                        .HasForeignKey("server.src.Models.StudentCourseFeeModel", "StudentId")
+                        .HasPrincipalKey("server.src.Models.StudentDataModel", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("StudentData");
+                });
+
             modelBuilder.Entity("server.src.Models.StudentCourseInfoModel", b =>
                 {
                     b.HasOne("server.src.Models.StudentDataModel", "StudentData")
@@ -1009,6 +1081,12 @@ namespace server.Migrations
 
             modelBuilder.Entity("server.src.Models.StudentPaymentModel", b =>
                 {
+                    b.HasOne("server.src.Models.StudentCourseFeeModel", "CourseFeeData")
+                        .WithMany("Payments")
+                        .HasForeignKey("CourseFeeId")
+                        .HasPrincipalKey("Id")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("server.src.Models.StudentDataModel", "StudentData")
                         .WithMany("Payments")
                         .HasForeignKey("StudentId")
@@ -1022,9 +1100,16 @@ namespace server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("CourseFeeData");
+
                     b.Navigation("StudentData");
 
                     b.Navigation("Trainer");
+                });
+
+            modelBuilder.Entity("server.src.Models.StudentCourseFeeModel", b =>
+                {
+                    b.Navigation("Payments");
                 });
 
             modelBuilder.Entity("server.src.Models.StudentCourseInfoModel", b =>
@@ -1041,6 +1126,8 @@ namespace server.Migrations
                     b.Navigation("MonthlyTuition");
 
                     b.Navigation("Payments");
+
+                    b.Navigation("StudentCourseFee");
                 });
 
             modelBuilder.Entity("server.src.Models.StudentPaymentModel", b =>

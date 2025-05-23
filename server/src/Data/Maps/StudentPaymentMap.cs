@@ -35,12 +35,12 @@ namespace server.src.Data.Maps
 
             builder.Property(s => s.DescriptionEnglish)
                 .HasColumnName("DescriptionEnglish")
-                .HasColumnType("varchar(50)") 
+                .HasColumnType("varchar(500)") 
                 .IsRequired();
 
             builder.Property(s => s.DescriptionPortuguese)
                 .HasColumnName("DescriptionPortuguese")
-                .HasColumnType("varchar(50)") 
+                .HasColumnType("varchar(500)") 
                 .IsRequired();
 
             builder.Property(s => s.Method)
@@ -99,6 +99,11 @@ namespace server.src.Data.Maps
                 .WithMany(p => p.Payments)
                 .HasForeignKey(s => s.StudentId)
                 .HasPrincipalKey(s => s.Id);
+
+            builder.HasOne(p => p.CourseFeeData)
+                .WithMany(sc => sc.Payments)
+                .HasForeignKey(p => p.CourseFeeId)
+                .HasPrincipalKey(sc => sc.Id);
 
             builder.HasOne(sp => sp.MonthlyTuitionData)
                 .WithOne(sm => sm.PaymentData)

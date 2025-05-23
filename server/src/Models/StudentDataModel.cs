@@ -50,6 +50,8 @@ namespace server.src.Models
 
 
         public StudentEnrollmentFormModel? EnrollmentForm { get; set; }
+        public StudentCourseFeeModel? StudentCourseFee { get; set; }
+        
         public ICollection<StudentCourseInfoModel>? CourseInfo { get; set; }
         public ICollection<StudentPaymentModel>? Payments { get; set; }
         public ICollection<StudentMonthlyTuitionModel>? MonthlyTuition { get; set; }

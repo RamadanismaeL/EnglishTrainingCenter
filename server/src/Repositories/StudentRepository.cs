@@ -154,6 +154,25 @@ namespace server.src.Repositories
                     TrainerName = trainerName!
                 };
 
+                var newCourseFeeId = GenerateStudentCourseFeeID();
+
+                if (newCourseFeeId is null)
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "Failed to generate a new course fee Id."
+                    };
+                }
+
+                var studentCourseFee = new StudentCourseFeeModel
+                {
+                    Id = newCourseFeeId,
+                    PriceTotal = courseFee,
+                    PricePaid = 0.0M,
+                    StudentId = newId
+                };
+
                 //Console.WriteLine($"Student ID = {newId}\nMonthly Fee = {monthlyFee} \nCourse Fee = {courseFee} \nInstallment = {installment} \nAge = {age}");
 
                 using var transaction = await _dbContext.Database.BeginTransactionAsync();
@@ -161,6 +180,7 @@ namespace server.src.Repositories
                 {
                     if (studentData != null) await _dbContext.StudentData.AddAsync(studentData);
                     if (studentEnrollmentForm != null) await _dbContext.StudentEnrollmentForm.AddAsync(studentEnrollmentForm);
+                    if (studentCourseFee != null) await _dbContext.StudentCourseFee.AddAsync(studentCourseFee);
 
                     await _dbContext.SaveChangesAsync();
                     await transaction.CommitAsync();
@@ -248,6 +268,19 @@ namespace server.src.Repositories
             if (studentId is null) return null!;
 
             return studentId;
+        }
+
+        public async Task<string> GetStudentCourseFeeByLastId()
+        {
+            var courseFeeId = await _dbContext.StudentCourseFee
+                .AsNoTracking()
+                .OrderByDescending(s => s.Order)
+                .Select(s => s.Id)
+                .FirstOrDefaultAsync();
+
+            if (courseFeeId is null) return null!;
+
+            return courseFeeId;
         }
 
         public async Task<List<StudentEnrollmentFormModel>> DetailStudentEnrollmentForm()
@@ -475,16 +508,36 @@ namespace server.src.Repositories
             };
         }
 
+        public async Task<IEnumerable<StudentCourseFeeModel>> GetStudentListCourseFee()
+        {
+            return await _dbContext.StudentCourseFee
+                .Include(sc => sc.Payments)
+                .AsNoTracking()
+                .Select(s => new StudentCourseFeeModel
+                {
+                    Order = s.Order,
+                    Id = s.Id,
+                    PriceTotal = s.PriceTotal,
+                    PricePaid = s.PricePaid,
+                    PriceDue = s.PriceDue,
+                    Status = s.Status,
+                    DateUpdate = s.DateUpdate,
+                    StudentId = s.StudentId,                    
+                    Payments = s.Payments!.ToList()
+                })
+                .ToListAsync();
+        }
+
         public async Task<IEnumerable<StudentListPrincipalViewDto>> GetStudentListPrincipalViewActive()
         {
             try
             {
                 var currentDate = DateTime.Now;
-                
+
                 var query = _dbContext.StudentData
                     .AsNoTracking()
                     .Where(s => s.Status == "Active")
-                    .Select(s => new 
+                    .Select(s => new
                     {
                         Student = s,
                         ActiveCourse = s.CourseInfo!.FirstOrDefault(c => c.Status == "In Progress")
@@ -506,7 +559,7 @@ namespace server.src.Repositories
                     .OrderBy(s => s.FullName);
 
                 var result = await query.ToListAsync();
-                
+
                 //_logger.LogInformation("Successfully retrieved {Count} active students with their courses", result.Count);
                 return result;
             }
@@ -539,6 +592,35 @@ namespace server.src.Repositories
 
                 // Combinar todos os componentes (8 dígitos no total)
                 string newId = $"ETC{year}{month}{nextOrder:D2}";
+
+                return newId;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to generate Student ID.");
+
+                // Retornar um fallback ou lançar exceção dependendo da sua necessidade
+                throw new InvalidOperationException("Failed to generate Student ID.", ex);
+            }
+        }
+
+        private string GenerateStudentCourseFeeID()
+        {
+            try
+            {
+                long lastOrder = _dbContext.StudentCourseFee
+                        .OrderByDescending(s => s.Order)
+                        .Select(s => s.Order)
+                        .FirstOrDefault();
+                        
+                long nextOrder = lastOrder + 1;
+
+                // Formatar data atual como AAAAMM
+                string year = $"{DateTime.Now.Year}";
+                string month = $"{DateTime.Now.Month}";
+
+                // Combinar todos os componentes (8 dígitos no total)
+                string newId = $"{year}{month}{nextOrder:D2}";
 
                 return newId;
             }

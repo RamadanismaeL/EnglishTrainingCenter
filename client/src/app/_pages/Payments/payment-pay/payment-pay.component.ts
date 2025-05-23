@@ -50,8 +50,6 @@ export class PaymentPayComponent implements OnInit, OnDestroy {
   studentInfo_academicPeriod : string | undefined = '--';
   studentInfo_schedule : string | undefined = '--';
   studentInfo_amountMT : string | undefined = '--';
-  private storageKey = 'amountMtToPay';
-  amountMtToPay : number | undefined;
 
   previousAmountValue: string = '';
   courseFeeActive: boolean = false;
@@ -141,7 +139,7 @@ export class PaymentPayComponent implements OnInit, OnDestroy {
           {
             this.studentInfo_amountMT = `${this.formatAmount(value)} MT`;
           }
-          sessionStorage.setItem(this.storageKey, JSON.stringify(value));
+          this.paymentPayNow.updateAttribute('amountToPay', value)
         }
       })
     );
@@ -155,17 +153,16 @@ export class PaymentPayComponent implements OnInit, OnDestroy {
         })
       ).subscribe({
         next: (result) => {
-          console.warn("CourseFee = ",this.courseFeeActive)
+          //console.warn("CourseFee = ",this.courseFeeActive)
           this.updateCourseFeeValidation();
+          if (result.amount == 0 || result.amount == null)
+          { this.studentInfo_amountMT = "--" }
+
           if(this.courseFeeActive == false)
           {
-            if (result.amount == 0 || result.amount == null)
-            { this.studentInfo_amountMT = "--" }
-            else
-            {
-              this.studentInfo_amountMT = `${this.formatAmount(result.amount)} MT`;
-            }
-            sessionStorage.setItem(this.storageKey, JSON.stringify(result.amount));
+            this.studentInfo_amountMT = `${this.formatAmount(result.amount)} MT`;
+
+            this.paymentPayNow.updateAttribute('amountToPay', result.amount)
           }
         },
         error: (err) => {
@@ -192,7 +189,7 @@ export class PaymentPayComponent implements OnInit, OnDestroy {
 
       case 'CourseFee':
         this.courseFeeActive = true;
-        return of({ amount: this.form.value.courseFee });
+        return of({ amount: 0 });
 
       default:
         return of({ amount: 0 });
@@ -225,7 +222,7 @@ export class PaymentPayComponent implements OnInit, OnDestroy {
       modality: activeCourse?.modality ?? '--',
       academicPeriod: activeCourse?.academicPeriod ?? '--',
       schedule: activeCourse?.schedule ?? '--',
-      amountToPay: this.getStoredAmount()
+      amountToPay: 0
     });
 
     this.studentInfo_package = this.paymentPayNow.currentEnrollment.package;
@@ -236,28 +233,6 @@ export class PaymentPayComponent implements OnInit, OnDestroy {
 
     this.studentInfo_id = this.paymentPayNow.currentEnrollment.studentId;
     this.studentInfo_fullName = this.paymentPayNow.currentEnrollment.fullName;
-  }
-
-  getStoredAmount(): number | undefined {
-    try {
-      const storedValue = sessionStorage.getItem(this.storageKey);
-
-      if (storedValue === null || storedValue.trim() === '') {
-        return undefined;
-      }
-
-      const parsedNumber = Number(storedValue);
-
-      // Check if the conversion resulted in a valid finite number
-      if (!isNaN(parsedNumber) && isFinite(parsedNumber)) {
-        return parsedNumber;
-      }
-
-      return undefined;
-    } catch (error) {
-      console.error('Error reading from sessionStorage:', error);
-      return undefined;
-    }
   }
 
   public clearStudentInfo(): void {
@@ -355,6 +330,7 @@ export class PaymentPayComponent implements OnInit, OnDestroy {
 
       this.paymentPayNowCreate.setEnrollmentStudent({
         studentId: this.paymentPayNow.currentEnrollment.studentId,
+        courseFeeId: "",
         receivedFrom: this.form.value.receivedFrom,
         description: this.GetReferent(this.form.value.transactionType),
         method: this.form.value.paymentMethod,

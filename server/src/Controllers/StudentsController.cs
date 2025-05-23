@@ -61,6 +61,22 @@ namespace server.src.Controllers
             return Ok(studentLastId);
         }
 
+        [HttpGet("getCourseFeeById")]
+        public async Task<ActionResult> GetStudentCourseFeeByLastId()
+        {
+            var studentLastId = await _studentRepository.GetStudentCourseFeeByLastId();
+
+            return Ok(studentLastId);
+        }
+
+        [HttpGet("get-student-list-course-fee")]
+        public async Task<ActionResult<IEnumerable<StudentCourseFeeModel>>> GetStudentListCourseFee()
+        {
+            var student = await _studentRepository.GetStudentListCourseFee();
+
+            return Ok(student);
+        }
+
         [HttpPost("detail-student-enrollment-form-by-id/{id}")]
         public async Task<ActionResult<StudentEnrollmentFormModel>> GetStudentEnrollmentFormById(string id)
         {

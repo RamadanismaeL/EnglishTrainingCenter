@@ -30,6 +30,9 @@ namespace server.src.Models
         public string StudentId { get; set; } = string.Empty;
         public StudentDataModel? StudentData { get; set; }
 
+        public string? CourseFeeId { get; set; }
+        public StudentCourseFeeModel? CourseFeeData { get; set; }
+
         // Referência para a mensalidade (opcional - só para pagamentos de mensalidade)
         public StudentMonthlyTuitionModel? MonthlyTuitionData { get; set; }
 
