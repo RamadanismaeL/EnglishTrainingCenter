@@ -1,3 +1,4 @@
+import { StudentCourseFeeModel } from "./student-course-fee-model";
 import { StudentCourseInfoDetails } from "./student-course-info-details";
 import { StudentPaymentModel } from "./student-payment-model";
 
@@ -28,7 +29,8 @@ export interface StudentDataModel {
   guardEmailAddress: string;
   trainerName: string;
   dateUpdate: Date;
-  courseInfo: StudentCourseInfoDetails [];
   enrollmentForm: string;
+  studentCourseFee: StudentCourseFeeModel;
+  courseInfo: StudentCourseInfoDetails [];
   payments: StudentPaymentModel[];
 }

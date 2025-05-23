@@ -214,6 +214,7 @@ namespace server.src.Repositories
             return await _dbContext.StudentData
                 .AsNoTracking()
                 .Include(sf => sf.EnrollmentForm)
+                .Include(cf => cf.StudentCourseFee)
                 .Include(sc => sc.CourseInfo)
                 .Include(sp => sp.Payments)
                 .Select(s => new StudentDataModel
@@ -249,6 +250,7 @@ namespace server.src.Repositories
                     TrainerName = s.TrainerName,
                     DateUpdate = s.DateUpdate,
 
+                    StudentCourseFee = s.StudentCourseFee,
                     EnrollmentForm = s.EnrollmentForm,
                     CourseInfo = s.CourseInfo,
                     Payments = s.Payments
@@ -445,9 +447,43 @@ namespace server.src.Repositories
         {
             // Inclua StudentData e relacionamentos necessários
             var student = await _dbContext.StudentData
+                .Where(s => s.FullName == fullName)
+                .Select(s => new {
+                    s.Order,
+                    s.Id,
+                    s.DocumentType,
+                    s.IdNumber,
+                    s.PlaceOfIssue,
+                    s.ExpirationDate,
+
+                    s.FullName,
+                    s.DateOfBirth,
+                    s.DateOfBirthCalc,
+                    s.Gender,
+                    s.MaritalStatus,
+                    s.Nationality,
+                    s.PlaceOfBirth,
+                    s.ResidentialAddress,
+                    s.FirstPhoneNumber,
+                    s.SecondPhoneNumber,
+                    s.EmailAddress,
+                    s.AdditionalNotes,
+
+                    s.GuardFullName,
+                    s.GuardRelationship,
+                    s.GuardFirstPhoneNumber,
+                    s.GuardSecondPhoneNumber,
+                    s.GuardEmailAddress,
+                    
+                    s.Status,
+                    s.TrainerName,
+                    s.DateUpdate,
+
+                    CourseInfo = s.CourseInfo!.Where(c => c.Status == "In Progress"),
+                    s.StudentCourseFee
+                })
                 .AsNoTracking()
-                .Include(s => s.CourseInfo!.Where(c => c.Status == "In Progress"))
-                .FirstOrDefaultAsync(s => s.FullName == fullName);
+                .FirstOrDefaultAsync();
 
             if (student == null) return null!;
 
@@ -485,7 +521,7 @@ namespace server.src.Repositories
                 TrainerName = student.TrainerName,
                 DateUpdate = student.DateUpdate,
 
-                CourseInfo = [.. student.CourseInfo!.Where(c => c.Status == "In Progress").Select(s => new StudentCourseInfoModel
+                CourseInfo = [.. student.CourseInfo.Select(s => new StudentCourseInfoModel
                 {
                     StudentId = s.StudentId,
                     CourseName = s.CourseName,
@@ -504,15 +540,18 @@ namespace server.src.Repositories
                     TrainerName = s.TrainerName,
                     DateUpdate = s.DateUpdate,
                     StudentData = null
-                })]
+                })],
+
+                StudentCourseFee = student.StudentCourseFee
             };
         }
 
         public async Task<IEnumerable<StudentCourseFeeModel>> GetStudentListCourseFee()
         {
             return await _dbContext.StudentCourseFee
-                .Include(sc => sc.Payments)
                 .AsNoTracking()
+                .Include(sd => sd.StudentData)
+                .Include(sc => sc.Payments)                
                 .Select(s => new StudentCourseFeeModel
                 {
                     Order = s.Order,
@@ -522,7 +561,8 @@ namespace server.src.Repositories
                     PriceDue = s.PriceDue,
                     Status = s.Status,
                     DateUpdate = s.DateUpdate,
-                    StudentId = s.StudentId,                    
+                    StudentId = s.StudentId,   
+                    StudentData = s.StudentData,                 
                     Payments = s.Payments!.ToList()
                 })
                 .ToListAsync();

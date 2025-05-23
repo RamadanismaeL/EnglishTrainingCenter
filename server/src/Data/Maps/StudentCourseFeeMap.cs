@@ -60,7 +60,9 @@ namespace server.src.Data.Maps
             builder.HasOne(sc => sc.StudentData)
                 .WithOne(sd => sd.StudentCourseFee)
                 .HasPrincipalKey<StudentDataModel>(sd => sd.Id)
-                .HasForeignKey<StudentCourseFeeModel>(sc => sc.StudentId);
+                .HasForeignKey<StudentCourseFeeModel>(sc => sc.StudentId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade); ;
 
             builder.HasMany(sc => sc.Payments)
                 .WithOne(p => p.CourseFeeData)

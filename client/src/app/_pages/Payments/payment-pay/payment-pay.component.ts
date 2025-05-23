@@ -217,6 +217,7 @@ export class PaymentPayComponent implements OnInit, OnDestroy {
     this.paymentPayNow.setEnrollmentStudent({
       studentId: student.id || '--',
       fullName: student.fullName || '--',
+      courseFeeId: student.studentCourseFee.id || '--',
       package: activeCourse?.package ?? '--',
       level: activeCourse?.level ?? '--',
       modality: activeCourse?.modality ?? '--',
@@ -330,7 +331,7 @@ export class PaymentPayComponent implements OnInit, OnDestroy {
 
       this.paymentPayNowCreate.setEnrollmentStudent({
         studentId: this.paymentPayNow.currentEnrollment.studentId,
-        courseFeeId: "",
+        courseFeeId: this.paymentPayNow.currentEnrollment.courseFeeId,
         receivedFrom: this.form.value.receivedFrom,
         description: this.GetReferent(this.form.value.transactionType),
         method: this.form.value.paymentMethod,

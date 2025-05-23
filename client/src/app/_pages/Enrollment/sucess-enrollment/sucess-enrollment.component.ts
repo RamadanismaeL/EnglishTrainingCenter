@@ -55,8 +55,21 @@ export class SucessEnrollmentComponent implements OnInit, OnDestroy, ICellRender
       guardEmailAddress: '',
       trainerName: '',
       dateUpdate: new Date,
-      courseInfo: [],
       enrollmentForm: '',
+      studentCourseFee:
+      {
+        order: 0,
+        id: '',
+        priceTotal: 0,
+        pricePaid: 0,
+        priceDue: 0,
+        status: '',
+        dateUpdate: new Date,
+        studentId: '',
+        studentData: '',
+        payments: []
+      },
+      courseInfo: [],
       payments: []
     },
     courseName: '',
