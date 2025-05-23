@@ -57,9 +57,8 @@ export class PaymentComponent implements OnInit, OnDestroy {
 
   resetStepper() {
     this.paymentComponent.resetForm();
-    this.paymentPayNow.clear();
     this.paymentPayNowCreate.clear();
     this.stepper.reset();
-    this.stepperService.setActiveStep(0);    
+    this.stepperService.setActiveStep(0);
   }
 }

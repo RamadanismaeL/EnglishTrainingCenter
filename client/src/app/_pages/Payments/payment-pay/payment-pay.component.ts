@@ -13,6 +13,8 @@ import { SettingAmountMtDetailsDto } from '../../../_interfaces/setting-amount-m
 import { SettingService } from '../../../_services/setting.service';
 import { PaymentPayNowService } from '../../../_services/payment-pay-now.service';
 import { PaymentPayNowCreateService } from '../../../_services/payment-pay-now-create.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { SnackBarService } from '../../../_services/snack-bar.service';
 
 export interface StateGroup {
   letter: string;
@@ -53,10 +55,12 @@ export class PaymentPayComponent implements OnInit, OnDestroy {
 
   previousAmountValue: string = '';
   courseFeeActive: boolean = false;
+  courseFeeId: string | undefined | null;
+  description: string = '';
 
   private subs = new Subscription();
 
-  constructor(private notificationHub: NotificationHubService, private stepperService: StepperPaymentService, private studentService: StudentsService, private settingService: SettingService, private paymentPayNow: PaymentPayNowService, private paymentPayNowCreate: PaymentPayNowCreateService)
+  constructor(private notificationHub: NotificationHubService, private stepperService: StepperPaymentService, private studentService: StudentsService, private settingService: SettingService, private paymentPayNow: PaymentPayNowService, private paymentPayNowCreate: PaymentPayNowCreateService, private alert: SnackBarService)
   {}
 
   ngOnInit(): void {
@@ -318,6 +322,18 @@ export class PaymentPayComponent implements OnInit, OnDestroy {
     return ""
   }
 
+  private capitalizeWords(value: string): string {
+    return value
+      .toLowerCase()
+      .split(' ')
+      .map(word =>
+        word.length > 0
+          ? word.charAt(0).toUpperCase() + word.slice(1)
+          : ''
+      )
+      .join(' ');
+  }
+
   @ViewChild('studentPaymentPayNowFormRef') formElement!: ElementRef<HTMLFormElement>;
   resetForm()
   {
@@ -327,18 +343,38 @@ export class PaymentPayComponent implements OnInit, OnDestroy {
 
   confirm() {
     if (this.form.valid) {
-      this.stepperService.setActiveStep(1);
+      this.description = this.GetReferent(this.form.value.transactionType);
+      if (this.description == "Course Fee")
+      { this.courseFeeId = this.paymentPayNow.currentEnrollment.courseFeeId; }
+      else
+      { this.courseFeeId = null; }
 
       this.paymentPayNowCreate.setEnrollmentStudent({
         studentId: this.paymentPayNow.currentEnrollment.studentId,
-        courseFeeId: this.paymentPayNow.currentEnrollment.courseFeeId,
-        receivedFrom: this.form.value.receivedFrom,
-        description: this.GetReferent(this.form.value.transactionType),
+        courseFeeId: this.courseFeeId,
+        receivedFrom: this.capitalizeWords(this.form.value.receivedFrom),
+        description: this.description,
         method: this.form.value.paymentMethod,
         amountMT: this.paymentPayNow.currentEnrollment.amountToPay
       });
 
-      console.log("Payment = ",this.paymentPayNowCreate.currentEnrollment)
+      //console.log("Payment = ",this.paymentPayNowCreate.currentEnrollment)
+
+      this.subs.add(
+        this.studentService.createStudentPayment(this.paymentPayNowCreate.currentEnrollment)
+        .subscribe({
+          next: () => {
+            this.paymentPayNow.clear();
+            this.alert.show('Registration completed successfully!', 'success');
+            this.notificationHub.sendMessage("Initialize enrollment form.");
+            this.stepperService.setActiveStep(1);
+          },
+          error: (error) => {
+            console.error("Erro no processo:", error);
+            this.handleError(error);
+          }
+        })
+      );
     }
   }
 
@@ -400,5 +436,19 @@ export class PaymentPayComponent implements OnInit, OnDestroy {
       // Converte "1.234,56" para 1234.56
       const numberString = formattedValue.replace(/\./g, '').replace(',', '.');
       return parseFloat(numberString) || 0;
+  }
+
+  private handleError(error: HttpErrorResponse) {
+    if (error.status === 400) {
+      this.alert.show('An error occurred.', 'error');
+    } else if (error.status === 401) {
+      this.alert.show('Oops! Unauthorized!', 'error');
+    } else if (error.status === 404) {
+      this.alert.show('Oops! Not found!', 'error');
+    } else if (error.status >= 500) {
+      this.alert.show('Oops! The server is busy!', 'error');
+    } else {
+      this.alert.show('Oops! An unexpected error occurred.', 'error');
+    }
   }
 }

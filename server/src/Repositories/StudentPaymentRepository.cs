@@ -71,6 +71,9 @@ namespace server.src.Repositories
                 {
                     if (!string.IsNullOrEmpty(paymentCreateDto.CourseFeeId))
                     {
+                        decimal priceDue = GetPriceDue(paymentCreateDto.CourseFeeId);
+                        decimal newPricePaid = 0.0M;
+
                         decimal courseFeeTotal = GetAmount("CourseFee");
                         var courseFee = await _dbContext.StudentCourseFee.FirstOrDefaultAsync(cf => cf.Id == paymentCreateDto.CourseFeeId);
                         if (courseFee is null)
@@ -80,7 +83,12 @@ namespace server.src.Repositories
                                 Message = "Id not found."
                             };
 
-                        courseFee.PricePaid += paymentCreateDto.AmountMT;
+                        if (priceDue == 0 || paymentCreateDto.AmountMT > priceDue)
+                        { newPricePaid = priceDue; }
+                        else if (paymentCreateDto.AmountMT <= priceDue)
+                        { newPricePaid = paymentCreateDto.AmountMT; }
+
+                        courseFee.PricePaid += newPricePaid;
                         courseFee.DateUpdate = DateTime.Now;
 
                         await _dbContext.SaveChangesAsync();
