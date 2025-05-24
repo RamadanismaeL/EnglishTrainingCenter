@@ -437,7 +437,7 @@ namespace server.src.Repositories
                             </tbody>
                         </table>
                         <footer style='width: 100%; text-align: center; margin-top: 720px;'>
-                            <small>&copy; 2025 | Developed by Ramadan Ibraimo A. Ismael · License: English Training Center</small>
+                            <small>&copy; 2025 | Ramadan I.A. Ismael · License: English Training Center · All rights reserved</small>
                         </footer>
                     </body>
                 </html>
@@ -683,7 +683,7 @@ namespace server.src.Repositories
                         </div>
                     </div>
                     <div style='width: 100%; text-align: center;'>
-                        <small>&copy; 2025 | Developed by Ramadan Ibraimo A. Ismael · License: English Training Center</small>
+                        <small>&copy; 2025 | Ramadan I.A. Ismael · License: English Training Center · All rights reserved</small>
                     </div>
                 </body>
                 </html>
@@ -929,7 +929,7 @@ namespace server.src.Repositories
                             </div>
                         </div>
                         <div style='width: 100%; text-align: center;'>
-                            <small>&copy; 2025 | Developed by Ramadan Ibraimo A. Ismael · License: English Training Center</small>
+                            <small>&copy; 2025 | Ramadan I.A. Ismael · License: English Training Center · All rights reserved</small>
                         </div>
 
                         <div style='border-top: 1px dashed #2f2f2f; margin: 35px 0;'></div>
@@ -1039,7 +1039,7 @@ namespace server.src.Repositories
                             </div>
                         </div>
                         <div style='width: 100%; text-align: center;'>
-                            <small>&copy; 2025 | Developed by Ramadan Ibraimo A. Ismael · License: English Training Center</small>
+                            <small>&copy; 2025 | Ramadan I.A. Ismael · License: English Training Center · All rights reserved</small>
                         </div>
                     </div>                    
                 </body>

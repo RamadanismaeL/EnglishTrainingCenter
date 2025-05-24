@@ -4,7 +4,7 @@
 
 namespace server.src.DTOs
 {
-    public class StudentListPrincipalViewDto
+    public class ListStudentActiveDto
     {
         public long Order { get; set; }
         public string Id { get; set; } = string.Empty;

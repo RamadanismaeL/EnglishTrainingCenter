@@ -411,7 +411,6 @@ export class PaymentPayComponent implements OnInit, OnDestroy {
     const input = event.target as HTMLInputElement;
     let value = input.value;
 
-    // Permite dígitos e vírgula
     value = value.replace(/[^\d]/g, '');
 
     const numberValue = this.parseNumber(value);

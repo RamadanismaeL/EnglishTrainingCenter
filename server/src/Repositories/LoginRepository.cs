@@ -222,7 +222,7 @@ namespace server.src.Repositories
 
             if (!double.TryParse(_configuration["JWTSettings:expiryTime"], out double expiryTime))expiryTime = 2; // Valor padrão de 2 horas se não houver configuração válida
 
-            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddHours(expiryTime);
+            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(expiryTime);
 
             var updateResult = await _userManager.UpdateAsync(user);
             if(!updateResult.Succeeded)
@@ -261,8 +261,10 @@ namespace server.src.Repositories
                 ValidateIssuerSigningKey = true, // Valida a chave de assinatura
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecurityKey)),
 
-                ValidateLifetime = false, // Ignora a validação de expiração para tokens expirados
-                ClockSkew = TimeSpan.Zero // Remove o "clock skew" para evitar falsos positivos
+                ValidateLifetime = true, // Ignora a validação de expiração para tokens expirados
+                ClockSkew = TimeSpan.FromMinutes(2), // Remove o "clock skew" para evitar falsos positivos
+                RequireExpirationTime = true, // Obrigatório em produção
+                RequireSignedTokens = true,   // Nenhum token sem assinatura
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();

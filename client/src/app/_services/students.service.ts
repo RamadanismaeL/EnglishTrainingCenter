@@ -9,6 +9,7 @@ import { StudentEnrollmentFormModel } from '../_interfaces/student-enrollment-fo
 import { StudentPaymentModel } from '../_interfaces/student-payment-model';
 import { StudentDataModel } from '../_interfaces/student-data-model';
 import { CourseInfoModel } from '../_interfaces/course-info-model';
+import { ListStudentActiveDto } from '../_interfaces/list-student-active-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -55,4 +56,8 @@ export class StudentsService {
 
   getPriceDueById = (id: string) : Observable<number> => this.http
     .post<number>(`${this.myUrl}/StudentPayment/get-price-due-by-id/${id}`, {headers : { 'Allow-Offline' : 'true' }});
+
+  // Students : ACTIVE
+  getListStudentActive = () : Observable<ListStudentActiveDto> => this.http
+    .get<ListStudentActiveDto>(`${this.myUrl}/Students/get-list-student-active`, {headers : { 'Allow-Offline' : 'true' }});
 }

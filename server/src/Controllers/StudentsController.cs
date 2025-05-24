@@ -93,10 +93,10 @@ namespace server.src.Controllers
             return Ok(student);
         }
         
-        [HttpGet("get-student-list-principal-view-active")]
-        public async  Task<ActionResult<IEnumerable<StudentListPrincipalViewDto>>> GetStudentListPrincipalViewActive()
+        [HttpGet("get-list-student-active")]
+        public async  Task<ActionResult<IEnumerable<ListStudentActiveDto>>> GetListStudentActive()
         {
-            var student = await _studentRepository.GetStudentListPrincipalViewActive();
+            var student = await _studentRepository.GetListStudentActive();
 
             return Ok(student);
         }

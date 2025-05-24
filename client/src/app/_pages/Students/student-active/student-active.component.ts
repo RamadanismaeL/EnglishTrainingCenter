@@ -4,7 +4,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule, TooltipPosition } from '@angular/material/tooltip';
 import { AgGridAngular } from 'ag-grid-angular';
 import { AllCommunityModule, ModuleRegistry, ColDef, GridApi, GridReadyEvent, RowSelectionOptions } from 'ag-grid-community';
-import { TrainersService } from '../../../_services/trainers.service';
 import { MatInputModule } from '@angular/material/input';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
@@ -27,6 +26,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { RouterLink } from '@angular/router';
 import { TitleNavbarService } from '../../../_services/title-navbar.service';
 import { BtnStudentActiveActionTableComponent } from '../../../_components/Students/btn-student-active-action-table/btn-student-active-action-table.component';
+import { StudentsService } from '../../../_services/students.service';
 
 ModuleRegistry.registerModules([ AllCommunityModule]);
 
@@ -63,42 +63,53 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
       },
       {
         headerName: 'Gender',
-        minWidth: 90, flex: 1,
+        field: 'gender', minWidth: 90, flex: 1,
         cellClass: 'custom-cell-center'
       },
       {
         headerName: 'Age',
-        minWidth: 90, flex: 1,
+        field: 'age', minWidth: 70, flex: 1,
         cellClass: 'custom-cell-center'
       },
       {
         headerName: 'Package',
-        field: 'position', minWidth: 150, flex: 1,
-        cellClass: 'custom-cell-center'
-      },
-      {
-        headerName: 'Level',
-        field: 'status', minWidth: 90, flex: 1,
+        field: 'package', minWidth: 130, flex: 1,
         cellClass: 'custom-cell-center',
         cellRenderer: (params: any) => {
-          return params.value === 0
-            ? '<span style="color: red;">Inactive</span>'
-            : '<span style="color: green;">Active</span>';
+          if (params.value === "Intensive")
+          { return '<span style="color: #6A040F;">Intensive</span>'; }
+          else if (params.value === "Private")
+          { return '<span style="color: #023047;">Private</span>'; }
+          else if (params.value === "Regular")
+          { return '<span style="color: #014F43;">Regular</span>'; }
+
+          return ""
         }
       },
       {
-        headerName: 'Modality',
-        field: 'position', minWidth: 140, flex: 1,
+        headerName: 'Level',
+        field: 'level', minWidth: 80, flex: 1,
         cellClass: 'custom-cell-center'
       },
       {
+        headerName: 'Modality',
+        field: 'modality', minWidth: 130, flex: 1,
+        cellClass: 'custom-cell-center',
+        cellRenderer: (params: any) => {
+          if (params.value === "Online")
+          { return '<span style="color: #3A86FF;">Online</span>'; }
+          else
+          { return '<span style="color: #43AA8B;">In-Person</span>'; }
+        }
+      },
+      {
         headerName: 'Period',
-        field: 'position', minWidth: 140, flex: 1,
+        field: 'academicPeriod', minWidth: 130, flex: 1,
         cellClass: 'custom-cell-center'
       },
       {
         headerName: 'Schedule',
-        field: 'position', minWidth: 140, flex: 1,
+        field: 'schedule', minWidth: 130, flex: 1,
         cellClass: 'custom-cell-center'
       },
       {
@@ -112,7 +123,7 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
   rowData: any[] = [];
   filteredData: any[] = [];
   searchText: string = '';
-  pageSize: number = 4;
+  pageSize: number = 7;
   currentPage: number = 1;
   totalPages: number = 1;
   startIndex: number = 0;
@@ -136,7 +147,7 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
 
   private footer = `Generated for ${this.institution} · Made in ${this.country} by ${this.author} · © ${this.currentYear} · All rights reserved.`;
 
-  constructor(private trainerService: TrainersService, private notificationHub: NotificationHubService, private alert: SnackBarService, private clipboard: Clipboard, private titleNavbarService: TitleNavbarService)
+  constructor(private studentService: StudentsService, private notificationHub: NotificationHubService, private alert: SnackBarService, private clipboard: Clipboard, private titleNavbarService: TitleNavbarService)
   {}
 
   navigateTo (breadcrumbs: { label: string, url?: any[] }) {
@@ -176,7 +187,7 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
   private loadData(): void
   {
     this.subs.add(
-      this.trainerService.detailsSubsidy().subscribe((data: any) => {
+      this.studentService.getListStudentActive().subscribe((data: any) => {
         this.rowData = data;
         this.applyPagination();
       })
@@ -348,7 +359,7 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
   private async copyAllDataTable(): Promise<void> {
     try {
       // 1. Busca todos os dados dos trainers
-      const response = await lastValueFrom(this.trainerService.detailsSubsidy());
+      const response = await lastValueFrom(this.studentService.getListStudentActive());
       const trainers = Array.isArray(response) ? response : [response];
 
       if (!trainers.length) {
@@ -356,8 +367,8 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
         return;
       }
 
-      const ignoreKeys = ['subsidyMT'];
-      const orderedKeys = ['profileImage', 'fullName', 'position', 'status', 'subsidyMTFormatted', 'dateUpdate']; // ordem desejada
+      const ignoreKeys = ['order'];
+      const orderedKeys = ['fullName', 'gender', 'age', 'package', 'level', 'modality', 'academicPeriod', 'schedule']; // ordem desejada
 
       // Filtra a ordem excluindo colunas ignoradas
       const finalKeys = orderedKeys.filter(key => !ignoreKeys.includes(key));
@@ -414,7 +425,7 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
   private async exportExcelAllDataTable(): Promise<void> {
     try {
       // 1. Fetch all trainer data
-      const response = await lastValueFrom(this.trainerService.detailsSubsidy());
+      const response = await lastValueFrom(this.studentService.getListStudentActive());
 
       // Validate response
       if (!response) {
@@ -423,7 +434,7 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
       }
 
        // 2. Ensure data is an array
-      const trainers = Array.isArray(response) ? response : [response];
+      const students = Array.isArray(response) ? response : [response];
 
       //console.log('Exporting:', trainers);
 
@@ -432,12 +443,14 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
       const worksheet = workbook.addWorksheet('Trainers');
 
       const excelColumns = [
-        { header: 'Photo', key: 'profileImage', width: 45 },
         { header: 'Full Name', key: 'fullName', width: 40 },
-        { header: 'Position', key: 'position', width: 40 },
-        { header: 'Status', key: 'status', width: 10 },
-        { header: 'Subsidy (MT)', key: 'subsidyMTFormatted', width: 20 },
-        { header: 'Date Update', key: 'dateUpdate', width: 25 }
+        { header: 'Gender', key: 'gender', width: 15 },
+        { header: 'Age', key: 'age', width: 10 },
+        { header: 'Package', key: 'package', width: 20 },
+        { header: 'Level', key: 'level', width: 10 },
+        { header: 'Modality', key: 'modality', width: 20 },
+        { header: 'Period', key: 'academicPeriod', width: 15 },
+        { header: 'Schedule', key: 'schedule', width: 15 },
       ];
 
       // 2. Definir manualmente os valores do cabeçalho na linha 4
@@ -473,15 +486,17 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
       });
 
       // 5. Add data SAFELY (only mapped columns)
-      trainers.forEach((trainer, index) => {
+      students.forEach((student, index) => {
         const rowNumber = index + 5; // Começa da linha 5
         worksheet.getRow(rowNumber).values = [
-          trainer.profileImage ?? '',
-          trainer.fullName ?? '',
-          trainer.position ?? '',
-          trainer.status ?? '',
-          trainer.subsidyMTFormatted ?? '',
-          trainer.dateUpdate ?? ''
+          student.fullName ?? '',
+          student.gender ?? '',
+          student.age ?? '',
+          student.package ?? '',
+          student.level ?? '',
+          student.modality ?? '',
+          student.academicPeriod ?? '',
+          student.schedule ?? ''
         ];
       });
 
@@ -492,16 +507,12 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
           row.eachCell({ includeEmpty: true }, cell => {
             // Estilo padrão para todas as células de dados
             cell.font = { size: 12, bold: false, color: { argb: 'FF000000' } }; // Preto
-            cell.alignment = { vertical: 'middle', horizontal: 'left' };
+            cell.alignment = { vertical: 'middle', horizontal: 'center' };
 
             const columnLetter = worksheet.getColumn(cell.col).letter;
 
-            if (['D', 'E', 'F'].includes(columnLetter)) {
-              cell.alignment = { vertical: 'middle', horizontal: 'center' };
-            }
-
-            if (['E'].includes(columnLetter)) {
-              cell.alignment = { vertical: 'middle', horizontal: 'right' };
+            if (['A'].includes(columnLetter)) {
+              cell.alignment = { vertical: 'middle', horizontal: 'left' };
             }
 
             cell.border = {
@@ -514,7 +525,7 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
         }
       });
 
-      // 1. Função auxiliar para converter imagem em base64 (adicione ao seu serviço)
+      // 1. Função auxiliar para converter imagem em base64
       async function imageToBase64(url: string): Promise<string> {
         const response = await fetch(url);
         const blob = await response.blob();
@@ -546,12 +557,13 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
       }
 
       // Descobre a última linha
+      // Pula duas linhas e adiciona o footer
       const lastRow = worksheet.lastRow?.number;
       const calc = lastRow! + 2;
-      console.log('LastRow + 2 = ', calc)
+      //console.log('LastRow + 2 = ', calc)
 
       const footer = worksheet.getRow(calc);
-      worksheet.mergeCells(`A${calc}:F${calc}`);
+      worksheet.mergeCells(`A${calc}:H${calc}`);
       footer.height = 20;
       const myName = worksheet.getCell(`A${calc}`);
       myName.value = this.footer;
@@ -562,31 +574,31 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
 
       worksheet.getRow(1).values = [];
       worksheet.getRow(1).height = 30;
-      worksheet.mergeCells('A1:E1');
+      worksheet.mergeCells('A1:F1');
       const titleCell1 = worksheet.getCell('A1');
       titleCell1.value = 'ENGLISH TRAINING CENTER';
       titleCell1.font = { size: 22, bold: true, color: { argb: 'FF2C2C2C' } };
       titleCell1.alignment = { vertical: 'middle', horizontal: 'center' };
 
-
-      worksheet.mergeCells('A2:E2');
+      worksheet.mergeCells('A2:F2');
       const titleCell2 = worksheet.getCell('A2');
-      titleCell2.value = 'Trainer Subsidies – Full List';
+      titleCell2.value = 'Students : Active – Full List';
       titleCell2.font = { size: 20, bold: true, color: { argb: '2C2C2C' } };
       titleCell2.alignment = { vertical: 'middle', horizontal: 'center' };
 
       // Adicionar data
-      const dateCell = worksheet.getCell('F2');
+      const dateCell = worksheet.getCell('G2');
+      worksheet.mergeCells('G2:H2')
       dateCell.value = `Issued on: ${this.formatDate(new Date())}`;
       dateCell.font = { size: 12, bold: false, color: { argb: '2C2C2C' } };
-      dateCell.alignment = { vertical: 'middle', horizontal: 'center' };
+      dateCell.alignment = { vertical: 'middle', horizontal: 'right' };
 
       const buffer = await workbook.xlsx.writeBuffer();
       const blob = new Blob([buffer], {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
       });
 
-      FileSaver.saveAs(blob, 'ETC_trainer_subsidies_full_list_data.xlsx');
+      FileSaver.saveAs(blob, 'ETC_students_active_full_list_data.xlsx');
       this.alert.show('All data exported to Excel.', 'success');
     } catch (error) {
       console.error('Error exporting Excel:', error);
@@ -621,12 +633,14 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
       const worksheet = workbook.addWorksheet('Trainers');
 
       const excelColumns = [
-        { header: 'Photo', key: 'profileImage', width: 45 },
         { header: 'Full Name', key: 'fullName', width: 40 },
-        { header: 'Position', key: 'position', width: 40 },
-        { header: 'Status', key: 'status', width: 10 },
-        { header: 'Subsidy (MT)', key: 'subsidyMTFormatted', width: 20 },
-        { header: 'Date Update', key: 'dateUpdate', width: 25 }
+        { header: 'Gender', key: 'gender', width: 15 },
+        { header: 'Age', key: 'age', width: 10 },
+        { header: 'Package', key: 'package', width: 20 },
+        { header: 'Level', key: 'level', width: 10 },
+        { header: 'Modality', key: 'modality', width: 20 },
+        { header: 'Period', key: 'academicPeriod', width: 15 },
+        { header: 'Schedule', key: 'schedule', width: 15 },
       ];
 
       // 2. Definir manualmente os valores do cabeçalho na linha 4
@@ -661,16 +675,18 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
         };
       });
 
-      // Adicionar dados
-      rowData.forEach((trainer, index) => {
+      // 5. Add data SAFELY (only mapped columns)
+      rowData.forEach((student, index) => {
         const rowNumber = index + 5; // Começa da linha 5
         worksheet.getRow(rowNumber).values = [
-          trainer.profileImage ?? '',
-          trainer.fullName ?? '',
-          trainer.position ?? '',
-          trainer.status ?? '',
-          trainer.subsidyMTFormatted ?? '',
-          trainer.dateUpdate ?? ''
+          student.fullName ?? '',
+          student.gender ?? '',
+          student.age ?? '',
+          student.package ?? '',
+          student.level ?? '',
+          student.modality ?? '',
+          student.academicPeriod ?? '',
+          student.schedule ?? ''
         ];
       });
 
@@ -681,16 +697,12 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
           row.eachCell({ includeEmpty: true }, cell => {
             // Estilo padrão para todas as células de dados
             cell.font = { size: 12, bold: false, color: { argb: 'FF000000' } }; // Preto
-            cell.alignment = { vertical: 'middle', horizontal: 'left' };
+            cell.alignment = { vertical: 'middle', horizontal: 'center' };
 
             const columnLetter = worksheet.getColumn(cell.col).letter;
 
-            if (['D', 'E', 'F'].includes(columnLetter)) {
-              cell.alignment = { vertical: 'middle', horizontal: 'center' };
-            }
-
-            if (['E'].includes(columnLetter)) {
-              cell.alignment = { vertical: 'middle', horizontal: 'right' };
+            if (['A'].includes(columnLetter)) {
+              cell.alignment = { vertical: 'middle', horizontal: 'left' };
             }
 
             cell.border = {
@@ -703,7 +715,7 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
         }
       });
 
-      // 1. Função auxiliar para converter imagem em base64 (adicione ao seu serviço)
+      // 1. Função auxiliar para converter imagem em base64
       async function imageToBase64(url: string): Promise<string> {
         const response = await fetch(url);
         const blob = await response.blob();
@@ -735,12 +747,13 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
       }
 
       // Descobre a última linha
+      // Pula duas linhas e adiciona o footer
       const lastRow = worksheet.lastRow?.number;
       const calc = lastRow! + 2;
       //console.log('LastRow + 2 = ', calc)
 
       const footer = worksheet.getRow(calc);
-      worksheet.mergeCells(`A${calc}:F${calc}`);
+      worksheet.mergeCells(`A${calc}:H${calc}`);
       footer.height = 20;
       const myName = worksheet.getCell(`A${calc}`);
       myName.value = this.footer;
@@ -751,31 +764,31 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
 
       worksheet.getRow(1).values = [];
       worksheet.getRow(1).height = 30;
-      worksheet.mergeCells('A1:E1');
+      worksheet.mergeCells('A1:F1');
       const titleCell1 = worksheet.getCell('A1');
       titleCell1.value = 'ENGLISH TRAINING CENTER';
       titleCell1.font = { size: 22, bold: true, color: { argb: 'FF2C2C2C' } };
       titleCell1.alignment = { vertical: 'middle', horizontal: 'center' };
 
-
-      worksheet.mergeCells('A2:E2');
+      worksheet.mergeCells('A2:F2');
       const titleCell2 = worksheet.getCell('A2');
-      titleCell2.value = 'Filtered Trainer Subsidies';
+      titleCell2.value = 'Students : Active – Filtered List';
       titleCell2.font = { size: 20, bold: true, color: { argb: '2C2C2C' } };
       titleCell2.alignment = { vertical: 'middle', horizontal: 'center' };
 
       // Adicionar data
-      const dateCell = worksheet.getCell('F2');
+      const dateCell = worksheet.getCell('G2');
+      worksheet.mergeCells('G2:H2')
       dateCell.value = `Issued on: ${this.formatDate(new Date())}`;
       dateCell.font = { size: 12, bold: false, color: { argb: '2C2C2C' } };
-      dateCell.alignment = { vertical: 'middle', horizontal: 'center' };
+      dateCell.alignment = { vertical: 'middle', horizontal: 'right' };
 
       const buffer = await workbook.xlsx.writeBuffer();
       const blob = new Blob([buffer], {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
       });
 
-      FileSaver.saveAs(blob, 'ETC_filtered_trainer_subsidies_data.xlsx');
+      FileSaver.saveAs(blob, 'ETC_filtered_students_active_data.xlsx');
       this.alert.show('Filtered data exported to Excel.', 'success');
     } catch (error) {
       console.error('Error exporting Excel:', error);
@@ -786,8 +799,8 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
   private async exportPdfAllDataTable(): Promise<void> {
     try {
       // 1. Fetch all trainer data
-      const response = await lastValueFrom(this.trainerService.detailsSubsidy());
-      const trainers = Array.isArray(response) ? response : [response];
+      const response = await lastValueFrom(this.studentService.getListStudentActive());
+      const students = Array.isArray(response) ? response : [response];
 
       if (!response) {
         this.alert.show('No data available for export.', 'warning');
@@ -796,22 +809,26 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
 
       // Preparar cabeçalhos
       const headers = [
-        'Photo',
         'Full Name',
-        'Position',
-        'Status',
-        'Subsidy (MT)',
-        'Date Update'
+        'Gender',
+        'Age',
+        'Package',
+        'Level',
+        'Modality',
+        'Period',
+        'Schedule'
       ];
 
       // 4. Mapear os dados para o formato da tabela
-      const data = trainers.map(trainer => [
-          trainer.profileImage ?? '',
-          trainer.fullName ?? '',
-          trainer.position ?? '',
-          trainer.status ?? '',
-          trainer.subsidyMTFormatted ?? '',
-          trainer.dateUpdate ?? ''
+      const data = students.map(student => [
+          student.fullName ?? '',
+          student.gender ?? '',
+          student.age ?? '',
+          student.package ?? '',
+          student.level ?? '',
+          student.modality ?? '',
+          student.academicPeriod ?? '',
+          student.schedule ?? ''
       ]);
 
       // Cria o documento PDF
@@ -840,7 +857,7 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
       doc.setFontSize(20);
       doc.setTextColor(44, 44, 44);
       doc.setFont('helvetica', 'normal');
-      doc.text('Trainer Subsidies – Full List', 100, 23);
+      doc.text('Students : Active – Full List', 100, 23);
 
       // 5. Adicionar data de emissão
       doc.setFontSize(10);
@@ -859,11 +876,13 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
         columnStyles: {
           // Ajuste proporcional conforme suas colunas
           0: { cellWidth: 50, halign: 'left' },
-          1: { cellWidth: 50, halign: 'left' },
-          2: { cellWidth: 'auto', halign: 'left' },
+          1: { cellWidth: 'auto', halign: 'center' },
+          2: { cellWidth: 'auto', halign: 'center' },
           3: { cellWidth: 'auto', halign: 'center' },
-          4: { cellWidth: 'auto', halign: 'right' },
-          5: { cellWidth: 'auto', halign: 'center' }
+          4: { cellWidth: 'auto', halign: 'center' },
+          5: { cellWidth: 'auto', halign: 'center' },
+          6: { cellWidth: 'auto', halign: 'center' },
+          7: { cellWidth: 'auto', halign: 'center' }
         },
 
         headStyles: {
@@ -893,7 +912,7 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
       doc.text(this.footer, pageWidth / 2, footerY + 10, { align: 'center' });
 
       // Salva o PDF
-      doc.save('ETC_trainer_subsidies_full_list_data.pdf');
+      doc.save('ETC_students_active_full_list_data.pdf');
       this.alert.show('All data exported to PDF.', 'success');
     } catch (error) {
       console.error('PDF export error:', error);
@@ -915,9 +934,6 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
         }
       });
 
-      // Alternativa para dados SELECIONADOS:
-      // const rowData = this.gridApi.getSelectedRows();
-
       if (!rowData.length) {
         this.alert.show('No data available for export.', 'warning');
         return;
@@ -925,22 +941,26 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
 
       // Preparar cabeçalhos
       const headers = [
-        'Photo',
         'Full Name',
-        'Position',
-        'Status',
-        'Subsidy (MT)',
-        'Date Update'
+        'Gender',
+        'Age',
+        'Package',
+        'Level',
+        'Modality',
+        'Period',
+        'Schedule'
       ];
 
       // 4. Mapear os dados para o formato da tabela
-      const data = rowData.map(trainer => [
-          trainer.profileImage ?? '',
-          trainer.fullName ?? '',
-          trainer.position ?? '',
-          trainer.status ?? '',
-          trainer.subsidyMTFormatted ?? '',
-          trainer.dateUpdate ?? ''
+      const data = rowData.map(student => [
+          student.fullName ?? '',
+          student.gender ?? '',
+          student.age ?? '',
+          student.package ?? '',
+          student.level ?? '',
+          student.modality ?? '',
+          student.academicPeriod ?? '',
+          student.schedule ?? ''
       ]);
 
       // Cria o documento PDF
@@ -969,7 +989,7 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
       doc.setFontSize(20);
       doc.setTextColor(44, 44, 44);
       doc.setFont('helvetica', 'normal');
-      doc.text('Filtered Trainer Subsidies', 105, 23);
+      doc.text('Students : Active – Filtered List', 100, 23);
 
       // 5. Adicionar data de emissão
       doc.setFontSize(10);
@@ -988,11 +1008,13 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
         columnStyles: {
           // Ajuste proporcional conforme suas colunas
           0: { cellWidth: 50, halign: 'left' },
-          1: { cellWidth: 50, halign: 'left' },
-          2: { cellWidth: 'auto', halign: 'left' },
+          1: { cellWidth: 'auto', halign: 'center' },
+          2: { cellWidth: 'auto', halign: 'center' },
           3: { cellWidth: 'auto', halign: 'center' },
-          4: { cellWidth: 'auto', halign: 'right' },
-          5: { cellWidth: 'auto', halign: 'center' }
+          4: { cellWidth: 'auto', halign: 'center' },
+          5: { cellWidth: 'auto', halign: 'center' },
+          6: { cellWidth: 'auto', halign: 'center' },
+          7: { cellWidth: 'auto', halign: 'center' }
         },
 
         headStyles: {
@@ -1033,8 +1055,8 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
   private async printAllDataTable(): Promise<void> {
     try {
       // 1. Fetch all trainer data
-      const response = await lastValueFrom(this.trainerService.detailsSubsidy());
-      const trainers = Array.isArray(response) ? response : [response];
+      const response = await lastValueFrom(this.studentService.getListStudentActive());
+      const students = Array.isArray(response) ? response : [response];
 
       if (!response) {
         this.alert.show('Could not print all data.', 'warning');
@@ -1043,22 +1065,26 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
 
       // Preparar cabeçalhos
       const headers = [
-        'Photo',
         'Full Name',
-        'Position',
-        'Status',
-        'Subsidy (MT)',
-        'Date Update'
+        'Gender',
+        'Age',
+        'Package',
+        'Level',
+        'Modality',
+        'Period',
+        'Schedule'
       ];
 
       // 4. Mapear os dados para o formato da tabela
-      const data = trainers.map(trainer => [
-          trainer.profileImage ?? '',
-          trainer.fullName ?? '',
-          trainer.position ?? '',
-          trainer.status ?? '',
-          trainer.subsidyMTFormatted ?? '',
-          trainer.dateUpdate ?? ''
+      const data = students.map(student => [
+          student.fullName ?? '',
+          student.gender ?? '',
+          student.age ?? '',
+          student.package ?? '',
+          student.level ?? '',
+          student.modality ?? '',
+          student.academicPeriod ?? '',
+          student.schedule ?? ''
       ]);
 
       // Cria o documento PDF
@@ -1087,7 +1113,7 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
       doc.setFontSize(20);
       doc.setTextColor(44, 44, 44);
       doc.setFont('helvetica', 'normal');
-      doc.text('Trainer Subsidies – Full List', 100, 23);
+      doc.text('Students : Active – Full List', 100, 23);
 
       // 5. Adicionar data de emissão
       doc.setFontSize(10);
@@ -1106,11 +1132,13 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
         columnStyles: {
           // Ajuste proporcional conforme suas colunas
           0: { cellWidth: 50, halign: 'left' },
-          1: { cellWidth: 50, halign: 'left' },
-          2: { cellWidth: 'auto', halign: 'left' },
+          1: { cellWidth: 'auto', halign: 'center' },
+          2: { cellWidth: 'auto', halign: 'center' },
           3: { cellWidth: 'auto', halign: 'center' },
-          4: { cellWidth: 'auto', halign: 'right' },
-          5: { cellWidth: 'auto', halign: 'center' }
+          4: { cellWidth: 'auto', halign: 'center' },
+          5: { cellWidth: 'auto', halign: 'center' },
+          6: { cellWidth: 'auto', halign: 'center' },
+          7: { cellWidth: 'auto', halign: 'center' }
         },
 
         headStyles: {
@@ -1156,7 +1184,7 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
          // console.error('PrintJS error:', error);
           this.alert.show('Oops! Direct printing failed.', 'error');
           // Fallback para download
-          doc.save('ETC_trainer_subsidies_full_list_data.pdf');
+          doc.save('ETC_students_active_full_list_data.pdf');
         }
       });
     } catch (error) {
@@ -1191,22 +1219,26 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
 
       // Preparar cabeçalhos
       const headers = [
-        'Photo',
         'Full Name',
-        'Position',
-        'Status',
-        'Subsidy (MT)',
-        'Date Update'
+        'Gender',
+        'Age',
+        'Package',
+        'Level',
+        'Modality',
+        'Period',
+        'Schedule'
       ];
 
       // 4. Mapear os dados para o formato da tabela
-      const data = rowData.map(trainer => [
-          trainer.profileImage ?? '',
-          trainer.fullName ?? '',
-          trainer.position ?? '',
-          trainer.status ?? '',
-          trainer.subsidyMTFormatted ?? '',
-          trainer.dateUpdate ?? ''
+      const data = rowData.map(student => [
+          student.fullName ?? '',
+          student.gender ?? '',
+          student.age ?? '',
+          student.package ?? '',
+          student.level ?? '',
+          student.modality ?? '',
+          student.academicPeriod ?? '',
+          student.schedule ?? ''
       ]);
 
       // Cria o documento PDF
@@ -1235,7 +1267,7 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
       doc.setFontSize(20);
       doc.setTextColor(44, 44, 44);
       doc.setFont('helvetica', 'normal');
-      doc.text('Filtered Trainer Subsidies', 105, 23);
+      doc.text('Students : Active – Filtered List', 100, 23);
 
       // 5. Adicionar data de emissão
       doc.setFontSize(10);
@@ -1254,11 +1286,13 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
         columnStyles: {
           // Ajuste proporcional conforme suas colunas
           0: { cellWidth: 50, halign: 'left' },
-          1: { cellWidth: 50, halign: 'left' },
-          2: { cellWidth: 'auto', halign: 'left' },
+          1: { cellWidth: 'auto', halign: 'center' },
+          2: { cellWidth: 'auto', halign: 'center' },
           3: { cellWidth: 'auto', halign: 'center' },
-          4: { cellWidth: 'auto', halign: 'right' },
-          5: { cellWidth: 'auto', halign: 'center' }
+          4: { cellWidth: 'auto', halign: 'center' },
+          5: { cellWidth: 'auto', halign: 'center' },
+          6: { cellWidth: 'auto', halign: 'center' },
+          7: { cellWidth: 'auto', halign: 'center' }
         },
 
         headStyles: {
@@ -1304,7 +1338,7 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
          // console.error('PrintJS error:', error);
           this.alert.show('Oops! Direct printing failed.', 'error');
           // Fallback para download
-          doc.save('ETC_list_of_trainers_filtered_data.pdf');
+          doc.save('ETC_list_of_student_active_filtered_data.pdf');
         }
       });
     } catch (error) {

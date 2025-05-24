@@ -568,7 +568,7 @@ namespace server.src.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<StudentListPrincipalViewDto>> GetStudentListPrincipalViewActive()
+        public async Task<IEnumerable<ListStudentActiveDto>> GetListStudentActive()
         {
             try
             {
@@ -583,7 +583,7 @@ namespace server.src.Repositories
                         ActiveCourse = s.CourseInfo!.FirstOrDefault(c => c.Status == "In Progress")
                     })
                     .Where(x => x.ActiveCourse != null)
-                    .Select(x => new StudentListPrincipalViewDto
+                    .Select(x => new ListStudentActiveDto
                     {
                         Order = x.Student.Order,
                         Id = x.Student.Id,
@@ -600,7 +600,6 @@ namespace server.src.Repositories
 
                 var result = await query.ToListAsync();
 
-                //_logger.LogInformation("Successfully retrieved {Count} active students with their courses", result.Count);
                 return result;
             }
             catch (Exception ex)
@@ -631,7 +630,7 @@ namespace server.src.Repositories
                 string month = $"{DateTime.Now.Month}";
 
                 // Combinar todos os componentes (8 dígitos no total)
-                string newId = $"ETC{year}{month}{nextOrder:D2}";
+                string newId = $"ETC{year}{month}{nextOrder:D3}";
 
                 return newId;
             }
@@ -660,7 +659,7 @@ namespace server.src.Repositories
                 string month = $"{DateTime.Now.Month}";
 
                 // Combinar todos os componentes (8 dígitos no total)
-                string newId = $"{year}{month}{nextOrder:D2}";
+                string newId = $"{year}{month}{nextOrder:D3}";
 
                 return newId;
             }

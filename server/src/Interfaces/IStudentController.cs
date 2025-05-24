@@ -18,6 +18,6 @@ namespace server.src.Interfaces
         Task<ActionResult<IEnumerable<StudentCourseFeeModel>>> GetStudentListCourseFee();
         Task<ActionResult<StudentEnrollmentFormModel>> GetStudentEnrollmentFormById(string id);
         Task<ActionResult<StudentDataModel>> GetStudentDataByName(string fullName);
-        Task<ActionResult<IEnumerable<StudentListPrincipalViewDto>>> GetStudentListPrincipalViewActive();
+        Task<ActionResult<IEnumerable<ListStudentActiveDto>>> GetListStudentActive();
     }
 }
