@@ -50,7 +50,7 @@ export class PaymentSuccessComponent implements OnInit, OnDestroy, ICellRenderer
     trainer: null
   }
 
-  constructor(private paymentPayNowCreate: PaymentPayNowCreateService, private studentService: StudentsService, private documentService: DocumentsService, private alert: SnackBarService, private notificationHub: NotificationHubService)
+  constructor(private studentService: StudentsService, private documentService: DocumentsService, private alert: SnackBarService, private notificationHub: NotificationHubService)
   {}
 
   ngOnInit(): void {
@@ -63,6 +63,10 @@ export class PaymentSuccessComponent implements OnInit, OnDestroy, ICellRenderer
                 this.studentService.detailStudentPaymentReceiptById(paymentId).subscribe({
                   next: (paymentData: StudentPaymentModel) => {
                     this.studentDataPayment = { ...paymentData };
+                    this.amountMT = `${this.formatAmount(paymentData.amountMT)} MT`;
+                    this.receivedFrom = paymentData.receivedFrom;
+                    this.method = paymentData.method;
+                    this.transaction = paymentData.descriptionEnglish;
                   },
                   error: (err) => console.error('Erro ao carregar pagamento:', err)
                 })
@@ -72,17 +76,6 @@ export class PaymentSuccessComponent implements OnInit, OnDestroy, ICellRenderer
           })
         );
       })
-    );
-
-    this.subs.add(
-      this.paymentPayNowCreate.enrollment$.pipe(
-        filter((enrollment): enrollment is StudentPaymentCreateDto => !!enrollment)
-      ).subscribe(enrollment => {
-        this.amountMT = `${this.formatAmount(enrollment.amountMT)} MT`;
-        this.receivedFrom = enrollment.receivedFrom;
-        this.method = enrollment.method;
-        this.transaction = enrollment.description;
-        })
     );
   }
 

@@ -12,39 +12,56 @@ namespace server.src.Configs
         private static readonly string[] DezADezenove = [ "Dez", "Onze", "Doze", "Treze", "Quatorze", "Quinze", "Dezesseis", "Dezessete", "Dezoito", "Dezenove" ];
         private static readonly string[] Dezenas = [ "", "", "Vinte", "Trinta", "Quarenta", "Cinquenta", "Sessenta", "Setenta", "Oitenta", "Noventa" ];
         private static readonly string[] Centenas = [ "", "Cento", "Duzentos", "Trezentos", "Quatrocentos", "Quinhentos", "Seiscentos", "Setecentos", "Oitocentos", "Novecentos" ];
-        private static readonly string[] Milhares = [ "", "Mil" ];
+        //private static readonly string[] Milhares = [ "", "Mil" ];
 
-        public static string ConverterParaExtenso(int numero)
+        public static string ConverterParaExtenso(decimal numero)
         {
             if (numero == 0) return "Zero Metical";
-            if (numero == 1) return "Um Metical";
-            if (numero == 1000) return "Mil Meticais";
-            if (numero == 100000) return "Cem Mil Meticais";
-            if (numero == 1000000) return "Um Milhão Meticais";
-
-            if (numero > 1000000)
+            if (numero > 999999999.99m)
                 throw new InvalidOperationException("Atingiu o limite. Por favor, contacte o administrador!");
 
-            var extenso = new StringBuilder();
+            int parteInteira = (int)Math.Floor(numero);
+            int parteDecimal = (int)Math.Round((numero - parteInteira) * 100);
 
-            if (numero >= 1000)
+            var partes = new List<string>();
+
+            int milhoes = parteInteira / 1_000_000;
+            int milhares = parteInteira % 1_000_000 / 1_000;
+            int centenas = parteInteira % 1_000;
+
+            if (milhoes > 0)
             {
-                int milhar = numero / 1000;
-                if (milhar == 1)
-                    extenso.Append(Milhares[1]);
-                else
-                    extenso.Append(ConverterParte(milhar)).Append(" Mil");
-
-                numero %= 1000;
-                if (numero > 0)
-                    extenso.Append(" e ");
+                partes.Add($"{ConverterParte(milhoes)} {(milhoes == 1 ? "Milhão" : "Milhões")}");
             }
 
-            if (numero > 0)
-                extenso.Append(ConverterParte(numero));
+            if (milhares > 0)
+            {
+                if (milhares == 1)
+                    partes.Add("Mil");
+                else
+                    partes.Add($"{ConverterParte(milhares)} Mil");
+            }
 
-            extenso.Append(" Meticais");
-            return extenso.ToString();
+            if (centenas > 0)
+            {
+                partes.Add($"{ConverterParte(centenas)}");
+            }
+
+            var resultado = new StringBuilder();
+            resultado.Append(string.Join(" e ", partes));
+
+            if (parteInteira > 0)
+                resultado.Append(parteInteira == 1 ? " Metical" : " Meticais");
+
+            if (parteDecimal > 0)
+            {
+                if (parteInteira > 0)
+                    resultado.Append(" e ");
+                resultado.Append(ConverterParte(parteDecimal));
+                resultado.Append(parteDecimal == 1 ? " Centavo" : " Centavos");
+            }
+
+            return resultado.ToString();
         }
 
         private static string ConverterParte(int numero)

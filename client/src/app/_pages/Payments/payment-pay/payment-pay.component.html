@@ -67,7 +67,6 @@
                 formControlName="courseFee"
                 type="text"
                 placeholder="0,00"
-                maxlength="1000000"
                 (input)="onAmount($event)"/>
                 @if (getErrorForms('courseFee')?.hasError('required')) {
                   <mat-error>Course fee is required</mat-error>

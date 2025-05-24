@@ -62,7 +62,7 @@ namespace server.src.Repositories
                 var newID = GeneratePaymentId();
                 if (newID is null) return null!;
 
-                var inwords = ValorPorExtenso.ConverterParaExtenso(paymentCreateDto.AmountMT);
+                var inwords = "";
 
                 //Console.WriteLine($"Receipt ID = {newID} \nInWords = {inwords}");
 
@@ -88,12 +88,15 @@ namespace server.src.Repositories
                         else if (paymentCreateDto.AmountMT <= priceDue)
                         { newPricePaid = paymentCreateDto.AmountMT; }
 
+                        paymentCreateDto.AmountMT = newPricePaid;                        
+
                         courseFee.PricePaid += newPricePaid;
                         courseFee.DateUpdate = DateTime.Now;
 
                         await _dbContext.SaveChangesAsync();
                     }
-
+                    inwords = ValorPorExtenso.ConverterParaExtenso(paymentCreateDto.AmountMT);
+                    
                     var receiptData = new StudentPaymentModel
                     {
                         Id = newID,
@@ -216,6 +219,15 @@ namespace server.src.Repositories
                 TrainerName = student.TrainerName,
                 Trainer = null,
             };
+        }
+
+        public async Task<decimal> GetPriceDueById(string id)
+        {
+            var checkId = await _dbContext.StudentCourseFee.FirstOrDefaultAsync(s => s.Id == id);
+
+            if (checkId is null) return 0;
+
+            return checkId.PriceDue;
         }
 
         private string GeneratePaymentId()

@@ -14,5 +14,6 @@ namespace server.src.Interfaces
         Task<ActionResult<List<StudentPaymentModel>>> Details();
         Task<ActionResult<string>> GetStudentPaymentByLastId();
         Task<ActionResult<StudentPaymentModel>> GetStudentPaymentById(string id);
+        Task<ActionResult<decimal>> GetPriceDueById(string id);
     }
 }

@@ -69,5 +69,13 @@ namespace server.src.Controllers
 
             return Ok(student);
         }
+
+        [HttpPost("get-price-due-by-id/{id}")]
+        public async Task<ActionResult<decimal>> GetPriceDueById(string id)
+        {
+            var student = await _paymentRepository.GetPriceDueById(id);
+
+            return Ok(student);
+        }
     }
 }

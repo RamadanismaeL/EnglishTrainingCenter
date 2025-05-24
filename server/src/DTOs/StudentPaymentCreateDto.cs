@@ -11,6 +11,6 @@ namespace server.src.DTOs
         public string ReceivedFrom { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public string Method { get; set; } = string.Empty; // Banco, E-Mola, M-Pesa,...
-        public int AmountMT { get; set; }
+        public decimal AmountMT { get; set; }
     }
 }

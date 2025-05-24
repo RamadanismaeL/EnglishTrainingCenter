@@ -52,4 +52,7 @@ export class StudentsService {
 
   createStudentCourseInfo = (data : CourseInfoModel) : Observable<ResponseDto> => this.http
     .post<ResponseDto>(`${this.myUrl}/StudentCourseInfo/create`, data, {headers : { 'Allow-Offline' : 'true' }});
+
+  getPriceDueById = (id: string) : Observable<number> => this.http
+    .post<number>(`${this.myUrl}/StudentPayment/get-price-due-by-id/${id}`, {headers : { 'Allow-Offline' : 'true' }});
 }

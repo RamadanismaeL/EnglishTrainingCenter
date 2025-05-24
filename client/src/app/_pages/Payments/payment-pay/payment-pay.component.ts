@@ -359,83 +359,98 @@ export class PaymentPayComponent implements OnInit, OnDestroy {
       });
 
       //console.log("Payment = ",this.paymentPayNowCreate.currentEnrollment)
-
-      this.subs.add(
-        this.studentService.createStudentPayment(this.paymentPayNowCreate.currentEnrollment)
-        .subscribe({
-          next: () => {
-            this.paymentPayNow.clear();
-            this.alert.show('Registration completed successfully!', 'success');
-            this.notificationHub.sendMessage("Initialize enrollment form.");
-            this.stepperService.setActiveStep(1);
-          },
-          error: (error) => {
-            console.error("Erro no processo:", error);
-            this.handleError(error);
+      if (this.courseFeeId != null)
+      {
+        this.studentService.getPriceDueById(this.courseFeeId).subscribe(priceDue => {
+          if (priceDue == 0)
+          {
+            this.alert.show('The payment was not processed, as this fee has already been settled by the student.', 'error');
           }
-        })
-      );
+          else
+          {
+            this.subs.add(
+              this.studentService.createStudentPayment(this.paymentPayNowCreate.currentEnrollment)
+              .subscribe({
+                next: () => {
+                  this.paymentPayNow.clear();
+                  this.alert.show('Registration completed successfully!', 'success');
+                  this.notificationHub.sendMessage("Initialize enrollment form.");
+                  this.stepperService.setActiveStep(1);
+                },
+                error: (error) => {
+                  console.error("Erro no processo:", error);
+                  this.handleError(error);
+                }
+              })
+            );
+          }
+        });
+      }
+      else
+      {
+        this.subs.add(
+          this.studentService.createStudentPayment(this.paymentPayNowCreate.currentEnrollment)
+          .subscribe({
+            next: () => {
+              this.paymentPayNow.clear();
+              this.alert.show('Registration completed successfully!', 'success');
+              this.notificationHub.sendMessage("Initialize enrollment form.");
+              this.stepperService.setActiveStep(1);
+            },
+            error: (error) => {
+              console.error("Erro no processo:", error);
+              this.handleError(error);
+            }
+          })
+        );
+      }
     }
   }
 
   onAmount(event: any) {
-    const input = event.target;
+    const input = event.target as HTMLInputElement;
     let value = input.value;
 
-    // Permite dígitos e vírgula (mas não permite vírgula no início sozinha)
-    const numericValue = value.replace(/[^\d,]/g, '');
+    // Permite dígitos e vírgula
+    value = value.replace(/[^\d]/g, '');
 
-    // Se for apenas uma vírgula, não faz nada (aguarda dígitos)
-    if (numericValue === ',') {
-      return;
-    }
+    const numberValue = this.parseNumber(value);
 
-    // Se após limpeza estiver vazio, define como vazio
-    if (numericValue === '') {
-      input.value = '';
-      return;
-    }
-
-    // Converte para número e verifica o valor máximo
-    const numberValue = this.parseNumber(numericValue);
+    // Validação de limite
     if (numberValue > 10000000) {
       input.value = this.previousAmountValue || '';
-    } else {
-      input.value = this.formatNumber(numericValue);
-      this.previousAmountValue = input.value;
+      return;
     }
+
+    input.value = this.formatNumber(value);
+    this.previousAmountValue = input.value;
   }
 
   formatNumber(value: string): string {
-      // Caso especial: quando o usuário está digitando um decimal (ex: "0," ou "123,")
-      if (value.endsWith(',')) {
-          let integerPart = value.replace(/\D/g, '');
-          integerPart = integerPart.replace(/^0+/, '') || '0';
-          integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-          return integerPart + ',';
-      }
-
-      // Processamento normal para valores completos
-      let [integerPart, decimalPart] = value.split(',');
-
-      // Limpa parte inteira
-      integerPart = integerPart.replace(/\D/g, '');
+    if (value.endsWith(',')) {
+      let integerPart = value.replace(',', '').replace(/\D/g, '');
       integerPart = integerPart.replace(/^0+/, '') || '0';
       integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+      return integerPart + ',';
+    }
 
-      // Processa parte decimal (se existir)
-      if (decimalPart !== undefined) {
-          decimalPart = decimalPart.replace(/\D/g, '').substring(0, 2);
-          return integerPart + ',' + decimalPart;
-      }
+    let [integerPart, decimalPart] = value.split(',');
 
-      return integerPart;
+    integerPart = integerPart.replace(/\D/g, '');
+    integerPart = integerPart.replace(/^0+/, '') || '0';
+    integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+    if (decimalPart !== undefined) {
+      decimalPart = decimalPart.replace(/\D/g, '').substring(0, 2);
+      return integerPart + ',' + decimalPart;
+    }
+
+    return integerPart;
   }
 
   parseNumber(formattedValue: string): number {
-      // Converte "1.234,56" para 1234.56
-      const numberString = formattedValue.replace(/\./g, '').replace(',', '.');
-      return parseFloat(numberString) || 0;
+    const numberString = formattedValue.replace(/\./g, '').replace(',', '.');
+    return parseFloat(numberString) || 0;
   }
 
   private handleError(error: HttpErrorResponse) {
