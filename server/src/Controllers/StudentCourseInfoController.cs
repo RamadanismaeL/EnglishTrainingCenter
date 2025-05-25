@@ -49,22 +49,30 @@ namespace server.src.Controllers
         [HttpPatch("update-quiz")]
         public async Task<IActionResult> UpdateQuiz(StudentCourseInfoUpdateQuizDto courseInfoUpdateQuizDto)
         {
-            if(courseInfoUpdateQuizDto is null)
+            if (courseInfoUpdateQuizDto is null)
             {
-                return BadRequest(new ResponseDto {
+                return BadRequest(new ResponseDto
+                {
                     IsSuccess = false,
                     Message = "Course data is request."
                 });
             }
-            
-            if(!ModelState.IsValid) return BadRequest(ModelState);
+
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
             var response = await _courseInfoRepository.UpdateQuiz(courseInfoUpdateQuizDto);
 
             // Notifica todos os clientes conectados
-            await _hubContext.Clients.All.SendAsync("ReceiveMessage", "Course updated successfully."); 
+            await _hubContext.Clients.All.SendAsync("ReceiveMessage", "Course updated successfully.");
 
             return response.IsSuccess ? Ok(response) : BadRequest(response);
+        }
+
+        [HttpGet("get-list-student-course-info-active")]
+        public async Task<ActionResult<List<StudentCourseInfoListDto>>> GetListStudentCourseInfoActive()
+        {
+            var courseData = await _courseInfoRepository.GetListStudentCourseInfoActive();
+            return Ok(courseData);
         }
     }
 }

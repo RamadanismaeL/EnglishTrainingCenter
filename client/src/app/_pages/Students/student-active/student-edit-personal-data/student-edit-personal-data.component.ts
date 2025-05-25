@@ -8,13 +8,14 @@ import { DateAdapter, MatNativeDateModule } from '@angular/material/core';
 import { NgxMaskDirective } from 'ngx-mask';
 import { SnackBarService } from '../../../../_services/snack-bar.service';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { StepperEnrollmentService } from '../../../../_services/stepper-enrollment.service';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import { AsyncPipe } from '@angular/common';
 import { debounceTime, distinctUntilChanged, map, Observable, startWith, Subscription } from 'rxjs';
-import { EnrollmentStudentService } from '../../../../_services/enrollment-student.service';
 import { StudentShareIdService } from '../../../../_services/student-share-id.service';
 import { StudentsService } from '../../../../_services/students.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { StudentEditPersonalDataService } from '../../../../_services/student-edit-personal-data.service';
+import { NotificationHubService } from '../../../../_services/notification-hub.service';
 
 export interface StateGroup {
   letter: string;
@@ -48,17 +49,17 @@ export class StudentEditPersonalDataComponent implements OnInit, OnDestroy {
   expirationDate: DateAdapter<Date, any>;
   private readonly alert = inject(SnackBarService);
   private readonly fb = inject(FormBuilder);
-  private readonly stepperService = inject(StepperEnrollmentService);
   stateGroupOptions!: Observable<StateGroup[]>;
   statePlaceOfIssue!: Observable<StateGroup[]>;
   stateNationality!: Observable<StateGroup[]>;
   statePlaceOfBirth!: Observable<StateGroup[]>;
   stateGroupOptionsGuardian!: Observable<StateGroup[]>;
   private subs = new Subscription();
+  orderStudent : number | undefined;
 
   form! : FormGroup;
 
-  constructor (private dateAdapter: DateAdapter<Date>, private studentShareId: StudentShareIdService, private studentService: StudentsService)
+  constructor (private dateAdapter: DateAdapter<Date>, private studentShareId: StudentShareIdService, private studentService: StudentsService, private studentEditPersonal: StudentEditPersonalDataService, private notificationHub: NotificationHubService)
   {
     this.dateAdapter.setLocale('en-GB'); // Use 'en-GB' for dd/mm/yyyy format
     this.expirationDate = this.dateAdapter;
@@ -71,8 +72,8 @@ export class StudentEditPersonalDataComponent implements OnInit, OnDestroy {
       [
         'Albazine',
         'Alto Maé',
-        'Aeroporto "A"',
-        'Aeroporto "B"'
+        'Aeroporto A',
+        'Aeroporto B'
       ],
     },
     {
@@ -92,8 +93,8 @@ export class StudentEditPersonalDataComponent implements OnInit, OnDestroy {
       letter: 'C',
       names:
       [
-        'Central "A"',
-        'Central "B"',
+        'Central A',
+        'Central B',
         'Chamanculo',
         'Coop',
         'Costa do Sol'
@@ -220,11 +221,10 @@ export class StudentEditPersonalDataComponent implements OnInit, OnDestroy {
       names:
       [
         'Cabo Delgado',
-        'Cidade de Maputo',
         'Gaza',
         'Inhambane',
         'Manica',
-        'Maputo Província',
+        'Maputo',
         'Nampula',
         'Niassa',
         'Sofala',
@@ -241,8 +241,8 @@ export class StudentEditPersonalDataComponent implements OnInit, OnDestroy {
       [
         'Albazine',
         'Alto Maé',
-        'Aeroporto "A"',
-        'Aeroporto "B"'
+        'Aeroporto A',
+        'Aeroporto B'
       ],
     },
     {
@@ -262,8 +262,8 @@ export class StudentEditPersonalDataComponent implements OnInit, OnDestroy {
       letter: 'C',
       names:
       [
-        'Central "A"',
-        'Central "B"',
+        'Central A',
+        'Central B',
         'Chamanculo',
         'Coop',
         'Costa do Sol'
@@ -364,8 +364,8 @@ export class StudentEditPersonalDataComponent implements OnInit, OnDestroy {
   ];
 
   ngOnInit(): void {
+    this.loderDetail();
     this.initializeForm();
-    this.setupAddressSync();
 
     this.stateGroupOptions = this.form.get('residentialAddress')!.valueChanges.pipe(
       startWith(''),
@@ -424,24 +424,49 @@ export class StudentEditPersonalDataComponent implements OnInit, OnDestroy {
       guardianAlternativePhoneNumber : [''],
       guardianEmailAddress : ['']
     });
-
-    this.form.patchValue
-    ({
-      //fullName : this.data.fullName,
-    });
   }
 
-  private setupAddressSync() {
+  private loderDetail()
+  {
     this.subs.add(
-      this.form.get('residentialAddress')?.valueChanges
-      .pipe(
-        debounceTime(100), // Espera 300ms após a digitação
-        distinctUntilChanged() // Só emite se o valor mudou
-      )
-      .subscribe(value => {
-        this.form.get('guardianResidentialAddress')?.patchValue(value);
+      this.studentService.GetStudentListProfileEditById(this.studentShareId.currentEnrollment).subscribe({
+        next: (response) =>
+          {
+            this.orderStudent = response.order
+            this.form.patchValue
+            ({
+              documentType : response.documentType,
+              idNumber : response.idNumber,
+              placeOfIssue : response.placeOfIssue,
+              expirationDate : this.parseDate(response.expirationDate),
+
+              fullName : response.fullName,
+              dateOfBirth : this.parseDate(response.dateOfBirth),
+              gender : response.gender,
+              maritalStatus : response.maritalStatus,
+              nationality : response.nationality,
+              placeOfBirth : response.placeOfBirth,
+              residentialAddress : response.residentialAddress,
+              primaryPhoneNumber : response.firstPhoneNumber,
+              alternativePhoneNumber  : response.secondPhoneNumber,
+              emailAddress : response.emailAddress,
+              additionalNotes : response.additionalNotes,
+
+              guardianFullName : response.guardFullName,
+              guardianRelationship : response.guardRelationship,
+              guardianResidentialAddress : response.guardResidentialAddress,
+              guardianPrimaryPhoneNumber : response.guardFirstPhoneNumber,
+              guardianAlternativePhoneNumber : response.guardSecondPhoneNumber,
+              guardianEmailAddress : response.guardEmailAddress
+            });
+          },
+        error: (error) =>
+          {
+            console.error("Erro no processo:", error);
+            this.handleError(error);
+          }
       })
-    )
+    );
   }
 
   private _filterGroup(value: string): StateGroup[] {
@@ -522,24 +547,29 @@ export class StudentEditPersonalDataComponent implements OnInit, OnDestroy {
     return `${day}/${month}/${year}`;
   }
 
-  @ViewChild('studentFormRef') formElement!: ElementRef<HTMLFormElement>;
-  resetForm()
-  {
-    this.form.reset();
-    this.formElement.nativeElement.reset();
+  private parseDate(dateStr: string): Date | null {
+    if (!dateStr) return null;
+
+    const [day, month, year] = dateStr.split('/').map(Number);
+
+    if (
+      isNaN(day) || isNaN(month) || isNaN(year) ||
+      day < 1 || day > 31 ||
+      month < 1 || month > 12
+    ) {
+      return null;
+    }
+
+    // Lembre-se: mês em JavaScript começa em 0 (Janeiro = 0)
+    return new Date(year, month - 1, day);
   }
 
   update()
   {
-    /*
     if (this.form.valid) {
-      this.enrollmentStudentService.setEnrollmentStudent
+      this.studentEditPersonal.setEnrollmentStudent
       ({
-        package: this.form.value.package,
-        level: this.form.value.level,
-        modality: this.form.value.modality,
-        academicPeriod: this.form.value.academicPeriod,
-        schedule: this.form.value.pickTime,
+        order: this.orderStudent,
 
         documentType: this.form.value.documentType,
         idNumber: this.form.value.idNumber,
@@ -548,22 +578,52 @@ export class StudentEditPersonalDataComponent implements OnInit, OnDestroy {
 
         fullName: this.capitalizeWords(this.form.value.fullName),
         dateOfBirth: this.formatDate(this.form.value.dateOfBirth),
+        dateOfBirthCalc: this.form.value.dateOfBirth,
         gender: this.form.value.gender,
         maritalStatus: this.form.value.maritalStatus,
         nationality: this.capitalizeWords(this.form.value.nationality),
         placeOfBirth: this.capitalizeWords(this.form.value.placeOfBirth),
         residentialAddress: this.capitalizeWords(this.form.value.residentialAddress),
-        phoneNumber: this.form.value.phoneNumber,
-        emailAddress: this.form.value.emailAddress!.toLowerCase(),
+        firstPhoneNumber: this.form.value.primaryPhoneNumber,
+        secondPhoneNumber: this.form.value.alternativePhoneNumber,
+        emailAddress: this.form.value.emailAddress.toLowerCase(),
         additionalNotes: this.form.value.additionalNotes,
 
         guardFullName: this.capitalizeWords(this.form.value.guardianFullName),
         guardRelationship: this.form.value.guardianRelationship,
         guardResidentialAddress: this.capitalizeWords(this.form.value.guardianResidentialAddress),
-        guardPhoneNumber: this.form.value.guardianPhoneNumber,
-        guardEmailAddress: this.form.value.guardianEmailAddress!.toLowerCase()
+        guardFirstPhoneNumber: this.form.value.guardianPrimaryPhoneNumber,
+        guardSecondPhoneNumber: this.form.value.guardianAlternativePhoneNumber,
+        guardEmailAddress: this.form.value.guardianEmailAddress.toLowerCase()
       });
+
+      this.subs.add(
+        this.studentService.update(this.studentEditPersonal.currentEnrollment).subscribe({
+          next: () => {
+            this.alert.show('Student updated successfully!', 'success');
+            this.notificationHub.sendMessage("Initialize enrollment form.");
+          },
+          error: (error) => {
+            console.error("Erro no processo:", error);
+            this.handleError(error);
+          }
+        })
+      );
     }
-    */
+  }
+
+  private handleError(error: HttpErrorResponse)
+  {
+    if (error.status === 400) {
+      this.alert.show('An error occurred.', 'error');
+    } else if (error.status === 401) {
+      this.alert.show('Oops! Unauthorized!', 'error');
+    } else if (error.status === 404) {
+      this.alert.show('Oops! Not found!', 'error');
+    } else if (error.status >= 500) {
+      this.alert.show('Oops! The server is busy!', 'error');
+    } else {
+      this.alert.show('Oops! An unexpected error occurred.', 'error');
+    }
   }
 }

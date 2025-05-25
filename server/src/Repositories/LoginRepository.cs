@@ -261,7 +261,8 @@ namespace server.src.Repositories
                 ValidateIssuerSigningKey = true, // Valida a chave de assinatura
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecurityKey)),
 
-                ValidateLifetime = true, // Ignora a validação de expiração para tokens expirados
+                ValidateLifetime = false, // Permite tokens expirados para extração do principal -- se true = Ignora a validação de expiração para tokens expirados
+
                 ClockSkew = TimeSpan.FromMinutes(2), // Remove o "clock skew" para evitar falsos positivos
                 RequireExpirationTime = true, // Obrigatório em produção
                 RequireSignedTokens = true,   // Nenhum token sem assinatura

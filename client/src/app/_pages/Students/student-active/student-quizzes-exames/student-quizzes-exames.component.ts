@@ -25,8 +25,8 @@ import { RouterLink } from '@angular/router';
 import { NotificationHubService } from '../../../../_services/notification-hub.service';
 import { SnackBarService } from '../../../../_services/snack-bar.service';
 import { TitleNavbarService } from '../../../../_services/title-navbar.service';
-import { TrainersService } from '../../../../_services/trainers.service';
 import { BtnStudentQuizzesExamActionTableComponent } from '../../../../_components/Students/btn-student-quizzes-exam-action-table/btn-student-quizzes-exam-action-table.component';
+import { StudentCourseInfoService } from '../../../../_services/student-course-info.service';
 
 ModuleRegistry.registerModules([ AllCommunityModule]);
 
@@ -63,52 +63,72 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
       },
       {
         headerName: 'Level',
-        minWidth: 70, flex: 1,
+        field: 'level', minWidth: 70, flex: 1,
         cellClass: 'custom-cell-center'
       },
       {
         headerName: 'Schedule',
-        field: 'position', minWidth: 120, flex: 1,
+        field: 'schedule', minWidth: 120, flex: 1,
         cellClass: 'custom-cell-center'
       },
       {
         headerName: 'Quiz 1',
-        field: 'status', minWidth: 110, flex: 1,
+        field: 'quizOne', minWidth: 110, flex: 1,
         cellClass: 'custom-cell-center',
         cellRenderer: (params: any) => {
-          return params.value === 0
-            ? '<span style="color: red;">Inactive</span>'
-            : '<span style="color: green;">Active</span>';
+          if (params.value == 0)
+          { return `<span style="color: #1c1c1c;">${ this.formatToPercentage(params.value) }</span>` }
+          else if (params.value > 0 && params.value < 50)
+          { return `<span style="color: red;">${ this.formatToPercentage(params.value) }</span>` }
+          else if (params.value >= 50 && params.value <= 100)
+          { return `<span style="color: #3A86FF;">${ this.formatToPercentage(params.value) }</span>` }
+          else
+          { return '<span style="color: red; font-weight: bold;">Error</span>' }
         }
       },
       {
         headerName: 'Quiz 2',
-        field: 'status', minWidth: 110, flex: 1,
+        field: 'quizTwo', minWidth: 110, flex: 1,
         cellClass: 'custom-cell-center',
         cellRenderer: (params: any) => {
-          return params.value === 0
-            ? '<span style="color: red;">Inactive</span>'
-            : '<span style="color: green;">Active</span>';
+          if (params.value == 0)
+          { return `<span style="color: #1c1c1c;">${ this.formatToPercentage(params.value) }</span>` }
+          else if (params.value > 0 && params.value < 50)
+          { return `<span style="color: red;">${ this.formatToPercentage(params.value) }</span>` }
+          else if (params.value >= 50 && params.value <= 100)
+          { return `<span style="color: #3A86FF;">${ this.formatToPercentage(params.value) }</span>` }
+          else
+          { return '<span style="color: red; font-weight: bold;">Error</span>' }
         }
       },
       {
         headerName: 'Exam',
-        field: 'status', minWidth: 110, flex: 1,
+        field: 'exam', minWidth: 110, flex: 1,
         cellClass: 'custom-cell-center',
         cellRenderer: (params: any) => {
-          return params.value === 0
-            ? '<span style="color: red;">Inactive</span>'
-            : '<span style="color: green;">Active</span>';
+          if (params.value == 0)
+          { return `<span style="color: #1c1c1c;">${ this.formatToPercentage(params.value) }</span>` }
+          else if (params.value > 0 && params.value < 50)
+          { return `<span style="color: red;">${ this.formatToPercentage(params.value) }</span>` }
+          else if (params.value >= 50 && params.value <= 100)
+          { return `<span style="color: #3A86FF;">${ this.formatToPercentage(params.value) }</span>` }
+          else
+          { return '<span style="color: red; font-weight: bold;">Error</span>' }
         }
       },
       {
         headerName: 'Final Average',
-        field: 'status', minWidth: 170, flex: 1,
+        field: 'finalAverage', minWidth: 170, flex: 1,
         cellClass: 'custom-cell-center',
         cellRenderer: (params: any) => {
-          return params.value === 0
-            ? '<span style="color: red;">Inactive</span>'
-            : '<span style="color: green;">Active</span>';
+          if (params.value == 0)
+          { return `<span style="color: #1c1c1c;">${ this.formatToPercentage(params.value) }</span>` }
+          else if (params.value > 0 && params.value < 50)
+          { return `<span style="color: red;">${ this.formatToPercentage(params.value) }</span>` }
+          else if (params.value >= 50 && params.value <= 100)
+          { return `<span style="color: #3A86FF;">${ this.formatToPercentage(params.value) }</span>` }
+          else
+          { return '<span style="color: red; font-weight: bold;">Error</span>' }
         }
       },
       {
@@ -116,9 +136,14 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
         field: 'status', minWidth: 90, flex: 1,
         cellClass: 'custom-cell-center',
         cellRenderer: (params: any) => {
-          return params.value === 0
-            ? '<span style="color: red;">Inactive</span>'
-            : '<span style="color: green;">Active</span>';
+          if (params.value === 'In Progress')
+          { return `<span style="color: #1c1c1c;">${ params.value }</span>` }
+          else if (params.value == 'Failed')
+          { return `<span style="color: red;">${ params.value }</span>` }
+          else if (params.value == 'Pass')
+          { return `<span style="color: #3A86FF;">${ params.value }</span>` }
+          else
+          { return '<span style="color: red; font-weight: bold;">Error</span>' }
         }
       },
       {
@@ -132,7 +157,7 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
   rowData: any[] = [];
   filteredData: any[] = [];
   searchText: string = '';
-  pageSize: number = 4;
+  pageSize: number = 7;
   currentPage: number = 1;
   totalPages: number = 1;
   startIndex: number = 0;
@@ -146,21 +171,20 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
 
   private subs = new Subscription();
   gridApi!: GridApi;
-  //tableModules = [ ExcelExportModule ] //Versão enterprise do ag-grid
-  // html := [modules]="tableModules"
 
-  private currentYear = new Date().getFullYear();
   private author = "Ramadan IsmaeL";
-  private country = "Mozambique";
   private institution = "English Training Center";
+  private footer = `© 2025 | ${this.author} · License: ${this.institution} · All rights reserved.`;
 
-  private footer = `Generated for ${this.institution} · Made in ${this.country} by ${this.author} · © ${this.currentYear} · All rights reserved.`;
-
-  constructor(private trainerService: TrainersService, private notificationHub: NotificationHubService, private alert: SnackBarService, private clipboard: Clipboard, private titleNavbarService: TitleNavbarService)
+  constructor(private studentCourseInfo: StudentCourseInfoService, private notificationHub: NotificationHubService, private alert: SnackBarService, private clipboard: Clipboard, private titleNavbarService: TitleNavbarService)
   {}
 
   navigateTo (breadcrumbs: { label: string, url?: any[] }) {
     this.titleNavbarService.addBreadcrumb(breadcrumbs);
+  }
+
+  private formatToPercentage(value: number): string {
+    return `${value.toFixed(2)}%`;
   }
 
   formatDate(date: Date | string | null): string {
@@ -196,7 +220,7 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
   private loadData(): void
   {
     this.subs.add(
-      this.trainerService.detailsSubsidy().subscribe((data: any) => {
+      this.studentCourseInfo.getListStudentCourseInfoActive().subscribe((data: any) => {
         this.rowData = data;
         this.applyPagination();
       })
@@ -368,7 +392,7 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
   private async copyAllDataTable(): Promise<void> {
     try {
       // 1. Busca todos os dados dos trainers
-      const response = await lastValueFrom(this.trainerService.detailsSubsidy());
+      const response = await lastValueFrom(this.studentCourseInfo.getListStudentCourseInfoActive());
       const trainers = Array.isArray(response) ? response : [response];
 
       if (!trainers.length) {
@@ -434,7 +458,7 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
   private async exportExcelAllDataTable(): Promise<void> {
     try {
       // 1. Fetch all trainer data
-      const response = await lastValueFrom(this.trainerService.detailsSubsidy());
+      const response = await lastValueFrom(this.studentCourseInfo.getListStudentCourseInfoActive());
 
       // Validate response
       if (!response) {
@@ -806,7 +830,7 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
   private async exportPdfAllDataTable(): Promise<void> {
     try {
       // 1. Fetch all trainer data
-      const response = await lastValueFrom(this.trainerService.detailsSubsidy());
+      const response = await lastValueFrom(this.studentCourseInfo.getListStudentCourseInfoActive());
       const trainers = Array.isArray(response) ? response : [response];
 
       if (!response) {
@@ -1053,7 +1077,7 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
   private async printAllDataTable(): Promise<void> {
     try {
       // 1. Fetch all trainer data
-      const response = await lastValueFrom(this.trainerService.detailsSubsidy());
+      const response = await lastValueFrom(this.studentCourseInfo.getListStudentCourseInfoActive());
       const trainers = Array.isArray(response) ? response : [response];
 
       if (!response) {

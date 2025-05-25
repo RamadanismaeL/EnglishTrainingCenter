@@ -88,7 +88,7 @@ namespace server.src.Repositories
                         else if (paymentCreateDto.AmountMT <= priceDue)
                         { newPricePaid = paymentCreateDto.AmountMT; }
 
-                        paymentCreateDto.AmountMT = newPricePaid;                        
+                        paymentCreateDto.AmountMT = newPricePaid;
 
                         courseFee.PricePaid += newPricePaid;
                         courseFee.DateUpdate = DateTime.Now;
@@ -96,7 +96,7 @@ namespace server.src.Repositories
                         await _dbContext.SaveChangesAsync();
                     }
                     inwords = ValorPorExtenso.ConverterParaExtenso(paymentCreateDto.AmountMT);
-                    
+
                     var receiptData = new StudentPaymentModel
                     {
                         Id = newID,
@@ -112,7 +112,7 @@ namespace server.src.Repositories
                         Days = DateTime.Now.Day,
                         Months = GetMonth(DateTime.Now.Month),
                         Years = DateTime.Now.Year,
-                        Times = DateTime.Now.ToString("HH:mm:ss"),
+                        Times = OnFormatTime(),
 
                         TrainerId = user.Id,
                         TrainerName = userName!
@@ -431,6 +431,15 @@ namespace server.src.Repositories
             previousAmountValue = formattedValue;
 
             return formattedValue;
+        }
+        
+        private static string OnFormatTime()
+        {
+            var date = DateTime.Now;
+            var hours = date.ToString("HH");
+            var minutes = date.ToString("mm");
+            var seconds = date.ToString("ss");
+            return $"{hours}h:{minutes}m:{seconds}s";
         }
     }
 }

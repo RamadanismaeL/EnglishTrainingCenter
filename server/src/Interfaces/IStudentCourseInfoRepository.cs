@@ -12,5 +12,7 @@ namespace server.src.Interfaces
         Task<ResponseDto> Create(StudentCourseInfoCreateDto studentCourseCreateDto);
         Task<List<StudentCourseInfoModel>> Details();
         Task<ResponseDto> UpdateQuiz(StudentCourseInfoUpdateQuizDto courseInfoUpdateQuizDto);
+
+        Task<List<StudentCourseInfoListDto>> GetListStudentCourseInfoActive();
     }
 }

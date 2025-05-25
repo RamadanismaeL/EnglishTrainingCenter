@@ -20,6 +20,7 @@ namespace server.src.Repositories
     {
         private readonly IConverter _converter = converter;
         private static string previousAmountValue = string.Empty;
+        private static string myFooter = "&copy; 2025 | Ramadan I.A. Ismael · Licença: English Training Center · Todos os direitos reservados";
 
         public byte[] PdfGenerateEnrollmentForm(StudentEnrollmentFormModel ficha)
         {
@@ -50,7 +51,7 @@ namespace server.src.Repositories
 
         public async Task<byte[]> PngGenerateEnrollmentForm(StudentEnrollmentFormModel ficha)
         {
-             var html = HtmlGenerateEnrollmentForm(ficha);
+            var html = HtmlGenerateEnrollmentForm(ficha);
             // Baixar o Chromium se não estiver disponível
             var browserFetcher = new BrowserFetcher();
             await browserFetcher.DownloadAsync(); // Baixa a última versão estável do Chromium
@@ -158,10 +159,10 @@ namespace server.src.Repositories
             // Retornar imagem otimizada
             return magickImage.ToByteArray();
         }
-        
+
         private static string HtmlGenerateEnrollmentForm(StudentEnrollmentFormModel ficha)
         {
-          return $@"
+            return $@"
                 <!DOCTYPE html>
                 <html lang='pt'>
                     <head>
@@ -320,10 +321,10 @@ namespace server.src.Repositories
                                             <ol start='1'>
                                                 <li>
                                                     Taxas e Pagamentos
-                                                    <ul style='font-weight: normal;'>
-                                                        <li>O valor do curso de Inglês é <strong>&nbsp;{OnAmount(ficha.CourseFee)} MT</strong>, dividido em três prestações mensais de <strong>&nbsp;{OnAmount(ficha.Installments)} MT</strong>.</li>
-                                                        <li>A primeira prestação deve ser paga antes do início das aulas.</li>
-                                                        <li>No ato da inscrição, é obrigatória a apresentação de um documento de identificação válido.</li>
+                                                    <ul style='font-weight: normal; padding-left: 0;'>
+                                                        <li style='padding-left: 8px;'>O valor do curso de Inglês é <strong>&nbsp;{OnAmount(ficha.CourseFee)} MT</strong>, dividido em três prestações mensais de <strong>&nbsp;{OnAmount(ficha.Installments)} MT</strong>.</li>
+                                                        <li style='padding-left: 8px;'>A primeira prestação deve ser paga antes do início das aulas.</li>
+                                                        <li style='padding-left: 8px;'>No ato da inscrição, é obrigatória a apresentação de um documento de identificação válido.</li>
                                                     </ul>
                                                 </li>
                                             </ol>    
@@ -336,9 +337,9 @@ namespace server.src.Repositories
                                             <ol start='2'>
                                                 <li>
                                                     Comprimissos e Responsabilidades
-                                                    <ul style='font-weight: normal;'>
-                                                        <li>A inscrição no curso implica a aceitação plena das normas institucionais.</li>
-                                                        <li>O(a) participante permanece responsável pelo cumprimento das regras, independentemente da sua frequência às aulas.</li>
+                                                    <ul style='font-weight: normal; padding-left: 0;'>
+                                                        <li style='padding-left: 8px;'>A inscrição no curso implica a aceitação plena das normas institucionais.</li>
+                                                        <li style='padding-left: 8px;'>O(a) participante permanece responsável pelo cumprimento das regras, independentemente da sua </br> frequência às aulas.</li>
                                                     </ul>
                                                 </li>
                                             </ol>    
@@ -351,9 +352,9 @@ namespace server.src.Repositories
                                             <ol start='3'>
                                                 <li>
                                                     Mensalidades e Penalidades
-                                                    <ul style='font-weight: normal;'>
-                                                        <li>As mensalidades devem ser pagas entre os dias <strong>&nbsp;01 e 10 de cada mês</strong>.</li>
-                                                        <li>O não cumprimento do prazo resultará na <strong>&nbsp;suspensão imediata</strong> do(a) participante até a regularização do pagamento.</li>
+                                                    <ul style='font-weight: normal; padding-left: 0;'>
+                                                        <li style='padding-left: 8px;'>As mensalidades devem ser pagas entre os dias <strong>&nbsp;01 e 10 de cada mês</strong>.</li>
+                                                        <li style='padding-left: 8px;'>O não cumprimento do prazo resultará na <strong>&nbsp;suspensão imediata</strong> do(a) participante até a regularização do pagamento.</li>
                                                     </ul>
                                                 </li>                                            
                                             </ol>    
@@ -366,9 +367,9 @@ namespace server.src.Repositories
                                             <ol start='4'>
                                                 <li>
                                                     Pontualidade e Conduta
-                                                    <ul style='font-weight: normal;'>
-                                                        <li>A pontualidade é obrigatória. O acesso à sala será vedado em caso de atrasos.</li>
-                                                        <li>O(a) participante deve apresentar-se com vestimenta adequada ao ambiente acadêmico.</li>
+                                                    <ul style='font-weight: normal; padding-left: 0;'>
+                                                        <li style='padding-left: 8px;'>A pontualidade é obrigatória. O acesso à sala será vedado em caso de atrasos.</li>
+                                                        <li style='padding-left: 8px;'>O(a) participante deve apresentar-se com vestimenta adequada ao ambiente acadêmico.</li>
                                                     </ul>
                                                 </li>
                                             </ol>    
@@ -381,11 +382,11 @@ namespace server.src.Repositories
                                             <ol start='5'>
                                                 <li>
                                                     Regras Gerais
-                                                    <ul style='font-weight: normal;'>
-                                                        <li>Não serão realizados reembolsos de valores pagos, sob qualquer circunstância.</li>
-                                                        <li>É obrigatória a apresentação dos comprovativos de pagamento sempre que solicitado.</li>
-                                                        <li>O(a) participante deverá frequentar as aulas exclusivamente nos horários e dias estabelecidos no ato da inscrição.</li>
-                                                        <li>Ao prosseguir com a inscrição, o(a) participante declara estar ciente e de acordo com todas as condições estabelecidas neste documento.</li>                                                    
+                                                    <ul style='font-weight: normal; padding-left: 0;'>
+                                                        <li style='padding-left: 8px;'>Não serão realizados reembolsos de valores pagos, sob qualquer circunstância.</li>
+                                                        <li style='padding-left: 8px;'>É obrigatória a apresentação dos comprovativos de pagamento sempre que solicitado.</li>
+                                                        <li style='padding-left: 8px;'>O(a) participante deverá frequentar as aulas exclusivamente nos horários e dias estabelecidos no ato da inscrição.</li>
+                                                        <li style='padding-left: 8px;'>Ao prosseguir com a inscrição, o(a) participante declara estar ciente e de acordo com todas as condições estabelecidas neste documento.</li>                                                    
                                                     </ul>
                                                 </li>
                                             </ol>    
@@ -406,7 +407,7 @@ namespace server.src.Repositories
                                 </tr>
                                 <tr>
                                     <td valign='middle' align='center' style='padding: 0 0 30px 0'>
-                                        <small>Hora: {OnCheckSpace(ficha.Times.ToString("HH:mm:ss"))}</small>
+                                        <small>Hora: {OnCheckSpace(FormatTime(ficha.Times))}</small>
                                     </td>                                
                                 </tr>
                                 <tr>
@@ -437,7 +438,7 @@ namespace server.src.Repositories
                             </tbody>
                         </table>
                         <footer style='width: 100%; text-align: center; margin-top: 720px;'>
-                            <small>&copy; 2025 | Ramadan I.A. Ismael · License: English Training Center · All rights reserved</small>
+                            <small>{ myFooter }</small>
                         </footer>
                     </body>
                 </html>
@@ -603,7 +604,7 @@ namespace server.src.Repositories
                                         <div style='font-size: 14pt; font-weight: bold;'>COMPROVATIVO DE PAGAMENTO</div>
                                         <div style='font-size: 12pt; font-weight: bold; padding-top: 5px;'>
                                             VALOR
-                                            <span class='retang-value'>{ OnAmount(ficha.AmountMT) }</span>
+                                            <span class='retang-value'>{OnAmount(ficha.AmountMT)}</span>
                                             MT
                                         </div>  
                                     </div>                                    
@@ -611,14 +612,14 @@ namespace server.src.Repositories
                                 <td rowspan='2' valign='middle' align='center'>
                                     <div class='retang' style='padding: 40px 0'>
                                         <div style='font-size: 12pt; font-weight: bold;'>RECIBO Nº</div>
-                                        <div style='font-size: 14pt; font-weight: bold;'>{ OnCheckSpace(ficha.Id) }</div>
+                                        <div style='font-size: 14pt; font-weight: bold;'>{OnCheckSpace(ficha.Id)}</div>
                                     </div>                                    
                                 </td>
                             </tr>
                             <tr>
                                 <td valign='middle' align='center' class='space-col'>
                                     <div class='retang' style='font-size: 11pt; padding: 5px 0;'>
-                                        Número de Estudente: { OnCheckSpace(ficha.StudentId) }
+                                        Número de Estudente: {OnCheckSpace(ficha.StudentId)}
                                     </div>
                                 </td>
                             </tr>  
@@ -627,15 +628,15 @@ namespace server.src.Repositories
                         <div class='retang' style='margin-top: 5px;'>
                             <div style='font-size: 11pt; padding: 5px 0;'>
                                 Recebi(emos) do(a) Exmo.(a) Sr.(a)
-                                <span class='wide-field'>{ OnCheckSpace(ficha.ReceivedFrom) }</span>
+                                <span class='wide-field'>{OnCheckSpace(ficha.ReceivedFrom)}</span>
                             </div> 
                             <div style='font-size: 11pt; padding: 5px 0;'>
                                 a quantia de 
-                                <span class='wide-field-field'>{ OnCheckSpace(ficha.InWords) }</span>
+                                <span class='wide-field-field'>{OnCheckSpace(ficha.InWords)}</span>
                             </div> 
                             <div style='font-size: 11pt; padding: 5px 0;'>
                                 referente ao pagamento da 
-                                <span class='wide-field-field-field'>{ OnCheckSpace(ficha.DescriptionPortuguese) }</span>
+                                <span class='wide-field-field-field'>{OnCheckSpace(ficha.DescriptionPortuguese)}</span>
                             </div> 
                             <div style='font-size: 11pt; padding: 10px 0;'>
                                 de que passamos o presente recibo.
@@ -666,9 +667,9 @@ namespace server.src.Repositories
                             <div style='text-align: right; margin-top: 20px;'>
                                 <div style='display: inline-block; width: 50%; text-align: center;'>
                                     <div>
-                                        Maputo, <span class='input-line'>{ ficha.Days }</span> de 
-                                        <span class='input-line' style='padding: 0 50px'>{ OnCheckSpace(ficha.Months) }</span> de 
-                                        <span class='input-line'>{ ficha.Years }</span>
+                                        Maputo, <span class='input-line'>{ficha.Days}</span> de 
+                                        <span class='input-line' style='padding: 0 50px'>{OnCheckSpace(ficha.Months)}</span> de 
+                                        <span class='input-line'>{ficha.Years}</span>
                                     </div>
                                     <div style='font-size: 10pt; margin-top: 5px;'>
                                         Hora: {OnCheckSpace(ficha.Times)}
@@ -683,7 +684,7 @@ namespace server.src.Repositories
                         </div>
                     </div>
                     <div style='width: 100%; text-align: center;'>
-                        <small>&copy; 2025 | Ramadan I.A. Ismael · License: English Training Center · All rights reserved</small>
+                        <small>{ myFooter }</small>
                     </div>
                 </body>
                 </html>
@@ -929,7 +930,7 @@ namespace server.src.Repositories
                             </div>
                         </div>
                         <div style='width: 100%; text-align: center;'>
-                            <small>&copy; 2025 | Ramadan I.A. Ismael · License: English Training Center · All rights reserved</small>
+                            <small>{ myFooter }</small>
                         </div>
 
                         <div style='border-top: 1px dashed #2f2f2f; margin: 35px 0;'></div>
@@ -1039,7 +1040,7 @@ namespace server.src.Repositories
                             </div>
                         </div>
                         <div style='width: 100%; text-align: center;'>
-                            <small>&copy; 2025 | Ramadan I.A. Ismael · License: English Training Center · All rights reserved</small>
+                            <small>{ myFooter }</small>
                         </div>
                     </div>                    
                 </body>
@@ -1115,6 +1116,15 @@ namespace server.src.Repositories
             if (!string.IsNullOrWhiteSpace(value)) return value;
 
             return "--";
-        }        
+        }
+
+        private static string FormatTime(DateTime date)
+        {
+            // Returns the time in "HH:mm:ss" format//ficha.Times.ToString("HH:mm:ss")
+            var hours = date.ToString("HH");
+            var minutes = date.ToString("mm");
+            var seconds = date.ToString("ss");
+            return $"{hours}h:{minutes}m:{seconds}s";
+        }
     }
 }

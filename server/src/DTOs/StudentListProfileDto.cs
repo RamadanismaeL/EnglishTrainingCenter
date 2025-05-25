@@ -4,11 +4,16 @@
 
 namespace server.src.DTOs
 {
-    public class StudentUpdateDto
+    public class StudentListProfileDto
     {
-        public long Order { get; set; }
+        // COURSE INFO
+        public string Package { get; set; } = string.Empty;
+        public string Level { get; set; } = string.Empty;
+        public string Modality { get; set; } = string.Empty;
+        public string AcademicPeriod { get; set; } = string.Empty;
+        public string Schedule { get; set; } = string.Empty;
 
-
+        
         // IDENTIFICATION DOCUMENT
         public string DocumentType { get; set; } = string.Empty;
         public string IdNumber { get; set; } = string.Empty;

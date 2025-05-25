@@ -37,6 +37,18 @@ namespace server.src.Controllers
             return response.IsSuccess ? Ok(response) : BadRequest(response);
         }
 
+        [HttpPatch("update")]
+        public async Task<IActionResult> Update([FromBody] StudentUpdateDto studentUpdateDto)
+        {
+            if(!ModelState.IsValid) return BadRequest(ModelState);
+
+            var response = await _studentRepository.Update(studentUpdateDto);
+
+            await _hubContext.Clients.All.SendAsync("ReceiveMessage", "Updated successfully.");
+
+            return response.IsSuccess ? Ok(response) : BadRequest(response);
+        }
+
         [HttpGet("detail-student-data")]
         public async Task<ActionResult<List<StudentDataModel>>> DetailStudentData()
         {
@@ -89,6 +101,30 @@ namespace server.src.Controllers
         public async Task<ActionResult<StudentDataModel>> GetStudentDataByName(string fullName)
         {
             var student = await _studentRepository.GetStudentDataByName(fullName);
+
+            return Ok(student);
+        }
+
+        [HttpPost("get-student-list-profile-edit-by-id/{id}")]
+        public async Task<ActionResult<StudentUpdateDto>> GetStudentListProfileEditById(string id)
+        {
+            var student = await _studentRepository.GetStudentListProfileEditById(id);
+
+            return Ok(student);
+        }
+
+        [HttpPost("get-student-list-profile-by-id/{id}")]
+        public async Task<ActionResult<StudentListProfileDto>> GetStudentListProfileById(string id)
+        {
+            var student = await _studentRepository.GetStudentListProfileById(id);
+
+            return Ok(student);
+        }
+
+        [HttpPost("get-student-list-profile-enrollment-by-id/{id}")]
+        public async Task<ActionResult<StudentListProfileEnrollmentDto>> GetStudentListProfileEnrollmentById(string id)
+        {
+            var student = await _studentRepository.GetStudentListProfileEnrollmentById(id);
 
             return Ok(student);
         }

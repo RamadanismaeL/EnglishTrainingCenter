@@ -12,6 +12,7 @@ import { CourseInfoModel } from '../_interfaces/course-info-model';
 import { ListStudentActiveDto } from '../_interfaces/list-student-active-dto';
 import { StudentListProfileDto } from '../_interfaces/student-list-profile-dto';
 import { StudentListProfileEnrollmentDto } from '../_interfaces/student-list-profile-enrollment-dto';
+import { StudentListProfileEditDto } from '../_interfaces/student-list-profile-edit-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -24,6 +25,9 @@ export class StudentsService {
 
   create = (data : StudentsCreateDto) : Observable<ResponseDto> => this.http
     .post<ResponseDto>(`${this.myUrl}/Students/create`, data, {headers : { 'Allow-Offline' : 'true' }});
+
+  update = (data : StudentListProfileEditDto) : Observable<ResponseDto> => this.http
+      .patch<ResponseDto>(`${this.myUrl}/Students/update`, data, {headers : { 'Allow-Offline' : 'true' }});
 
   getStudentById = () : Observable<string> => this.http
     .get(`${this.myUrl}/Students/getStudentById`, { headers: { 'Allow-Offline': 'true' },
@@ -58,6 +62,9 @@ export class StudentsService {
 
   getPriceDueById = (id: string) : Observable<number> => this.http
     .post<number>(`${this.myUrl}/StudentPayment/get-price-due-by-id/${id}`, {headers : { 'Allow-Offline' : 'true' }});
+
+  GetStudentListProfileEditById = (id: string) : Observable<StudentListProfileEditDto> => this.http
+    .post<StudentListProfileEditDto>(`${this.myUrl}/Students/get-student-list-profile-edit-by-id/${id}`, {headers : { 'Allow-Offline' : 'true' }});
 
   getStudentListProfileById = (id: string) : Observable<StudentListProfileDto> => this.http
     .post<StudentListProfileDto>(`${this.myUrl}/Students/get-student-list-profile-by-id/${id}`, {headers : { 'Allow-Offline' : 'true' }});

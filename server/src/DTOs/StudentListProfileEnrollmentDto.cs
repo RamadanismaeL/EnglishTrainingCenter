@@ -4,11 +4,32 @@
 
 namespace server.src.DTOs
 {
-    public class StudentUpdateDto
+    public class StudentListProfileEnrollmentDto
     {
-        public long Order { get; set; }
+        // COURSE INFO
+        public string CourseName { get; set; } = string.Empty;
+        public string Package { get; set; } = string.Empty;
+        public string Level { get; set; } = string.Empty;
+        public string Modality { get; set; } = string.Empty;
+        public string AcademicPeriod { get; set; } = string.Empty;
+        public string Schedule { get; set; } = string.Empty;
+        public string Duration { get; set; } = string.Empty;
+        public decimal MonthlyFee { get; set; }
+        public int Age { get; set; }
 
 
+        // Fees and Payment
+        public decimal CourseFee { get; set; }
+        public decimal Installments { get; set; }
+
+
+        // Date
+        public int Days { get; set; }
+        public string Months { get; set; } = string.Empty;
+        public int Years { get; set; }
+        public DateTime Times { get; set; }
+
+        
         // IDENTIFICATION DOCUMENT
         public string DocumentType { get; set; } = string.Empty;
         public string IdNumber { get; set; } = string.Empty;
@@ -19,7 +40,6 @@ namespace server.src.DTOs
         // PERSONAL DATA
         public string FullName { get; set; } = string.Empty;
         public string DateOfBirth { get; set; } = string.Empty;
-        public DateTime DateOfBirthCalc { get; set; }
         public string Gender { get; set; } = string.Empty;
         public string MaritalStatus { get; set; } = string.Empty;
         public string Nationality { get; set; } = string.Empty;

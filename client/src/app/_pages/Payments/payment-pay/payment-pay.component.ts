@@ -52,6 +52,7 @@ export class PaymentPayComponent implements OnInit, OnDestroy {
   studentInfo_academicPeriod : string | undefined = '--';
   studentInfo_schedule : string | undefined = '--';
   studentInfo_amountMT : string | undefined = '--';
+  amountMToPay : number | undefined;
 
   previousAmountValue: string = '';
   courseFeeActive: boolean = false;
@@ -86,7 +87,7 @@ export class PaymentPayComponent implements OnInit, OnDestroy {
     // Configura o autocomplete
     this.filteredStudents$ = this.form.get('studentName')!.valueChanges.pipe(
       startWith(''),
-      debounceTime(300),
+      debounceTime(200),
       switchMap(value => {
         if (value && typeof value === 'object') {
           return of([value]); // Mostra apenas o estudante selecionado
@@ -144,6 +145,7 @@ export class PaymentPayComponent implements OnInit, OnDestroy {
             this.studentInfo_amountMT = `${this.formatAmount(value)} MT`;
           }
           this.paymentPayNow.updateAttribute('amountToPay', value)
+          this.amountMToPay = value;
         }
       })
     );
@@ -166,7 +168,8 @@ export class PaymentPayComponent implements OnInit, OnDestroy {
           {
             this.studentInfo_amountMT = `${this.formatAmount(result.amount)} MT`;
 
-            this.paymentPayNow.updateAttribute('amountToPay', result.amount)
+            this.paymentPayNow.updateAttribute('amountToPay', result.amount);
+            this.amountMToPay = result.amount;
           }
         },
         error: (err) => {
@@ -227,7 +230,7 @@ export class PaymentPayComponent implements OnInit, OnDestroy {
       modality: activeCourse?.modality ?? '--',
       academicPeriod: activeCourse?.academicPeriod ?? '--',
       schedule: activeCourse?.schedule ?? '--',
-      amountToPay: 0
+      amountToPay: this.amountMToPay
     });
 
     this.studentInfo_package = this.paymentPayNow.currentEnrollment.package;

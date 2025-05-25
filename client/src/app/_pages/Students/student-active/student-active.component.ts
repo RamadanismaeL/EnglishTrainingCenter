@@ -167,12 +167,6 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
       : `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth()+1).toString().padStart(2, '0')}/${d.getFullYear()}`;
   }
 
-  /*
-  ngAfterViewInit() {
-    console.log(typeof this.pageSize); // Deve mostrar "number"
-  }
-    */
-
   ngOnInit(): void
   {
     this.subs.add(
@@ -372,7 +366,7 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
       }
 
       const ignoreKeys = ['order'];
-      const orderedKeys = ['fullName', 'gender', 'age', 'package', 'level', 'modality', 'academicPeriod', 'schedule']; // ordem desejada
+      const orderedKeys = ['id', 'fullName', 'gender', 'age', 'package', 'level', 'modality', 'academicPeriod', 'schedule']; // ordem desejada
 
       // Filtra a ordem excluindo colunas ignoradas
       const finalKeys = orderedKeys.filter(key => !ignoreKeys.includes(key));
@@ -447,6 +441,7 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
       const worksheet = workbook.addWorksheet('Trainers');
 
       const excelColumns = [
+        { header: 'Code', key: 'id', width: 20 },
         { header: 'Full Name', key: 'fullName', width: 40 },
         { header: 'Gender', key: 'gender', width: 15 },
         { header: 'Age', key: 'age', width: 10 },
@@ -493,6 +488,7 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
       students.forEach((student, index) => {
         const rowNumber = index + 5; // Começa da linha 5
         worksheet.getRow(rowNumber).values = [
+          student.id ?? '',
           student.fullName ?? '',
           student.gender ?? '',
           student.age ?? '',
@@ -515,7 +511,7 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
 
             const columnLetter = worksheet.getColumn(cell.col).letter;
 
-            if (['A'].includes(columnLetter)) {
+            if (['B'].includes(columnLetter)) {
               cell.alignment = { vertical: 'middle', horizontal: 'left' };
             }
 
@@ -567,7 +563,7 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
       //console.log('LastRow + 2 = ', calc)
 
       const footer = worksheet.getRow(calc);
-      worksheet.mergeCells(`A${calc}:H${calc}`);
+      worksheet.mergeCells(`A${calc}:I${calc}`);
       footer.height = 20;
       const myName = worksheet.getCell(`A${calc}`);
       myName.value = this.footer;
@@ -578,21 +574,21 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
 
       worksheet.getRow(1).values = [];
       worksheet.getRow(1).height = 30;
-      worksheet.mergeCells('A1:F1');
+      worksheet.mergeCells('A1:G1');
       const titleCell1 = worksheet.getCell('A1');
       titleCell1.value = 'ENGLISH TRAINING CENTER';
       titleCell1.font = { size: 22, bold: true, color: { argb: 'FF2C2C2C' } };
       titleCell1.alignment = { vertical: 'middle', horizontal: 'center' };
 
-      worksheet.mergeCells('A2:F2');
+      worksheet.mergeCells('A2:G2');
       const titleCell2 = worksheet.getCell('A2');
       titleCell2.value = 'Students : Active – Full List';
       titleCell2.font = { size: 20, bold: true, color: { argb: '2C2C2C' } };
       titleCell2.alignment = { vertical: 'middle', horizontal: 'center' };
 
       // Adicionar data
-      const dateCell = worksheet.getCell('G2');
-      worksheet.mergeCells('G2:H2')
+      const dateCell = worksheet.getCell('H2');
+      worksheet.mergeCells('H2:I2')
       dateCell.value = `Issued on: ${this.formatDate(new Date())}`;
       dateCell.font = { size: 12, bold: false, color: { argb: '2C2C2C' } };
       dateCell.alignment = { vertical: 'middle', horizontal: 'right' };
@@ -617,17 +613,17 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
       }
 
       // 1. Obter dados VISÍVEIS do grid (com filtros aplicados)
-      const rowData: any[] = [];
+      const students: any[] = [];
       this.gridApi.forEachNodeAfterFilter(node => {
         if (node.data) {
-          rowData.push(node.data);
+          students.push(node.data);
         }
       });
 
       // Alternativa para dados SELECIONADOS:
       // const rowData = this.gridApi.getSelectedRows();
 
-      if (!rowData.length) {
+      if (!students.length) {
         this.alert.show('No data available for export.', 'warning');
         return;
       }
@@ -637,6 +633,7 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
       const worksheet = workbook.addWorksheet('Trainers');
 
       const excelColumns = [
+        { header: 'Code', key: 'id', width: 20 },
         { header: 'Full Name', key: 'fullName', width: 40 },
         { header: 'Gender', key: 'gender', width: 15 },
         { header: 'Age', key: 'age', width: 10 },
@@ -680,9 +677,10 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
       });
 
       // 5. Add data SAFELY (only mapped columns)
-      rowData.forEach((student, index) => {
+      students.forEach((student, index) => {
         const rowNumber = index + 5; // Começa da linha 5
         worksheet.getRow(rowNumber).values = [
+          student.id ?? '',
           student.fullName ?? '',
           student.gender ?? '',
           student.age ?? '',
@@ -705,7 +703,7 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
 
             const columnLetter = worksheet.getColumn(cell.col).letter;
 
-            if (['A'].includes(columnLetter)) {
+            if (['B'].includes(columnLetter)) {
               cell.alignment = { vertical: 'middle', horizontal: 'left' };
             }
 
@@ -757,7 +755,7 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
       //console.log('LastRow + 2 = ', calc)
 
       const footer = worksheet.getRow(calc);
-      worksheet.mergeCells(`A${calc}:H${calc}`);
+      worksheet.mergeCells(`A${calc}:I${calc}`);
       footer.height = 20;
       const myName = worksheet.getCell(`A${calc}`);
       myName.value = this.footer;
@@ -768,21 +766,21 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
 
       worksheet.getRow(1).values = [];
       worksheet.getRow(1).height = 30;
-      worksheet.mergeCells('A1:F1');
+      worksheet.mergeCells('A1:G1');
       const titleCell1 = worksheet.getCell('A1');
       titleCell1.value = 'ENGLISH TRAINING CENTER';
       titleCell1.font = { size: 22, bold: true, color: { argb: 'FF2C2C2C' } };
       titleCell1.alignment = { vertical: 'middle', horizontal: 'center' };
 
-      worksheet.mergeCells('A2:F2');
+      worksheet.mergeCells('A2:G2');
       const titleCell2 = worksheet.getCell('A2');
       titleCell2.value = 'Students : Active – Filtered List';
       titleCell2.font = { size: 20, bold: true, color: { argb: '2C2C2C' } };
       titleCell2.alignment = { vertical: 'middle', horizontal: 'center' };
 
       // Adicionar data
-      const dateCell = worksheet.getCell('G2');
-      worksheet.mergeCells('G2:H2')
+      const dateCell = worksheet.getCell('H2');
+      worksheet.mergeCells('H2:I2')
       dateCell.value = `Issued on: ${this.formatDate(new Date())}`;
       dateCell.font = { size: 12, bold: false, color: { argb: '2C2C2C' } };
       dateCell.alignment = { vertical: 'middle', horizontal: 'right' };
@@ -813,6 +811,7 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
 
       // Preparar cabeçalhos
       const headers = [
+        'Code',
         'Full Name',
         'Gender',
         'Age',
@@ -825,6 +824,7 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
 
       // 4. Mapear os dados para o formato da tabela
       const data = students.map(student => [
+          student.id ?? '',
           student.fullName ?? '',
           student.gender ?? '',
           student.age ?? '',
@@ -879,14 +879,15 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
 
         columnStyles: {
           // Ajuste proporcional conforme suas colunas
-          0: { cellWidth: 50, halign: 'left' },
-          1: { cellWidth: 'auto', halign: 'center' },
+          0: { cellWidth: 'auto', halign: 'center' },
+          1: { cellWidth: 50, halign: 'left' },
           2: { cellWidth: 'auto', halign: 'center' },
           3: { cellWidth: 'auto', halign: 'center' },
           4: { cellWidth: 'auto', halign: 'center' },
           5: { cellWidth: 'auto', halign: 'center' },
           6: { cellWidth: 'auto', halign: 'center' },
-          7: { cellWidth: 'auto', halign: 'center' }
+          7: { cellWidth: 'auto', halign: 'center' },
+          8: { cellWidth: 'auto', halign: 'center' }
         },
 
         headStyles: {
@@ -945,6 +946,7 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
 
       // Preparar cabeçalhos
       const headers = [
+        'Code',
         'Full Name',
         'Gender',
         'Age',
@@ -957,6 +959,7 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
 
       // 4. Mapear os dados para o formato da tabela
       const data = rowData.map(student => [
+          student.id ?? '',
           student.fullName ?? '',
           student.gender ?? '',
           student.age ?? '',
@@ -1010,15 +1013,15 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
         tableWidth: 'auto', // ou 'auto' para ajuste automático
 
         columnStyles: {
-          // Ajuste proporcional conforme suas colunas
-          0: { cellWidth: 50, halign: 'left' },
-          1: { cellWidth: 'auto', halign: 'center' },
+          0: { cellWidth: 'auto', halign: 'center' },
+          1: { cellWidth: 50, halign: 'left' },
           2: { cellWidth: 'auto', halign: 'center' },
           3: { cellWidth: 'auto', halign: 'center' },
           4: { cellWidth: 'auto', halign: 'center' },
           5: { cellWidth: 'auto', halign: 'center' },
           6: { cellWidth: 'auto', halign: 'center' },
-          7: { cellWidth: 'auto', halign: 'center' }
+          7: { cellWidth: 'auto', halign: 'center' },
+          8: { cellWidth: 'auto', halign: 'center' }
         },
 
         headStyles: {
@@ -1069,6 +1072,7 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
 
       // Preparar cabeçalhos
       const headers = [
+        'Code',
         'Full Name',
         'Gender',
         'Age',
@@ -1081,6 +1085,7 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
 
       // 4. Mapear os dados para o formato da tabela
       const data = students.map(student => [
+          student.id ?? '',
           student.fullName ?? '',
           student.gender ?? '',
           student.age ?? '',
@@ -1134,15 +1139,15 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
         tableWidth: 'auto', // ou 'auto' para ajuste automático
 
         columnStyles: {
-          // Ajuste proporcional conforme suas colunas
-          0: { cellWidth: 50, halign: 'left' },
-          1: { cellWidth: 'auto', halign: 'center' },
+          0: { cellWidth: 'auto', halign: 'center' },
+          1: { cellWidth: 50, halign: 'left' },
           2: { cellWidth: 'auto', halign: 'center' },
           3: { cellWidth: 'auto', halign: 'center' },
           4: { cellWidth: 'auto', halign: 'center' },
           5: { cellWidth: 'auto', halign: 'center' },
           6: { cellWidth: 'auto', halign: 'center' },
-          7: { cellWidth: 'auto', halign: 'center' }
+          7: { cellWidth: 'auto', halign: 'center' },
+          8: { cellWidth: 'auto', halign: 'center' }
         },
 
         headStyles: {
@@ -1223,6 +1228,7 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
 
       // Preparar cabeçalhos
       const headers = [
+        'Code',
         'Full Name',
         'Gender',
         'Age',
@@ -1235,6 +1241,7 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
 
       // 4. Mapear os dados para o formato da tabela
       const data = rowData.map(student => [
+          student.id ?? '',
           student.fullName ?? '',
           student.gender ?? '',
           student.age ?? '',
@@ -1288,15 +1295,15 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
         tableWidth: 'auto', // ou 'auto' para ajuste automático
 
         columnStyles: {
-          // Ajuste proporcional conforme suas colunas
-          0: { cellWidth: 50, halign: 'left' },
-          1: { cellWidth: 'auto', halign: 'center' },
+          0: { cellWidth: 'auto', halign: 'center' },
+          1: { cellWidth: 50, halign: 'left' },
           2: { cellWidth: 'auto', halign: 'center' },
           3: { cellWidth: 'auto', halign: 'center' },
           4: { cellWidth: 'auto', halign: 'center' },
           5: { cellWidth: 'auto', halign: 'center' },
           6: { cellWidth: 'auto', halign: 'center' },
-          7: { cellWidth: 'auto', halign: 'center' }
+          7: { cellWidth: 'auto', halign: 'center' },
+          8: { cellWidth: 'auto', halign: 'center' }
         },
 
         headStyles: {

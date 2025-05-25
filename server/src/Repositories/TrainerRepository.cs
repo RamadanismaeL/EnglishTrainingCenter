@@ -244,7 +244,7 @@ namespace server.src.Repositories
 
                     if (!removeResult.Succeeded)
                     {
-                        _logger.LogWarning($"Failed to remove roles: {string.Join(", ", removeResult.Errors.Select(e => e.Description))}");
+                        _logger.LogWarning($"Failed to remove roles: { string.Join(", ", removeResult.Errors.Select(e => e.Description)) }");
                     }
 
                     foreach (var role in trainerUpdateDto.Roles)

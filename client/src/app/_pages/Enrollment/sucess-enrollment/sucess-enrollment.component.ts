@@ -114,9 +114,9 @@ export class SucessEnrollmentComponent implements OnInit, OnDestroy, ICellRender
   }
 
   amountMT : string | undefined = '--';
-  receivedFrom : string | undefined = '--';
   method : string | undefined = '--';
   transaction : string | undefined = '--';
+  receivedFrom : string | undefined = '--';
 
   params: any;
 
@@ -124,16 +124,6 @@ export class SucessEnrollmentComponent implements OnInit, OnDestroy, ICellRender
   {}
 
   ngOnInit(): void {
-    this.subs.add(
-      this.enrollmentPaymentService.enrollment$.pipe(
-        filter((enrollment): enrollment is StudentPaymentCreateDto => !!enrollment)
-      ).subscribe(enrollment => {
-        this.amountMT = `${this.formatAmount(enrollment.amountMT)} MT`;
-        this.receivedFrom = enrollment.receivedFrom;
-        this.method = enrollment.method;
-        this.transaction = enrollment.description;
-      })
-    );
     this.subs.add(
       this.notificationHub.receiveMessage().subscribe(() => {
         this.loadDetails();
@@ -171,6 +161,11 @@ export class SucessEnrollmentComponent implements OnInit, OnDestroy, ICellRender
             this.studentService.detailStudentPaymentReceiptById(paymentId).subscribe({
               next: (paymentData: StudentPaymentModel) => {
                 this.studentDataPayment = { ...paymentData };
+
+                this.amountMT = `${this.formatAmount(paymentData.amountMT)} MT`;
+                this.receivedFrom = paymentData.receivedFrom;
+                this.method = paymentData.method;
+                this.transaction = paymentData.descriptionEnglish;
               },
               error: (err) => console.error('Erro ao carregar pagamento:', err)
             })

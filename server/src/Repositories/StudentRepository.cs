@@ -209,14 +209,126 @@ namespace server.src.Repositories
             }
         }
 
+        public async Task<ResponseDto> Update(StudentUpdateDto studentUpdateDto)
+        {
+            try
+            {
+                var trainerAuth = _httpContextAccessor.HttpContext?.User;
+                if (trainerAuth == null)
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "User not authenticated."
+                    };
+                }
+
+                var trainerId = trainerAuth.FindFirst(ClaimTypes.NameIdentifier);
+                if (trainerId == null)
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "User not found."
+                    };
+                }
+
+                var trainerIdValue = trainerId.Value;
+                var trainer = await _dbContext.Users
+                    .FirstOrDefaultAsync(u => u.Id == trainerIdValue);
+                if (trainer == null)
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "User not found."
+                    };
+                }
+
+                var userNameClaim = _httpContextAccessor.HttpContext?.User.FindFirst(JwtRegisteredClaimNames.Name);
+
+                var trainerName = userNameClaim?.Value;
+
+
+                var studentExistIdDoc = !string.IsNullOrEmpty(studentUpdateDto.IdNumber)
+                    && await _dbContext.StudentData.AnyAsync(s => s.IdNumber == studentUpdateDto.IdNumber && s.Order != studentUpdateDto.Order);
+
+                var studentExistFullName = !string.IsNullOrEmpty(studentUpdateDto.FullName)
+                    && await _dbContext.StudentData.AnyAsync(s => s.FullName == studentUpdateDto.FullName && s.Order != studentUpdateDto.Order);
+
+
+                if (studentExistIdDoc || studentExistFullName)
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "Student already exist!"
+                    };
+                }
+
+                var student = await _dbContext.StudentData.FindAsync(studentUpdateDto.Order);
+                if (student == null)
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "Id not found."
+                    };
+
+                student.DocumentType = studentUpdateDto.DocumentType;
+                student.IdNumber = studentUpdateDto.IdNumber;
+                student.PlaceOfIssue = studentUpdateDto.PlaceOfIssue;
+                student.ExpirationDate = studentUpdateDto.ExpirationDate;
+
+                student.FullName = studentUpdateDto.FullName;
+                student.DateOfBirth = studentUpdateDto.DateOfBirth;
+                student.DateOfBirthCalc = studentUpdateDto.DateOfBirthCalc;
+                student.Gender = studentUpdateDto.Gender;
+                student.MaritalStatus = studentUpdateDto.MaritalStatus;
+                student.Nationality = studentUpdateDto.Nationality;
+                student.PlaceOfBirth = studentUpdateDto.PlaceOfBirth;
+                student.ResidentialAddress = studentUpdateDto.ResidentialAddress;
+                student.FirstPhoneNumber = studentUpdateDto.FirstPhoneNumber;
+                student.SecondPhoneNumber = studentUpdateDto.SecondPhoneNumber;
+                student.EmailAddress = studentUpdateDto.EmailAddress;
+                student.AdditionalNotes = studentUpdateDto.AdditionalNotes;
+
+                student.GuardFullName = studentUpdateDto.GuardFullName;
+                student.GuardRelationship = studentUpdateDto.GuardRelationship;
+                student.GuardResidentialAddress = studentUpdateDto.GuardResidentialAddress;
+                student.GuardFirstPhoneNumber = studentUpdateDto.GuardFirstPhoneNumber;
+                student.GuardSecondPhoneNumber = studentUpdateDto.GuardSecondPhoneNumber;
+                student.GuardEmailAddress = studentUpdateDto.GuardEmailAddress;
+
+                student.DateUpdate = DateTime.Now;
+                student.TrainerName = trainerName!;
+
+                await _dbContext.SaveChangesAsync();
+
+                return new ResponseDto
+                {
+                    IsSuccess = true,
+                    Message = "Student updated successfully."
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating student.");
+                return new ResponseDto
+                {
+                    IsSuccess = false,
+                    Message = "An unexpected error occurred while updating."
+                };
+            }
+        }
+
         public async Task<List<StudentDataModel>> DetailStudentData()
         {
             return await _dbContext.StudentData
                 .AsNoTracking()
-                .Include(sf => sf.EnrollmentForm)
-                .Include(cf => cf.StudentCourseFee)
-                .Include(sc => sc.CourseInfo)
-                .Include(sp => sp.Payments)
+                //.Include(sf => sf.EnrollmentForm)
+                //.Include(cf => cf.StudentCourseFee)
+                //.Include(sc => sc.CourseInfo)
+                //.Include(sp => sp.Payments)
                 .Select(s => new StudentDataModel
                 {
                     Order = s.Order,
@@ -242,6 +354,7 @@ namespace server.src.Repositories
 
                     GuardFullName = s.GuardFullName,
                     GuardRelationship = s.GuardRelationship,
+                    GuardResidentialAddress = s.GuardResidentialAddress,
                     GuardFirstPhoneNumber = s.GuardFirstPhoneNumber,
                     GuardSecondPhoneNumber = s.GuardSecondPhoneNumber,
                     GuardEmailAddress = s.GuardEmailAddress,
@@ -251,9 +364,9 @@ namespace server.src.Repositories
                     DateUpdate = s.DateUpdate,
 
                     StudentCourseFee = s.StudentCourseFee,
-                    EnrollmentForm = s.EnrollmentForm,
+                    //EnrollmentForm = s.EnrollmentForm,
                     CourseInfo = s.CourseInfo,
-                    Payments = s.Payments
+                    //Payments = s.Payments
                 })
                 .OrderBy(s => s.FullName)
                 .ToListAsync();
@@ -546,12 +659,160 @@ namespace server.src.Repositories
             };
         }
 
+        public async Task<StudentUpdateDto> GetStudentListProfileEditById(string id)
+        {
+            var student = await _dbContext.StudentData
+                .AsNoTracking()
+                .Include(c => c.CourseInfo)
+                .Where(s => s.Id == id)
+                .Select(x => new StudentUpdateDto
+                {
+                    Order = x.Order,
+                    DocumentType = x.DocumentType,
+                    IdNumber = x.IdNumber,
+                    PlaceOfIssue = x.PlaceOfIssue,
+                    ExpirationDate = x.ExpirationDate,
+
+                    FullName = x.FullName,
+                    DateOfBirth = x.DateOfBirth,
+                    Gender = x.Gender,
+                    MaritalStatus = x.MaritalStatus,
+                    Nationality = x.Nationality,
+                    PlaceOfBirth = x.PlaceOfBirth,
+                    ResidentialAddress = x.ResidentialAddress,
+                    FirstPhoneNumber = x.FirstPhoneNumber,
+                    SecondPhoneNumber = x.SecondPhoneNumber,
+                    EmailAddress = x.EmailAddress,
+                    AdditionalNotes = x.AdditionalNotes,
+
+                    GuardFullName = x.GuardFullName,
+                    GuardRelationship = x.GuardRelationship,
+                    GuardResidentialAddress = x.GuardResidentialAddress,
+                    GuardFirstPhoneNumber = x.GuardFirstPhoneNumber,
+                    GuardSecondPhoneNumber = x.GuardSecondPhoneNumber,
+                    GuardEmailAddress = x.GuardEmailAddress
+                })
+                .FirstOrDefaultAsync();
+
+            return student!;
+        }
+
+        public async Task<StudentListProfileDto> GetStudentListProfileById(string id)
+        {
+            var student = await _dbContext.StudentData
+                .AsNoTracking()
+                .Include(c => c.CourseInfo)
+                .Where(s => s.Id == id)
+                .Select(s => new
+                {
+                    Student = s,
+                    ActiveCourse = s.CourseInfo!.FirstOrDefault(c => c.Status == "In Progress")
+                })
+                .Where(x => x.ActiveCourse != null)
+                .Select(x => new StudentListProfileDto
+                {
+                    Package = x.ActiveCourse!.Package,
+                    Level = x.ActiveCourse!.Level,
+                    Modality = x.ActiveCourse!.Modality,
+                    AcademicPeriod = x.ActiveCourse!.AcademicPeriod,
+                    Schedule = x.ActiveCourse!.Schedule,
+
+                    DocumentType = x.Student.DocumentType,
+                    IdNumber = x.Student.IdNumber,
+                    PlaceOfIssue = x.Student.PlaceOfIssue,
+                    ExpirationDate = x.Student.ExpirationDate,
+
+                    FullName = x.Student.FullName,
+                    DateOfBirth = x.Student.DateOfBirth,
+                    Gender = x.Student.Gender,
+                    MaritalStatus = x.Student.MaritalStatus,
+                    Nationality = x.Student.Nationality,
+                    PlaceOfBirth = x.Student.PlaceOfBirth,
+                    ResidentialAddress = x.Student.ResidentialAddress,
+                    FirstPhoneNumber = x.Student.FirstPhoneNumber,
+                    SecondPhoneNumber = x.Student.SecondPhoneNumber,
+                    EmailAddress = x.Student.EmailAddress,
+                    AdditionalNotes = x.Student.AdditionalNotes,
+
+                    GuardFullName = x.Student.GuardFullName,
+                    GuardRelationship = x.Student.GuardRelationship,
+                    GuardResidentialAddress = x.Student.GuardResidentialAddress,
+                    GuardFirstPhoneNumber = x.Student.GuardFirstPhoneNumber,
+                    GuardSecondPhoneNumber = x.Student.GuardSecondPhoneNumber,
+                    GuardEmailAddress = x.Student.GuardEmailAddress
+                })
+                .FirstOrDefaultAsync();
+
+            return student!;
+        }
+
+        public async Task<StudentListProfileEnrollmentDto> GetStudentListProfileEnrollmentById(string id)
+        {
+            var student = await _dbContext.StudentEnrollmentForm
+                .AsNoTracking()
+                .Include(c => c.StudentData)
+                .Where(s => s.StudentId == id)
+                .Select(s => new
+                {
+                    StudentEnroll = s,
+                    s.StudentData
+                })
+                .Where(x => x.StudentData != null)
+                .Select(x => new StudentListProfileEnrollmentDto
+                {
+                    CourseName = x.StudentEnroll.CourseName,
+                    Package = x.StudentEnroll.Package,
+                    Level = x.StudentEnroll.Level,
+                    Modality = x.StudentEnroll.Modality,
+                    AcademicPeriod = x.StudentEnroll.AcademicPeriod,
+                    Schedule = x.StudentEnroll.Schedule,
+                    Duration = x.StudentEnroll.Duration,
+                    MonthlyFee = x.StudentEnroll.MonthlyFee,
+                    Age = x.StudentEnroll.Age,
+
+                    CourseFee = x.StudentEnroll.CourseFee,
+                    Installments = x.StudentEnroll.Installments,
+
+                    Days = x.StudentEnroll.Days,
+                    Months = x.StudentEnroll.Months,
+                    Years = x.StudentEnroll.Years,
+                    Times = x.StudentEnroll.Times,
+
+                    DocumentType = x.StudentData!.DocumentType,
+                    IdNumber = x.StudentData.IdNumber,
+                    PlaceOfIssue = x.StudentData.PlaceOfIssue,
+                    ExpirationDate = x.StudentData.ExpirationDate,
+
+                    FullName = x.StudentData.FullName,
+                    DateOfBirth = x.StudentData.DateOfBirth,
+                    Gender = x.StudentData.Gender,
+                    MaritalStatus = x.StudentData.MaritalStatus,
+                    Nationality = x.StudentData.Nationality,
+                    PlaceOfBirth = x.StudentData.PlaceOfBirth,
+                    ResidentialAddress = x.StudentData.ResidentialAddress,
+                    FirstPhoneNumber = x.StudentData.FirstPhoneNumber,
+                    SecondPhoneNumber = x.StudentData.SecondPhoneNumber,
+                    EmailAddress = x.StudentData.EmailAddress,
+                    AdditionalNotes = x.StudentData.AdditionalNotes,
+
+                    GuardFullName = x.StudentData.GuardFullName,
+                    GuardRelationship = x.StudentData.GuardRelationship,
+                    GuardResidentialAddress = x.StudentData.GuardResidentialAddress,
+                    GuardFirstPhoneNumber = x.StudentData.GuardFirstPhoneNumber,
+                    GuardSecondPhoneNumber = x.StudentData.GuardSecondPhoneNumber,
+                    GuardEmailAddress = x.StudentData.GuardEmailAddress
+                })
+                .FirstOrDefaultAsync();
+
+            return student!;
+        }
+
         public async Task<IEnumerable<StudentCourseFeeModel>> GetStudentListCourseFee()
         {
             return await _dbContext.StudentCourseFee
                 .AsNoTracking()
                 .Include(sd => sd.StudentData)
-                .Include(sc => sc.Payments)                
+                .Include(sc => sc.Payments)
                 .Select(s => new StudentCourseFeeModel
                 {
                     Order = s.Order,
@@ -561,8 +822,8 @@ namespace server.src.Repositories
                     PriceDue = s.PriceDue,
                     Status = s.Status,
                     DateUpdate = s.DateUpdate,
-                    StudentId = s.StudentId,   
-                    StudentData = s.StudentData,                 
+                    StudentId = s.StudentId,
+                    StudentData = s.StudentData,
                     Payments = s.Payments!.ToList()
                 })
                 .ToListAsync();

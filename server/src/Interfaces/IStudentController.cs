@@ -11,6 +11,7 @@ namespace server.src.Interfaces
     public interface IStudentController
     {
         Task<IActionResult> Create([FromBody] StudentCreateDto studentCreateDto);
+        Task<IActionResult> Update([FromBody] StudentUpdateDto studentUpdateDto);
         Task<ActionResult<List<StudentDataModel>>> DetailStudentData();
         Task<ActionResult<List<StudentEnrollmentFormModel>>> DetailStudentEnrollmentForm();
         Task<ActionResult<string>> GetStudentByLastId();
@@ -18,6 +19,9 @@ namespace server.src.Interfaces
         Task<ActionResult<IEnumerable<StudentCourseFeeModel>>> GetStudentListCourseFee();
         Task<ActionResult<StudentEnrollmentFormModel>> GetStudentEnrollmentFormById(string id);
         Task<ActionResult<StudentDataModel>> GetStudentDataByName(string fullName);
+        Task<ActionResult<StudentUpdateDto>> GetStudentListProfileEditById(string id); 
+        Task<ActionResult<StudentListProfileDto>> GetStudentListProfileById(string id);
+        Task<ActionResult<StudentListProfileEnrollmentDto>> GetStudentListProfileEnrollmentById(string id);
         Task<ActionResult<IEnumerable<ListStudentActiveDto>>> GetListStudentActive();
     }
 }

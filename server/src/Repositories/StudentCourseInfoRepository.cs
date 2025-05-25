@@ -215,6 +215,47 @@ namespace server.src.Repositories
             }
         }
 
+        public async Task<List<StudentCourseInfoListDto>> GetListStudentCourseInfoActive()
+        {
+            try
+            {
+                var currentDate = DateTime.Now;
+
+                var query = _dbContext.StudentData
+                    .AsNoTracking()
+                    .Where(s => s.Status == "Active")
+                    .Select(s => new
+                    {
+                        Student = s,
+                        ActiveCourse = s.CourseInfo!.FirstOrDefault(c => c.Status == "In Progress")
+                    })
+                    .Where(x => x.ActiveCourse != null)
+                    .Select(x => new StudentCourseInfoListDto
+                    {
+                        Order = x.ActiveCourse!.Order,
+                        FullName = x.Student.FullName,
+                        Level = x.ActiveCourse.Level,
+                        Schedule = x.ActiveCourse.Schedule,
+                        QuizOne = x.ActiveCourse.QuizOne,
+                        QuizTwo = x.ActiveCourse.QuizTwo,
+                        Exam = x.ActiveCourse.Exam,
+                        FinalAverage = x.ActiveCourse.FinalAverage,
+                        Status = x.ActiveCourse.Status
+                    })
+                    .OrderBy(s => s.Level)
+                    .ThenBy(s => s.FullName);
+
+                var result = await query.ToListAsync();
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving active student list");
+                throw;
+            }
+        }
+
         private string GenerateCourseId(string level)
         {
             try
