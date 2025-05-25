@@ -2,11 +2,9 @@ import { Component, ElementRef, inject, OnDestroy, OnInit, ViewChild } from '@an
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-//import { NgxMatTimepickerModule } from 'ngx-mat-timepicker';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { DateAdapter, MatNativeDateModule } from '@angular/material/core';
 import { NgxMaskDirective } from 'ngx-mask';
-import { SnackBarService } from '../../../_services/snack-bar.service';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { StepperEnrollmentService } from '../../../_services/stepper-enrollment.service';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
@@ -45,7 +43,6 @@ export const _filter = (opt: string[], value: string): string[] => {
 })
 export class StudentComponent implements OnInit, OnDestroy {
   expirationDate: DateAdapter<Date, any>;
-  private readonly alert = inject(SnackBarService);
   private readonly fb = inject(FormBuilder);
   private readonly stepperService = inject(StepperEnrollmentService);
   stateGroupOptions!: Observable<StateGroup[]>;
@@ -70,8 +67,8 @@ export class StudentComponent implements OnInit, OnDestroy {
       [
         'Albazine',
         'Alto Maé',
-        'Aeroporto "A"',
-        'Aeroporto "B"'
+        'Aeroporto A',
+        'Aeroporto B'
       ],
     },
     {
@@ -91,8 +88,8 @@ export class StudentComponent implements OnInit, OnDestroy {
       letter: 'C',
       names:
       [
-        'Central "A"',
-        'Central "B"',
+        'Central A',
+        'Central B',
         'Chamanculo',
         'Coop',
         'Costa do Sol'
@@ -219,11 +216,10 @@ export class StudentComponent implements OnInit, OnDestroy {
       names:
       [
         'Cabo Delgado',
-        'Cidade de Maputo',
         'Gaza',
         'Inhambane',
         'Manica',
-        'Maputo Província',
+        'Maputo',
         'Nampula',
         'Niassa',
         'Sofala',
@@ -240,8 +236,8 @@ export class StudentComponent implements OnInit, OnDestroy {
       [
         'Albazine',
         'Alto Maé',
-        'Aeroporto "A"',
-        'Aeroporto "B"'
+        'Aeroporto A',
+        'Aeroporto B'
       ],
     },
     {
@@ -261,8 +257,8 @@ export class StudentComponent implements OnInit, OnDestroy {
       letter: 'C',
       names:
       [
-        'Central "A"',
-        'Central "B"',
+        'Central A',
+        'Central B',
         'Chamanculo',
         'Coop',
         'Costa do Sol'
@@ -527,11 +523,6 @@ export class StudentComponent implements OnInit, OnDestroy {
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
-  }
-
-  clear()
-  {
-    this.alert.show('Form cleared successfully!', 'success');
   }
 
   @ViewChild('studentFormRef') formElement!: ElementRef<HTMLFormElement>;

@@ -57,8 +57,13 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
   columnDefs: ColDef[] =
     [
       {
+        headerName: 'Code',
+        field: 'id', minWidth: 130, flex: 1,
+        cellClass: 'custom-cell-center'
+      },
+      {
         headerName: 'Full Name',
-        field: 'fullName', minWidth: 280, flex: 1,
+        field: 'fullName', minWidth: 250, flex: 1,
         cellClass: 'custom-cell-start'
       },
       {
@@ -68,12 +73,12 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
       },
       {
         headerName: 'Age',
-        field: 'age', minWidth: 70, flex: 1,
+        field: 'age', minWidth: 60, flex: 1,
         cellClass: 'custom-cell-center'
       },
       {
         headerName: 'Package',
-        field: 'package', minWidth: 130, flex: 1,
+        field: 'package', minWidth: 110, flex: 1,
         cellClass: 'custom-cell-center',
         cellRenderer: (params: any) => {
           if (params.value === "Intensive")
@@ -93,7 +98,7 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
       },
       {
         headerName: 'Modality',
-        field: 'modality', minWidth: 130, flex: 1,
+        field: 'modality', minWidth: 110, flex: 1,
         cellClass: 'custom-cell-center',
         cellRenderer: (params: any) => {
           if (params.value === "Online")
@@ -104,12 +109,12 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
       },
       {
         headerName: 'Period',
-        field: 'academicPeriod', minWidth: 130, flex: 1,
+        field: 'academicPeriod', minWidth: 110, flex: 1,
         cellClass: 'custom-cell-center'
       },
       {
         headerName: 'Schedule',
-        field: 'schedule', minWidth: 130, flex: 1,
+        field: 'schedule', minWidth: 110, flex: 1,
         cellClass: 'custom-cell-center'
       },
       {
@@ -140,12 +145,11 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
   //tableModules = [ ExcelExportModule ] //Versão enterprise do ag-grid
   // html := [modules]="tableModules"
 
-  private currentYear = new Date().getFullYear();
+  //private currentYear = new Date().getFullYear();
   private author = "Ramadan IsmaeL";
-  private country = "Mozambique";
   private institution = "English Training Center";
-
-  private footer = `Generated for ${this.institution} · Made in ${this.country} by ${this.author} · © ${this.currentYear} · All rights reserved.`;
+// &copy; 2025 | Ramadan I.A. Ismael · License: English Training Center · All rights reserved
+  private footer = `© 2025 | ${this.author} · License: ${this.institution} · All rights reserved.`;
 
   constructor(private studentService: StudentsService, private notificationHub: NotificationHubService, private alert: SnackBarService, private clipboard: Clipboard, private titleNavbarService: TitleNavbarService)
   {}

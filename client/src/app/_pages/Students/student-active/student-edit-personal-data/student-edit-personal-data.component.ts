@@ -13,6 +13,8 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import { AsyncPipe } from '@angular/common';
 import { debounceTime, distinctUntilChanged, map, Observable, startWith, Subscription } from 'rxjs';
 import { EnrollmentStudentService } from '../../../../_services/enrollment-student.service';
+import { StudentShareIdService } from '../../../../_services/student-share-id.service';
+import { StudentsService } from '../../../../_services/students.service';
 
 export interface StateGroup {
   letter: string;
@@ -56,7 +58,7 @@ export class StudentEditPersonalDataComponent implements OnInit, OnDestroy {
 
   form! : FormGroup;
 
-  constructor (private dateAdapter: DateAdapter<Date>, private enrollmentStudentService: EnrollmentStudentService)
+  constructor (private dateAdapter: DateAdapter<Date>, private studentShareId: StudentShareIdService, private studentService: StudentsService)
   {
     this.dateAdapter.setLocale('en-GB'); // Use 'en-GB' for dd/mm/yyyy format
     this.expirationDate = this.dateAdapter;
@@ -422,6 +424,11 @@ export class StudentEditPersonalDataComponent implements OnInit, OnDestroy {
       guardianAlternativePhoneNumber : [''],
       guardianEmailAddress : ['']
     });
+
+    this.form.patchValue
+    ({
+      //fullName : this.data.fullName,
+    });
   }
 
   private setupAddressSync() {
@@ -515,11 +522,6 @@ export class StudentEditPersonalDataComponent implements OnInit, OnDestroy {
     return `${day}/${month}/${year}`;
   }
 
-  clear()
-  {
-    this.alert.show('Form cleared successfully!', 'success');
-  }
-
   @ViewChild('studentFormRef') formElement!: ElementRef<HTMLFormElement>;
   resetForm()
   {
@@ -529,7 +531,6 @@ export class StudentEditPersonalDataComponent implements OnInit, OnDestroy {
 
   update()
   {
-    this.stepperService.setActiveStep(1);
     /*
     if (this.form.valid) {
       this.enrollmentStudentService.setEnrollmentStudent
@@ -562,8 +563,6 @@ export class StudentEditPersonalDataComponent implements OnInit, OnDestroy {
         guardPhoneNumber: this.form.value.guardianPhoneNumber,
         guardEmailAddress: this.form.value.guardianEmailAddress!.toLowerCase()
       });
-
-      this.stepperService.setActiveStep(1);
     }
     */
   }

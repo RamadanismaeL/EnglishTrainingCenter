@@ -1,8 +1,11 @@
-<div class="flex justify-center">
-  <div class="w-full shadow-xl rounded-3xl p-7 bg-white max-w-2xl">
-    <div class="w-full flex justify-between">
+<div class="flex justify-center mb-5">
+  <div *ngIf="profileDetail$ | async as student"
+  class="w-full shadow-xl rounded-3xl p-7 bg-white max-w-2xl"
+  >
+    <div class="w-full flex justify-between"
+    >
       <h1 class="text-lg text-gray-600 font-bold mb-1 text-start truncate">
-        RAMADAN IBRAIMO ISMAEL
+        {{ student.fullName.toUpperCase() }}
       </h1>
 
       <button mat-icon-button [matMenuTriggerFor]="menu" class="text-gray-600 cursor-pointer">
@@ -65,17 +68,17 @@
       </div>
 
       <div class="grid gap-5 min-w-[1px]">
-        <div class="text-gray-600 font-medium truncate">--</div>
+        <div class="text-gray-600 font-medium truncate">{{ sutdentId }}</div>
 
-        <div class="text-gray-600 font-medium truncate">--</div>
+        <div class="text-gray-600 font-medium truncate">{{ student.package }}</div>
 
-        <div class="text-gray-600 font-medium truncate">--</div>
+        <div class="text-gray-600 font-medium truncate">{{ student.level }}</div>
 
-        <div class="text-gray-600 font-medium truncate">--</div>
+        <div class="text-gray-600 font-medium truncate">{{ student.modality }}</div>
 
-        <div class="text-gray-600 font-medium truncate">--</div>
+        <div class="text-gray-600 font-medium truncate">{{ student.academicPeriod }}</div>
 
-        <div class="text-gray-600 font-medium truncate">--</div>
+        <div class="text-gray-600 font-medium truncate">{{ student.schedule }}</div>
       </div>
     </div>
     <h1 class="text-lg text-[#555] font-bold mb-1 text-start mt-10">
@@ -105,13 +108,27 @@
       </div>
 
       <div class="grid gap-5 min-w-[1px]">
-        <div class="text-gray-600 font-medium truncate">--</div>
+        <div class="text-gray-600 font-medium truncate">{{ student.documentType }}</div>
 
-        <div class="text-gray-600 font-medium truncate">--</div>
+        <div class="text-gray-600 font-medium truncate">{{ student.idNumber }}</div>
 
-        <div class="text-gray-600 font-medium truncate">--</div>
+        <div class="text-gray-600 font-medium truncate">
+          @if(student.placeOfIssue == 'Cidade De Maputo')
+          { Maputo City }
+          @else if(student.placeOfIssue == 'Cidade Da Matola')
+          { Matola City }
+          @else if(student.placeOfIssue == 'Maputo Província')
+          { Maputo Province }
+          @else
+          { {{ student.placeOfIssue }} }
+        </div>
 
-        <div class="text-gray-600 font-medium truncate">--</div>
+        <div class="text-gray-600 font-medium truncate">
+          @if(student.expirationDate == null || student.expirationDate == '')
+          {--}
+          @else
+          { {{ student.expirationDate }} }
+        </div>
       </div>
     </div>
     <h1 class="text-lg text-[#555] font-bold mb-1 text-start mt-10">
@@ -176,27 +193,66 @@
       </div>
 
       <div class="grid gap-5 min-w-[1px]">
-        <div class="text-gray-600 font-medium truncate">--</div>
+        <div class="text-gray-600 font-medium truncate">{{ student.fullName }}</div>
 
-        <div class="text-gray-600 font-medium truncate">--</div>
+        <div class="text-gray-600 font-medium truncate">{{ student.dateOfBirth }}</div>
 
-        <div class="text-gray-600 font-medium truncate">--</div>
+        <div class="text-gray-600 font-medium truncate">
+          @if(student.gender == 'M')
+          { Male }
+          @else
+          { Female }
+        </div>
 
-        <div class="text-gray-600 font-medium truncate">--</div>
+        <div class="text-gray-600 font-medium truncate">{{ student.maritalStatus }}</div>
 
-        <div class="text-gray-600 font-medium truncate">--</div>
+        <div class="text-gray-600 font-medium truncate">
+          @if(student.nationality == 'Moçambicana')
+          { Mozambican }
+          @else
+          { {{ student.nationality }} }
+        </div>
 
-        <div class="text-gray-600 font-medium truncate">--</div>
+        <div class="text-gray-600 font-medium truncate">
+          @if(student.placeOfBirth == 'Cidade De Maputo')
+          { Maputo City }
+          @else if(student.placeOfBirth == 'Cidade Da Matola')
+          { Matola City }
+          @else if(student.placeOfBirth == 'Maputo Província')
+          { Maputo Province }
+          @else
+          { {{ student.placeOfBirth }} }
+        </div>
 
-        <div class="text-gray-600 font-medium truncate">--</div>
+        <div class="text-gray-600 font-medium truncate">{{ student.residentialAddress }}</div>
 
-        <div class="text-gray-600 font-medium truncate">--</div>
+        <div class="text-gray-600 font-medium truncate">
+          @if(student.firstPhoneNumber == null || student.firstPhoneNumber == '')
+          {--}
+          @else
+          { {{ student.firstPhoneNumber }} }
+        </div>
 
-        <div class="text-gray-600 font-medium truncate">--</div>
+        <div class="text-gray-600 font-medium truncate">
+          @if(student.secondPhoneNumber == null || student.secondPhoneNumber == '')
+          {--}
+          @else
+          { {{ student.secondPhoneNumber }} }
+        </div>
 
-        <div class="text-gray-600 font-medium truncate">--</div>
+        <div class="text-gray-600 font-medium truncate">
+          @if(student.emailAddress == null || student.emailAddress == '')
+          {--}
+          @else
+          { {{ student.emailAddress }} }
+        </div>
 
-        <div class="text-gray-600 font-medium truncate">--</div>
+        <div class="text-gray-600 font-medium truncate">
+          @if(student.additionalNotes == null || student.additionalNotes == '')
+          {--}
+          @else
+          { {{ student.additionalNotes }} }
+        </div>
       </div>
     </div>
     <h1 class="text-lg text-[#555] font-bold mb-1 text-start mt-10">
@@ -236,17 +292,47 @@
       </div>
 
       <div class="grid gap-5 min-w-[1px]">
-        <div class="text-gray-600 font-medium truncate">--</div>
+        <div class="text-gray-600 font-medium truncate">
+          @if(student.guardFullName == null || student.guardFullName == '')
+          {--}
+          @else
+          { {{ student.guardFullName }} }
+        </div>
 
-        <div class="text-gray-600 font-medium truncate">--</div>
+        <div class="text-gray-600 font-medium truncate">
+          @if(student.guardRelationship == null || student.guardRelationship == '')
+          {--}
+          @else
+          { {{ student.guardRelationship }} }
+        </div>
 
-        <div class="text-gray-600 font-medium truncate">--</div>
+        <div class="text-gray-600 font-medium truncate">
+          @if(student.residentialAddress == null || student.residentialAddress == '')
+          {--}
+          @else
+          { {{ student.residentialAddress }} }
+        </div>
 
-        <div class="text-gray-600 font-medium truncate">--</div>
+        <div class="text-gray-600 font-medium truncate">
+          @if(student.guardFirstPhoneNumber == null || student.guardFirstPhoneNumber == '')
+          {--}
+          @else
+          { {{ student.guardFirstPhoneNumber }} }
+        </div>
 
-        <div class="text-gray-600 font-medium truncate">--</div>
+        <div class="text-gray-600 font-medium truncate">
+          @if(student.guardSecondPhoneNumber == null || student.guardSecondPhoneNumber == '')
+          {--}
+          @else
+          { {{ student.guardSecondPhoneNumber }} }
+        </div>
 
-        <div class="text-gray-600 font-medium truncate">--</div>
+        <div class="text-gray-600 font-medium truncate">
+          @if(student.guardEmailAddress == null || student.guardEmailAddress == '')
+          {--}
+          @else
+          { {{ student.guardEmailAddress }} }
+        </div>
       </div>
     </div>
   </div>

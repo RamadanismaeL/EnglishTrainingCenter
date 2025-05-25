@@ -1,5 +1,7 @@
 <div class="w-full shadow-xl rounded-xl p-7 bg-white cursor-default">
-  <div class="w-full h-full overflow-auto">
+  <div *ngIf="profileDetail$ | async as student"
+  class="w-full h-full overflow-auto"
+  >
     <div class="ficha-container">
       <header class="flex">
         <div>
@@ -15,33 +17,34 @@
 
       <section class="w-full h-full flex flex-col gap-1">
         <div>
-          <span class="flex justify-end mb-2">N&uacute;mero de Estudante: ETC20250201</span>
+          <span class="flex justify-end mb-2">N&uacute;mero de Estudante: {{ sutdentId }}</span>
           <div class="h-full retang">
             <h2 class="my-2">DADOS DO CURSO</h2>
             <div class="p-2">
               <p class="text-center">
                 Curso:
-                <span class="input-line">Inglês</span>
+                <span class="input-line">{{ student.courseName }}</span>
                 ,&nbsp;&nbsp;
                 Pacote:
-                <span class="input-line">Regular</span>
+                <span class="input-line">{{ student.package }}</span>
                 ,&nbsp;&nbsp;
                 Nível:
-                <span class="input-line">A1</span>
+                <span class="input-line">{{ student.level }}</span>
                 ,&nbsp;&nbsp;
                 Modalidade:
-                <span class="input-line">Presencial</span>,
+                <span class="input-line">Presencial</span>,&nbsp;&nbsp;
+                Período:<span class="input-line">{{ student.modality }}</span>
+                ,
               </p>
               <p class="text-center">
-                Período:<span class="input-line">Manhã</span>
-                ,&nbsp;&nbsp;
-                Horário:<span class="input-line">7h - 8h</span>
+
+                Horário:<span class="input-line">{{ student.schedule }}</span>
                 ,&nbsp;&nbsp;
                 Dura&ccedil;&atilde;o:
-                <span class="input-line">3 Meses</span>
+                <span class="input-line">{{ student.duration }}</span>
                 ,&nbsp;&nbsp;
                 Mensalidade:
-                <span class="input-line">700,00 MT</span>,
+                <span class="input-line">{{ formatAmount(student.monthlyFee) }} MT</span>,
               </p>
               <p class="text-center">
                 Dias de aulas: De segunda-feira a quinta-feira
@@ -55,15 +58,15 @@
           <div class="p-2">
             <p class="text-center">
               Tipo:
-              <span class="input-line">Carta de Condução</span>
+              <span class="input-line">{{ OnConvertData(student.documentType) }}</span>
               ,&nbsp;&nbsp;
               N&uacute;mero:
-              <span class="input-line">1234567890R</span>,
+              <span class="input-line">{{ student.idNumber }}</span>,
             </p>
             <p class="text-center">
-              Local de Emissão:<span class="input-line">Cidade da Matola</span>
+              Local de Emissão:<span class="input-line">{{ student.placeOfIssue }}</span>
               ,&nbsp;&nbsp;
-              Validade:<span class="input-line">09/02/2025</span>
+              Validade:<span class="input-line">{{ checkIsNull(student.expirationDate) }}</span>
             </p>
           </div>
         </div>
@@ -73,43 +76,50 @@
           <div class="p-2">
             <p class="text-center">
               Nome Completo:
-              <span class="input-line">Ramadan Ibraimo Abdula Ismael</span>
+              <span class="input-line">{{ student.fullName }}</span>
               ,&nbsp;&nbsp;
               Data de Nascimento:
-              <span class="input-line">21/11/2001</span>
+              <span class="input-line">{{ student.dateOfBirth }}</span>
               ,&nbsp;&nbsp;
+              Idade:
+              <span class="input-line">{{ student.age }}</span>
+              ,
             </p>
             <p class="text-center">
-              Idade:
-              <span class="input-line">27</span>
-              ,&nbsp;&nbsp;
               Gênero:
-              <span class="input-line">Masculino</span>
+              <span class="input-line">
+                @if(student.gender == 'M')
+                { Masculino }
+                @else
+                { Feminino }
+              </span>
               ,&nbsp;&nbsp;
               Estado Civil:
-              <span class="input-line">Solteiro</span>
+              <span class="input-line">{{ OnConvertData(student.maritalStatus) }}</span>
               ,&nbsp;&nbsp;
               Nacionalidade:
-              <span class="input-line">Moçambicana</span>
-              ,&nbsp;&nbsp;
+              <span class="input-line">{{ checkIsNull(student.nationality) }}</span>
+              ,
             </p>
             <p class="text-center">
               Natural:
-              <span class="input-line">Maputo</span>
+              <span class="input-line">{{ checkIsNull(student.placeOfBirth) }}</span>
               ,&nbsp;&nbsp;
               Endereço Residencial:
-              <span class="input-line">Nkobe</span>
-              ,&nbsp;&nbsp;
+              <span class="input-line">{{ checkIsNull(student.residentialAddress) }}</span>
+              ,
             </p>
             <p class="text-center">
               Telefone: (+258)
-              <span class="input-line">87 171 7834</span>/<span class="input-line">87 171 7834</span>
+              <span class="input-line">{{ student.firstPhoneNumber }}</span>/<span class="input-line">{{ checkIsNull(student.secondPhoneNumber) }}</span>
               ,&nbsp;&nbsp;
               E-mail:
-              <span class="input-line">ramdan.ismaelagmail.com</span>
-              ,&nbsp;&nbsp;
+              <span class="input-line">{{ checkIsNull(student.emailAddress) }}</span>
+              ,
+            </p>
+            <p class="text-center">
               Observações:
-              <span class="input-line">--</span>
+              <span class="input-line">{{ checkIsNull(student.additionalNotes) }}</span>
             </p>
           </div>
         </div>
@@ -119,18 +129,22 @@
           <div class="p-2">
             <p class="text-center">
               Nome Completo:
-              <span class="input-line">Ramad Ibraimo Abdula</span>
+              <span class="input-line">{{ checkIsNull(student.guardFullName) }}</span>
               ,&nbsp;&nbsp;
               Parentesco:
-              <span class="input-line">Pai/Mãe</span>
-              ,&nbsp;&nbsp;
+              <span class="input-line">{{ checkIsNull(OnConvertData(student.guardRelationship)) }}</span>
+              ,
+            </p>
+            <p class="text-center">
               Endereço Residencial:
-              <span class="input-line">Machava-socimol</span>
+              <span class="input-line">{{ checkIsNull(student.guardResidentialAddress) }}</span>
               ,&nbsp;&nbsp;
               Telefone: (+258)
-              <span class="input-line">87 171 7834</span>/<span class="input-line">--</span>,&nbsp;&nbsp;
+              <span class="input-line">{{ checkIsNull(student.guardFirstPhoneNumber) }}</span>/<span class="input-line">{{ checkIsNull(student.secondPhoneNumber) }}</span>,
+            </p>
+            <p class="text-center">
               E-mail:
-              <span class="input-line">--</span>
+              <span class="input-line">{{ checkIsNull(student.guardEmailAddress) }}</span>
             </p>
           </div>
         </div>
@@ -143,7 +157,7 @@
               <li>
                 <div class="flex items-center">
                   <span class="pont"></span>
-                  <span>O valor do curso de Inglês é <strong>2.550,00 MT</strong>, dividido em três prestações mensais de <strong>850,00 MT</strong>.</span>
+                  <span>O valor do curso de Inglês é <strong>{{ formatAmount(student.courseFee) }} MT</strong>, dividido em três prestações mensais de <strong>{{ formatAmount(student.installments) }} MT</strong>.</span>
                 </div>
               </li>
               <li>
@@ -266,13 +280,13 @@
       <div class="mt-25">
         <p class="text-center">
             Maputo,
-            <span class="input-line">09</span>
+            <span class="input-line">{{ student.days }}</span>
             &nbsp;de&nbsp;
-            <span class="input-line">Fevereiro</span>
+            <span class="input-line">{{ student.months }}</span>
             &nbsp;de&nbsp;
-            <span class="input-line">2025</span>
+            <span class="input-line">{{ student.years }}</span>
         </p>
-        <small class="flex justify-center mt-1">Hora: 3:28:21</small>
+        <small class="flex justify-center mt-1">Hora: {{ getTimeFromDate(student.times) }}</small>
 
         <div class="mt-5 w-full flex flex-col items-start justify-center gap-4">
           <div>
@@ -291,6 +305,7 @@
           <span>(Assinatura e Carimbo)</span>
         </div>
       </div>
+      <small class="w-full flex justify-center mt-50">© 2025 | Ramadan I.A. Ismael · Licença: English Training Center · Todos os direitos reservados</small>
     </div>
   </div>
 </div>

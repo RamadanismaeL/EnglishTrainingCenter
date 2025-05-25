@@ -176,11 +176,12 @@ export class TableComponent implements OnInit, OnDestroy {
 
   private currentYear = new Date().getFullYear();
   private author = "Ramadan IsmaeL";
-  private country = "Mozambique";
+  //private country = "Mozambique";
   private institution = "English Training Center";
   breadcrumbs: BreadcrumbItem[] = [];
 
-  private footer = `Generated for ${this.institution} · Made in ${this.country} by ${this.author} · © ${this.currentYear} · All rights reserved.`;
+  //private footer = `Generated for ${this.institution} · Made in ${this.country} by ${this.author} · © ${this.currentYear} · All rights reserved.`;
+  private footer = `© ${this.currentYear} | ${this.author} · License: ${this.institution} · All rights reserved.`;
 
   constructor(private trainerService: TrainersService, private notificationHub: NotificationHubService, private alert: SnackBarService, private clipboard: Clipboard, private titleNavbarService: TitleNavbarService)
   {}

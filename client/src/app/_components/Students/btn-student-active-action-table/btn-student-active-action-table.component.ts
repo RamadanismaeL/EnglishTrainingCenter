@@ -5,6 +5,7 @@ import { RouterLink } from '@angular/router';
 import { FormControl } from '@angular/forms';
 import { MatTooltipModule, TooltipPosition } from '@angular/material/tooltip';
 import { TitleNavbarService } from '../../../_services/title-navbar.service';
+import { StudentShareIdService } from '../../../_services/student-share-id.service';
 
 @Component({
   selector: 'app-btn-student-active-action-table',
@@ -22,7 +23,7 @@ export class BtnStudentActiveActionTableComponent implements ICellRendererAngula
 
   params: any;
 
-  constructor (private titleNavbarService: TitleNavbarService)
+  constructor (private titleNavbarService: TitleNavbarService, private studentShareId: StudentShareIdService)
   {}
 
   agInit(params: any): void {
@@ -35,5 +36,8 @@ export class BtnStudentActiveActionTableComponent implements ICellRendererAngula
 
   navigateTo (breadcrumbs: { label: string, url?: any[] }) {
     this.titleNavbarService.addBreadcrumb(breadcrumbs);
+
+    //console.log(`Dados = ${this.params.data.id}`)
+    this.studentShareId.setEnrollmentStudent(this.params.data.id);
   }
 }

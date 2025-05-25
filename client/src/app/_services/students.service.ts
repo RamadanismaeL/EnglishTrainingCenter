@@ -10,6 +10,8 @@ import { StudentPaymentModel } from '../_interfaces/student-payment-model';
 import { StudentDataModel } from '../_interfaces/student-data-model';
 import { CourseInfoModel } from '../_interfaces/course-info-model';
 import { ListStudentActiveDto } from '../_interfaces/list-student-active-dto';
+import { StudentListProfileDto } from '../_interfaces/student-list-profile-dto';
+import { StudentListProfileEnrollmentDto } from '../_interfaces/student-list-profile-enrollment-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -56,6 +58,12 @@ export class StudentsService {
 
   getPriceDueById = (id: string) : Observable<number> => this.http
     .post<number>(`${this.myUrl}/StudentPayment/get-price-due-by-id/${id}`, {headers : { 'Allow-Offline' : 'true' }});
+
+  getStudentListProfileById = (id: string) : Observable<StudentListProfileDto> => this.http
+    .post<StudentListProfileDto>(`${this.myUrl}/Students/get-student-list-profile-by-id/${id}`, {headers : { 'Allow-Offline' : 'true' }});
+
+  getStudentListProfileEnrollmentById = (id: string) : Observable<StudentListProfileEnrollmentDto> => this.http
+    .post<StudentListProfileEnrollmentDto>(`${this.myUrl}/Students/get-student-list-profile-enrollment-by-id/${id}`, {headers : { 'Allow-Offline' : 'true' }});
 
   // Students : ACTIVE
   getListStudentActive = () : Observable<ListStudentActiveDto> => this.http

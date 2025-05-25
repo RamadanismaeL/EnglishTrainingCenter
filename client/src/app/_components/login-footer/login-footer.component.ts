@@ -7,12 +7,9 @@ import { Component } from '@angular/core';
   styleUrl: './login-footer.component.scss'
 })
 export class LoginFooterComponent {
-  private currentYear = new Date().getFullYear();
-  private author = "Ramadan Ibraimo A. Ismael";
-  private country = "Mozambique";
+  private author = "Ramadan I.A. Ismael";
   private institution = "English Training Center";
+  //© 2025 | Ramadan I.A. Ismael · License: English Training Center · All rights reserved
 
-  footer = `Licence: ${this.institution} · Made in ${this.country} by ${this.author} · © ${this.currentYear} · All rights reserved.`;
-
-  // eg.: Copyright © 2025 Made in Mozambique by Ramadan IsmaeL · All rights reserved.
+  footer = `© 2025 | ${this.author} · Licence: ${this.institution} · All rights reserved`
 }
