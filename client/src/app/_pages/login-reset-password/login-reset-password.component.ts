@@ -11,6 +11,7 @@ import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 
 @Component({
+  standalone: true,
   selector: 'app-login-reset-password',
   imports: [
     MatInputModule,

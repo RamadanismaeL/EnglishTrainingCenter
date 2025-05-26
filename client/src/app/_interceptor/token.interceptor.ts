@@ -45,9 +45,9 @@ export const tokenInterceptor: HttpInterceptorFn = (req, next) => {
 
       // Prepara o payload conforme sua API requer
       const refreshPayload = {
+        refreshToken: refreshToken, // Refresh token
         token: currentToken || '', // Token antigo
-        email: userDetails.email,  // Email do usuário
-        refreshToken: refreshToken // Refresh token
+        email: userDetails.email  // Email do usuário
       };
 
       return from(authService.refreshToken(refreshPayload)).pipe(

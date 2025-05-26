@@ -4,6 +4,7 @@ export interface StudentListProfileDto {
   "modality": string
   "academicPeriod": string
   "schedule": string
+  "monthlyFee": number
   "documentType": string
   "idNumber": string
   "placeOfIssue": string

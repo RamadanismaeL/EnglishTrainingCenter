@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 @Component({
+  standalone: true,
   selector: 'app-login-ok',
   imports: [ RouterModule ],
   templateUrl: './login-ok.component.html',

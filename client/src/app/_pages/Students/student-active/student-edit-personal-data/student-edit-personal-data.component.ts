@@ -29,6 +29,7 @@ export const _filter = (opt: string[], value: string): string[] => {
 };
 
 @Component({
+  standalone: true,
   selector: 'app-student-edit-personal-data',
   imports: [
     MatInputModule,

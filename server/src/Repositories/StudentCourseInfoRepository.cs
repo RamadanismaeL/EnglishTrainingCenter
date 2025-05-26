@@ -91,8 +91,7 @@ namespace server.src.Repositories
                     Exam = 0.0M,
                     FinalAverage = 0.0M,
                     Status = "In Progress",
-                    TrainerName = trainerName!,
-                    DateUpdate = DateTime.Now
+                    TrainerName = trainerName!
                 };
 
                 await _dbContext.StudentCourseInfo.AddAsync(courseInfoData);
@@ -170,32 +169,86 @@ namespace server.src.Repositories
                         Message = "Course ID not found."
                     };
                 }
-                
-                decimal finalAverage = 
-                (((courseInfoUpdateQuizDto.QuizOne + courseInfoUpdateQuizDto.QuizTwo) / 2) * 0.6M) + (courseInfoUpdateQuizDto.Exam * 0.4M);
-
-                string status = "";
-                if (courseInfoUpdateQuizDto.Exam == 0.0M)
-                { status = "In Progress"; }
-                else
-                {
-                    if (finalAverage >= 0.0M && finalAverage < 50.0M)
-                    { status = "Failed"; }
-                    else if (finalAverage >= 50.0M && finalAverage <= 100.0M)
-                    { status = "Pass"; }
-                    else
-                    { status = "Error"; }
-                }
 
                 courseId.QuizOne = courseInfoUpdateQuizDto.QuizOne;
                 courseId.QuizTwo = courseInfoUpdateQuizDto.QuizTwo;
                 courseId.Exam = courseInfoUpdateQuizDto.Exam;
-                courseId.FinalAverage = finalAverage;
-                courseId.Status = status;
                 courseId.TrainerName = trainerName!;
                 courseId.DateUpdate = DateTime.Now;
                 
-                _dbContext.StudentCourseInfo.Update(courseId);
+                await _dbContext.SaveChangesAsync();
+
+                return new ResponseDto
+                {
+                    IsSuccess = true,
+                    Message = "Course updated successfuly."
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to update course.");
+                return new ResponseDto
+                {
+                    IsSuccess = false,
+                    Message = "Failed to update course."
+                };
+            }
+        }
+
+        public async Task<ResponseDto> UpdateQuizOneTwo(StudentCourseInfoUpdateQuizOneTwoDto courseInfoUpdateQuizDto)
+        {
+            try
+            {
+                var userPrincipal = _httpContextAccessor.HttpContext?.User;
+                if (userPrincipal is null)
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "User not authenticated."
+                    };
+                }
+
+                var userId = userPrincipal.FindFirst(ClaimTypes.NameIdentifier);
+                if (userId is null)
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "User not found."
+                    };
+                }
+
+                var userIdValue = userId.Value;
+                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userIdValue);
+                if (user is null)
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "User not found."
+                    };
+                }
+
+                var usernameClaim = _httpContextAccessor.HttpContext?.User.FindFirst(JwtRegisteredClaimNames.Name);
+
+                var trainerName = usernameClaim?.Value;
+
+                var courseId = await _dbContext.StudentCourseInfo.FindAsync(courseInfoUpdateQuizDto.Order);
+                if (courseId is null)
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "Course ID not found."
+                    };
+                }
+
+                courseId.QuizOne = courseInfoUpdateQuizDto.QuizOne;
+                courseId.QuizTwo = courseInfoUpdateQuizDto.QuizTwo;
+                courseId.TrainerName = trainerName!;
+                courseId.DateUpdate = DateTime.Now;
+                
                 await _dbContext.SaveChangesAsync();
 
                 return new ResponseDto
@@ -219,8 +272,6 @@ namespace server.src.Repositories
         {
             try
             {
-                var currentDate = DateTime.Now;
-
                 var query = _dbContext.StudentData
                     .AsNoTracking()
                     .Where(s => s.Status == "Active")
@@ -233,6 +284,7 @@ namespace server.src.Repositories
                     .Select(x => new StudentCourseInfoListDto
                     {
                         Order = x.ActiveCourse!.Order,
+                        Id = x.Student.Id,
                         FullName = x.Student.FullName,
                         Level = x.ActiveCourse.Level,
                         Schedule = x.ActiveCourse.Schedule,
@@ -252,6 +304,41 @@ namespace server.src.Repositories
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving active student list");
+                throw;
+            }
+        }
+
+        public async Task<List<StudentCourseInfoProgressHistoryDto>> GetListStudentCourseInfoProgressHistory(string studentId)
+        {
+            if (string.IsNullOrWhiteSpace(studentId))
+                throw new ArgumentException("Student ID cannot be empty.", nameof(studentId));
+
+            try
+            {
+                var courseInfo = await _dbContext.StudentCourseInfo // Query CourseInfo directly (more efficient)
+                    .AsNoTracking()
+                    .Where(c => c.StudentId == studentId) // Assuming StudentDataId is the FK
+                    .OrderBy(c => c.Level)
+                    .ThenBy(c => c.DateRegister)
+                    .Select(c => new StudentCourseInfoProgressHistoryDto
+                    {
+                        Order = c.Order,
+                        FullName = c.StudentData != null ? c.StudentData.FullName : "N/A",
+                        Level = c.Level,
+                        QuizOne = c.QuizOne,
+                        QuizTwo = c.QuizTwo,
+                        Exam = c.Exam,
+                        FinalAverage = c.FinalAverage,
+                        Status = c.Status,
+                        DateUpdate = c.DateUpdate != null ? c.DateUpdate.Value.ToString("dd/MM/yyyy") : ""
+                    })
+                    .ToListAsync();
+
+                return courseInfo; // Nullable return (caller handles null)
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving course progress history for Student ID: {StudentId}", studentId);
                 throw;
             }
         }

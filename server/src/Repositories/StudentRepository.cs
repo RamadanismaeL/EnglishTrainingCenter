@@ -716,6 +716,7 @@ namespace server.src.Repositories
                     Modality = x.ActiveCourse!.Modality,
                     AcademicPeriod = x.ActiveCourse!.AcademicPeriod,
                     Schedule = x.ActiveCourse!.Schedule,
+                    MonthlyFee = x.ActiveCourse!.MonthlyFee,
 
                     DocumentType = x.Student.DocumentType,
                     IdNumber = x.Student.IdNumber,

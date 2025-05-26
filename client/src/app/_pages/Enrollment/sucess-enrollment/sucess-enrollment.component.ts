@@ -120,7 +120,7 @@ export class SucessEnrollmentComponent implements OnInit, OnDestroy, ICellRender
 
   params: any;
 
-  constructor(private alert: SnackBarService, private dialog: MatDialog, private studentService: StudentsService, private notificationHub: NotificationHubService, private documentService: DocumentsService, private enrollmentPaymentService: EnrollmentPaymentService)
+  constructor(private alert: SnackBarService, private dialog: MatDialog, private studentService: StudentsService, private notificationHub: NotificationHubService, private documentService: DocumentsService)
   {}
 
   ngOnInit(): void {

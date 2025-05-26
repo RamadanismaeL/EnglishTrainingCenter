@@ -12,7 +12,9 @@ namespace server.src.Interfaces
         Task<ResponseDto> Create(StudentCourseInfoCreateDto studentCourseCreateDto);
         Task<List<StudentCourseInfoModel>> Details();
         Task<ResponseDto> UpdateQuiz(StudentCourseInfoUpdateQuizDto courseInfoUpdateQuizDto);
-
+        Task<ResponseDto> UpdateQuizOneTwo(StudentCourseInfoUpdateQuizOneTwoDto courseInfoUpdateQuizDto);
+        //Task<ResponseDto> UpdateQuizExam(StudentCourseInfoUpdateExamDto courseInfoUpdateQuizDto);
         Task<List<StudentCourseInfoListDto>> GetListStudentCourseInfoActive();
+        Task<List<StudentCourseInfoProgressHistoryDto>> GetListStudentCourseInfoProgressHistory(string studentId);
     }
 }

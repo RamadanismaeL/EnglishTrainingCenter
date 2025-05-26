@@ -15,9 +15,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 
 import { MatSelectModule } from '@angular/material/select';
-import { RouterLink } from '@angular/router';
 import { TrainersService } from '../../../../_services/trainers.service';
-import { BtnTrainerActionsTableComponent } from '../../../../_components/trainers/btn-trainer-actions-table/btn-trainer-actions-table.component';
 import { NotificationHubService } from '../../../../_services/notification-hub.service';
 import { SnackBarService } from '../../../../_services/snack-bar.service';
 import { TitleNavbarService } from '../../../../_services/title-navbar.service';
@@ -25,6 +23,7 @@ import { TitleNavbarService } from '../../../../_services/title-navbar.service';
 ModuleRegistry.registerModules([ AllCommunityModule]);
 
 @Component({
+  standalone: true,
   selector: 'app-student-progress-management',
   imports: [
     AgGridAngular,

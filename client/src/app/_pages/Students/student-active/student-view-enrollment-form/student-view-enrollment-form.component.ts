@@ -6,6 +6,7 @@ import { StudentsService } from '../../../../_services/students.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
+  standalone: true,
   selector: 'app-student-view-enrollment-form',
   imports: [ CommonModule ],
   templateUrl: './student-view-enrollment-form.component.html',

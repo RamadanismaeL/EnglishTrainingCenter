@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 
 @Component({
+  standalone: true,
   selector: 'app-student-dropouts',
   imports: [],
   templateUrl: './student-dropouts.component.html',

@@ -12,7 +12,7 @@ using server.src.Data;
 namespace server.Migrations
 {
     [DbContext(typeof(ServerDbContext))]
-    [Migration("20250524045829_InitializeMigrations")]
+    [Migration("20250526180441_InitializeMigrations")]
     partial class InitializeMigrations
     {
         /// <inheritdoc />
@@ -445,8 +445,10 @@ namespace server.Migrations
                         .HasColumnName("Exam");
 
                     b.Property<decimal>("FinalAverage")
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("decimal(10,2)")
-                        .HasColumnName("FinalAverage");
+                        .HasColumnName("FinalAverage")
+                        .HasComputedColumnSql("((QuizOne + QuizTwo) / 2 * 0.6) + (Exam * 0.4)", true);
 
                     b.Property<string>("Id")
                         .IsRequired()
@@ -478,7 +480,7 @@ namespace server.Migrations
 
                     b.Property<decimal>("QuizTwo")
                         .HasColumnType("decimal(10,2)")
-                        .HasColumnName("QuitTwo");
+                        .HasColumnName("QuizTwo");
 
                     b.Property<string>("Schedule")
                         .IsRequired()
@@ -487,8 +489,10 @@ namespace server.Migrations
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("Status");
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("varchar(20)")
+                        .HasColumnName("Status")
+                        .HasComputedColumnSql("\n                    CASE \n                        WHEN Exam = 0.0 THEN 'In Progress'\n                        WHEN FinalAverage >= 50.0 AND FinalAverage <= 100.0 THEN 'Pass'\n                        WHEN FinalAverage >= 0.0 AND FinalAverage < 50.0 THEN 'Failed'\n                        ELSE 'Error'\n                    END", true);
 
                     b.Property<string>("StudentId")
                         .IsRequired()

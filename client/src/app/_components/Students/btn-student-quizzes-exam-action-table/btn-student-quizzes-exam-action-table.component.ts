@@ -7,6 +7,7 @@ import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { TitleNavbarService } from '../../../_services/title-navbar.service';
 import { DialogManageEvalutionsEditGradeTableComponent } from '../dialog-manage-evalutions-edit-grade-table/dialog-manage-evalutions-edit-grade-table.component';
 import { MatDialog } from '@angular/material/dialog';
+import { StudentShareIdService } from '../../../_services/student-share-id.service';
 
 @Component({
   selector: 'app-btn-student-quizzes-exam-action-table',
@@ -24,7 +25,7 @@ export class BtnStudentQuizzesExamActionTableComponent implements ICellRendererA
 
   params: any;
 
-  constructor (private titleNavbarService: TitleNavbarService, private dialog: MatDialog)
+  constructor (private titleNavbarService: TitleNavbarService, private dialog: MatDialog, private studentShareId: StudentShareIdService)
   {}
 
   agInit(params: any): void {
@@ -37,10 +38,19 @@ export class BtnStudentQuizzesExamActionTableComponent implements ICellRendererA
 
   navigateTo (breadcrumbs: { label: string, url?: any[] }) {
     this.titleNavbarService.addBreadcrumb(breadcrumbs);
+
+    this.studentShareId.setEnrollmentStudent(this.params.data.id);
   }
 
   onEdit()
   {
-    this.dialog.open(DialogManageEvalutionsEditGradeTableComponent);
+    this.dialog.open(DialogManageEvalutionsEditGradeTableComponent, {
+      data:
+      {
+        order: this.params.data.order,
+        quizOne: this.params.data.quizOne,
+        quizTwo: this.params.data.quizTwo
+      }
+    });
   }
 }

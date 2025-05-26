@@ -47,7 +47,7 @@ namespace server.src.Controllers
         }
 
         [HttpPatch("update-quiz")]
-        public async Task<IActionResult> UpdateQuiz(StudentCourseInfoUpdateQuizDto courseInfoUpdateQuizDto)
+        public async Task<IActionResult> UpdateQuiz([FromBody] StudentCourseInfoUpdateQuizDto courseInfoUpdateQuizDto)
         {
             if (courseInfoUpdateQuizDto is null)
             {
@@ -68,10 +68,48 @@ namespace server.src.Controllers
             return response.IsSuccess ? Ok(response) : BadRequest(response);
         }
 
+        [HttpPatch("update-quiz-one-two")]
+        public async Task<IActionResult> UpdateQuizOneTwo([FromBody] StudentCourseInfoUpdateQuizOneTwoDto courseInfoUpdateQuizDto)
+        {
+            if (courseInfoUpdateQuizDto is null)
+            {
+                return BadRequest(new ResponseDto
+                {
+                    IsSuccess = false,
+                    Message = "Course data is request."
+                });
+            }
+
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var response = await _courseInfoRepository.UpdateQuizOneTwo(courseInfoUpdateQuizDto);
+
+            // Notifica todos os clientes conectados
+            await _hubContext.Clients.All.SendAsync("ReceiveMessage", "Course updated successfully.");
+
+            return response.IsSuccess ? Ok(response) : BadRequest(response);
+        }
+
         [HttpGet("get-list-student-course-info-active")]
         public async Task<ActionResult<List<StudentCourseInfoListDto>>> GetListStudentCourseInfoActive()
         {
             var courseData = await _courseInfoRepository.GetListStudentCourseInfoActive();
+            return Ok(courseData);
+        }
+
+        [HttpPost("get-list-student-course-info-progress-history-by-studentId/{studentId}")]
+        public async Task<ActionResult<List<StudentCourseInfoProgressHistoryDto>>> GetListStudentCourseInfoProgressHistory(string studentId)
+        {
+            if (studentId == null || studentId.Trim().Length == 0)
+            {
+                return BadRequest(new ResponseDto
+                {
+                    IsSuccess = false,
+                    Message = "Invalid student ID."
+                });
+            }
+
+            var courseData = await _courseInfoRepository.GetListStudentCourseInfoProgressHistory(studentId);
             return Ok(courseData);
         }
     }

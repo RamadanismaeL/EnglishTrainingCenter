@@ -12,6 +12,7 @@ namespace server.src.DTOs
         public string Modality { get; set; } = string.Empty;
         public string AcademicPeriod { get; set; } = string.Empty;
         public string Schedule { get; set; } = string.Empty;
+        public decimal MonthlyFee { get; set; }
 
         
         // IDENTIFICATION DOCUMENT

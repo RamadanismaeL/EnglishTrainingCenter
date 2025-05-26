@@ -3,6 +3,7 @@ import { TopFinancialCashFlowComponent } from "../../../_components/Financial/Ca
 import { BottomFinancialCashFlowComponent } from '../../../_components/Financial/CashFlow/bottom-financial-cash-flow/bottom-financial-cash-flow.component';
 
 @Component({
+  standalone: true,
   selector: 'app-financial-cash-flow',
   imports: [TopFinancialCashFlowComponent, BottomFinancialCashFlowComponent],
   templateUrl: './financial-cash-flow.component.html',

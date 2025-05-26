@@ -13,8 +13,7 @@ import { jwtDecode } from 'jwt-decode';
 export class LoginService {
   private readonly myUrl : string = environment.myUrl; // URL da API
   private readonly userKey = 'auth_data'; // Chave para armazenamento
-  private readonly tokenRefreshThreshold = 300;
-  private isRefreshing = false;
+  private readonly tokenRefreshThreshold = 500; // Tempo em segundos antes do token expirar para considerar que está prestes a expirar
 
   constructor(private http: HttpClient)
   {}
@@ -80,42 +79,21 @@ export class LoginService {
   }
 
   // Atualiza o token de autenticação usando o refresh token
-  refreshToken (data: LoginTokenDto) : Observable<ResponseDto>
-  {
-    if (this.isRefreshing)
-    {
-      // Evita múltiplas chamadas simultâneas de refresh
-      return this.http
-      .post<ResponseDto>(`${this.myUrl}/Login/refresh-token`, data, { headers : { 'Allow-Offline' : 'true' } })
-        .pipe(
-          tap(response => {
-            if (response.isSuccess) {
-              this.storeAuthData(response);
-            }
-            this.isRefreshing = false;
-          }),
-          catchError(error => {
-            this.isRefreshing = false;
-            return this.handleError(error);
-          })
-        );
-    }
-
-    this.isRefreshing = true;
+  refreshToken(data: LoginTokenDto): Observable<ResponseDto> {
     return this.http
-      .post<ResponseDto>(`${this.myUrl}/Login/refresh-token`, data, { headers : { 'Allow-Offline' : 'true' } })
-        .pipe(
-          tap(response => {
-            if (response.isSuccess) {
-              this.storeAuthData(response);
-            }
-            this.isRefreshing = false;
-          }),
-          catchError(error => {
-            this.isRefreshing = false;
-            return this.handleError(error);
-          })
-        );
+      .post<ResponseDto>(`${this.myUrl}/Login/refresh-token`, data, {
+        headers: { 'Allow-Offline': 'true' }
+      })
+      .pipe(
+        tap(response => {
+          if (response.isSuccess) {
+            this.storeAuthData(response);
+          }
+        }),
+        catchError(error => {
+          return this.handleError(error);
+        })
+      );
   }
 
   // Verifica se o token está prestes a expirar

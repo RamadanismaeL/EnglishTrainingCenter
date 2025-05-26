@@ -10,6 +10,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { LoginService } from '../../_services/login.service';
 
 @Component({
+  standalone: true,
   selector: 'app-profile',
   imports: [
     MatIconModule,

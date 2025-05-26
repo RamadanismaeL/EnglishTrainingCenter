@@ -15,6 +15,7 @@ import { SnackBarService } from '../../_services/snack-bar.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { SettingAmountMtDetailsDto } from '../../_interfaces/setting-amount-mt-details-dto';
 import { BtnActionSettingsWeeklyScheduleTableComponent } from './btn-action-settings-weekly-schedule-table/btn-action-settings-weekly-schedule-table.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 export interface MonthlyTuition {
   id: string,
@@ -31,6 +32,7 @@ export interface WeeklySchedule {
 }
 
 @Component({
+  standalone: true,
   selector: 'app-settings',
   imports: [
     MatInputModule,
@@ -39,7 +41,8 @@ export interface WeeklySchedule {
     CommonModule,
     ReactiveFormsModule,
     AgGridAngular,
-    MatTableModule
+    MatTableModule,
+    MatTooltipModule
   ],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss'

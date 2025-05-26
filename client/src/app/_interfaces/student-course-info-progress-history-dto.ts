@@ -1,12 +1,11 @@
-export interface StudentCourseInfoListActive {
+export interface StudentCourseInfoProgressHistoryDto {
   "order": number | undefined
-  "id": string | undefined
   "fullName": string | undefined
   "level": string | undefined
-  "schedule": string | undefined
   "quizOne": number | undefined
   "quizTwo": number | undefined
   "exam": number | undefined
   "finalAverage": number | undefined
   "status": string | undefined
+  "dateUpdate": string | undefined
 }

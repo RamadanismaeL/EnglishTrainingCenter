@@ -10,6 +10,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 
 @Component({
+  standalone: true,
   selector: 'app-login-forgot-password',
   imports: [
     MatInputModule,

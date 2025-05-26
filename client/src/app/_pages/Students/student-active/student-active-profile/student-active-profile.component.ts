@@ -11,6 +11,7 @@ import { CommonModule } from '@angular/common';
 import { NotificationHubService } from '../../../../_services/notification-hub.service';
 
 @Component({
+  standalone: true,
   selector: 'app-student-active-profile',
   imports: [
     MatMenuModule,
@@ -47,5 +48,25 @@ export class StudentActiveProfileComponent implements OnInit, OnDestroy {
 
   navigateTo (breadcrumbs: { label: string, url?: any[] }) {
     this.titleNavbarService.addBreadcrumb(breadcrumbs);
+  }
+
+  formatAmount(value: number | undefined | string): string {
+    if (value === null || value === undefined || value === '') return '';
+
+    let numberValue: number;
+
+    if (typeof value === 'string') {
+      const cleanedValue = value.replace(/\./g, '').replace(',', '.');
+      numberValue = parseFloat(cleanedValue);
+    } else {
+      numberValue = value;
+    }
+
+    if (isNaN(numberValue)) return '';
+
+    // Formatação manual com regex
+    return numberValue.toFixed(2)
+      .replace('.', ',') // Substitui ponto decimal por vírgula
+      .replace(/\B(?=(\d{3})+(?!\d))/g, '.'); // Adiciona pontos nos milhares
   }
 }

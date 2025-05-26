@@ -29,6 +29,7 @@ import { BtnTrainerSubsidyActionsTableComponent } from '../../../_components/tra
 ModuleRegistry.registerModules([ AllCommunityModule]);
 
 @Component({
+  standalone: true,
   selector: 'app-subsidy',
   imports: [
     AgGridAngular,

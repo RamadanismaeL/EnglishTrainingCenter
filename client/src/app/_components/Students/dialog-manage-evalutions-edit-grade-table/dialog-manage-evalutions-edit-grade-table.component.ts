@@ -1,7 +1,11 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, Inject, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
+import { Subscription } from 'rxjs';
+import { StudentCourseInfoService } from '../../../_services/student-course-info.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { SnackBarService } from '../../../_services/snack-bar.service';
 
 @Component({
   selector: 'app-dialog-manage-evalutions-edit-grade-table',
@@ -12,12 +16,21 @@ import { MatInputModule } from '@angular/material/input';
   templateUrl: './dialog-manage-evalutions-edit-grade-table.component.html',
   styleUrl: './dialog-manage-evalutions-edit-grade-table.component.scss'
 })
-export class DialogManageEvalutionsEditGradeTableComponent implements OnInit {
+export class DialogManageEvalutionsEditGradeTableComponent implements OnInit, OnDestroy {
   private readonly fb = inject(FormBuilder);
   form! : FormGroup;
   previousAmountValue: string = '';
+  private subs: Subscription = new Subscription();
 
-  constructor(public dialogRef : MatDialogRef<DialogManageEvalutionsEditGradeTableComponent>)
+  constructor(public dialogRef : MatDialogRef<DialogManageEvalutionsEditGradeTableComponent>, @Inject(MAT_DIALOG_DATA) public data:
+    {
+      order: number,
+      quizOne: number,
+      quizTwo: number
+    },
+  private studentCourseInfo: StudentCourseInfoService,
+  private alert: SnackBarService
+  )
   {
     //console.log('Dados recebidos: ',data)
   }
@@ -26,11 +39,23 @@ export class DialogManageEvalutionsEditGradeTableComponent implements OnInit {
       this.initializeForm();
   }
 
+  ngOnDestroy(): void {
+    //throw new Error('Method not implemented.');
+  }
+
   private initializeForm() : void {
     this.form = this.fb.group({
       quizOne : [''],
       quizTwo : ['']
     });
+
+    if (this.data)
+    {
+      this.form.patchValue({
+        quizOne: this.data.quizOne,
+        quizTwo: this.data.quizTwo
+      });
+    }
   }
 
   onAmount(event: any) {
@@ -53,7 +78,7 @@ export class DialogManageEvalutionsEditGradeTableComponent implements OnInit {
 
     // Converte para número e verifica o valor máximo
     const numberValue = this.parseNumber(numericValue);
-    if (numberValue > 101) {
+    if (numberValue > 100) {
       input.value = this.previousAmountValue || '';
     } else {
       input.value = this.formatNumber(numericValue);
@@ -86,5 +111,45 @@ export class DialogManageEvalutionsEditGradeTableComponent implements OnInit {
   }
 
   onSave()
-  {}
+  {
+    if (this.form.valid)
+    {
+      const formDataToSend = {
+        order: this.data.order,
+        quizOne: this.form.value.quizOne,
+        quizTwo: this.form.value.quizTwo
+      };
+
+      this.subs.add(
+        this.studentCourseInfo.updateQuizOneTwo(formDataToSend).subscribe({
+          next: () => {
+            //console.log('Resposta do servidor:', response);
+            this.dialogRef.close(true);
+          },
+          error: (error) => {
+            this.handleError(error);
+            this.dialogRef.close(false);
+          }
+        })
+      );
+    }
+    else
+    {
+      this.dialogRef.close(false);
+    }
+  }
+
+  private handleError(error: HttpErrorResponse) {
+    if (error.status === 400) {
+      this.alert.show('An error occurred.', 'error');
+    } else if (error.status === 401) {
+      this.alert.show('Oops! Unauthorized!', 'error');
+    } else if (error.status === 404) {
+      this.alert.show('Oops! Not found!', 'error');
+    } else if (error.status >= 500) {
+      this.alert.show('Oops! The server is busy!', 'error');
+    } else {
+      this.alert.show('Oops! An unexpected error occurred.', 'error');
+    }
+  }
 }

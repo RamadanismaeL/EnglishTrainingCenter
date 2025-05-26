@@ -16,6 +16,7 @@ import { MatCardModule } from '@angular/material/card';
 import { Subscription } from 'rxjs';
 
 @Component({
+  standalone: true,
   selector: 'app-change-password',
   imports: [
     MatStepperModule,

@@ -75,7 +75,7 @@ namespace server.src.Data.Maps
                 .IsRequired();
 
             builder.Property(s => s.QuizTwo)
-                .HasColumnName("QuitTwo")
+                .HasColumnName("QuizTwo")
                 .HasColumnType("decimal(10,2)")
                 .IsRequired();
 
@@ -87,12 +87,18 @@ namespace server.src.Data.Maps
             builder.Property(s => s.FinalAverage)
                 .HasColumnName("FinalAverage")
                 .HasColumnType("decimal(10,2)")
-                .IsRequired();
+                .HasComputedColumnSql("((QuizOne + QuizTwo) / 2 * 0.6) + (Exam * 0.4)", stored: true);
 
             builder.Property(s => s.Status)
                 .HasColumnName("Status")
-                .HasColumnType("varchar(50)")
-                .IsRequired();
+                .HasColumnType("varchar(20)")
+                .HasComputedColumnSql(@"
+                    CASE 
+                        WHEN Exam = 0.0 THEN 'In Progress'
+                        WHEN FinalAverage >= 50.0 AND FinalAverage <= 100.0 THEN 'Pass'
+                        WHEN FinalAverage >= 0.0 AND FinalAverage < 50.0 THEN 'Failed'
+                        ELSE 'Error'
+                    END", stored: true);
 
             builder.Property(s => s.TrainerName)
                 .HasColumnName("TrainerName")
@@ -102,6 +108,12 @@ namespace server.src.Data.Maps
             builder.Property(s => s.DateUpdate)
                 .HasColumnName("DateUpdate")
                 .HasColumnType("datetime");
+
+            builder.Property(t => t.DateRegister)
+                .HasColumnName("DateRegister")
+                .HasColumnType("datetime")
+                .HasDefaultValueSql("current_timestamp")
+                .IsRequired();
 
             builder.Property(s => s.StudentId)
                 .HasColumnName("StudentId")

@@ -65,6 +65,11 @@
           <span class="material-icons">schedule</span>
           <span class="truncate">Schedule</span>
         </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">account_balance_wallet</span>
+          <span class="truncate">Monthly Fee</span>
+        </div>
       </div>
 
       <div class="grid gap-5 min-w-[1px]">
@@ -79,6 +84,8 @@
         <div class="text-gray-600 font-medium truncate">{{ student.academicPeriod }}</div>
 
         <div class="text-gray-600 font-medium truncate">{{ student.schedule }}</div>
+
+        <div class="text-gray-600 font-medium truncate">{{ formatAmount(student.monthlyFee) }}&nbsp;MT</div>
       </div>
     </div>
     <h1 class="text-lg text-[#555] font-bold mb-1 text-start mt-10">

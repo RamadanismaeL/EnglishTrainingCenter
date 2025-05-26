@@ -3,6 +3,7 @@ import { RegisterComponent } from '../../_pages/Trainers/register/register.compo
 import { TableComponent } from '../../_pages/Trainers/table/table.component';
 
 @Component({
+  standalone: true,
   selector: 'app-trainers',
   imports: [
     RegisterComponent,

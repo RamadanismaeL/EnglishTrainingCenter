@@ -416,10 +416,10 @@ namespace server.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     MonthlyFee = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     QuizOne = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
-                    QuitTwo = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    QuizTwo = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     Exam = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
-                    FinalAverage = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
-                    Status = table.Column<string>(type: "varchar(50)", nullable: false)
+                    FinalAverage = table.Column<decimal>(type: "decimal(10,2)", nullable: false, computedColumnSql: "((QuizOne + QuizTwo) / 2 * 0.6) + (Exam * 0.4)", stored: true),
+                    Status = table.Column<string>(type: "varchar(20)", nullable: false, computedColumnSql: "\n                    CASE \n                        WHEN Exam = 0.0 THEN 'In Progress'\n                        WHEN FinalAverage >= 50.0 AND FinalAverage <= 100.0 THEN 'Pass'\n                        WHEN FinalAverage >= 0.0 AND FinalAverage < 50.0 THEN 'Failed'\n                        ELSE 'Error'\n                    END", stored: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     TrainerName = table.Column<string>(type: "varchar(50)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),

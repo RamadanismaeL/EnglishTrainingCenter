@@ -3,28 +3,25 @@ import { RamComponent } from './_components/ram/ram.component';
 import { DashboardComponent } from './_pages/dashboard/dashboard.component';
 import { authGuard } from './_guards/auth.guard';
 import { loginGuard } from './_guards/login.guard';
+import { LoginComponent } from './_components/login/login.component';
 import { EnrollmentComponent } from './_components/enrollment/enrollment.component';
 import { PaymentComponent } from './_components/payment/payment.component';
-import { StudentFinishedComponent } from './_pages/Students/student-finished/student-finished.component';
-import { StudentDropoutsComponent } from './_pages/Students/student-dropouts/student-dropouts.component';
-import { FinancialExpenseComponent } from './_pages/Financials/financial-expense/financial-expense.component';
-import { FinancialRevenueComponent } from './_pages/Financials/financial-revenue/financial-revenue.component';
-import { FinancialTuitionComponent } from './_pages/Financials/financial-tuition/financial-tuition.component';
-import { FinancialCashFlowComponent } from './_pages/Financials/financial-cash-flow/financial-cash-flow.component';
-import { FinancialDailyReportComponent } from './_pages/Financials/financial-daily-report/financial-daily-report.component';
+import { StudentActiveComponent } from './_pages/Students/student-active/student-active.component';
 import { StudentQuizzesExamesComponent } from './_pages/Students/student-active/student-quizzes-exames/student-quizzes-exames.component';
+import { StudentScheduledExamsComponent } from './_pages/Students/student-scheduled-exams/student-scheduled-exams.component';
+import { FinancialExpenseComponent } from './_pages/Financials/financial-expense/financial-expense.component';
+import { FinancialDailyReportComponent } from './_pages/Financials/financial-daily-report/financial-daily-report.component';
+import { LoginSigninComponent } from './_pages/login-signin/login-signin.component';
 
 export const routes: Routes = [
     {
     path : 'login',
-    loadComponent: () =>
-      import('./_components/login/login.component').then(m => m.LoginComponent),
+    component : LoginComponent,
     canActivate : [loginGuard],
     children : [
       {
         path : '',
-        loadComponent: () =>
-          import('./_pages/login-signin/login-signin.component').then(m => m.LoginSigninComponent),
+        component : LoginSigninComponent,
         outlet: 'loginRouter'
       },
       {
@@ -106,8 +103,7 @@ export const routes: Routes = [
       },
       {
         path : 'student-active',
-        loadComponent: () =>
-          import('./_pages/Students/student-active/student-active.component').then(m => m.StudentActiveComponent),
+        component : StudentActiveComponent,
         outlet : 'ramRouter'
       },
       {
@@ -147,18 +143,19 @@ export const routes: Routes = [
       },
       {
         path : 'student-scheduled-exams',
-        loadComponent: () =>
-          import('./_pages/Students/student-scheduled-exams/student-scheduled-exams.component').then(s => s.StudentScheduledExamsComponent),
+        component : StudentScheduledExamsComponent,
         outlet : 'ramRouter'
       },
       {
         path : 'student-finished',
-        component : StudentFinishedComponent,
+        loadComponent: () =>
+          import('./_pages/Students/student-finished/student-finished.component').then(m => m.StudentFinishedComponent),
         outlet : 'ramRouter'
       },
       {
         path : 'student-dropouts',
-        component : StudentDropoutsComponent,
+        loadComponent: () =>
+          import('./_pages/Students/student-dropouts/student-dropouts.component').then(m => m.StudentDropoutsComponent),
         outlet : 'ramRouter'
       },
       {
@@ -168,17 +165,20 @@ export const routes: Routes = [
       },
       {
         path : 'financial-revenue',
-        component : FinancialRevenueComponent,
+        loadComponent: () =>
+          import('./_pages/Financials/financial-revenue/financial-revenue.component').then(m => m.FinancialRevenueComponent),
         outlet : 'ramRouter'
       },
       {
         path : 'financial-tuition',
-        component : FinancialTuitionComponent,
+        loadComponent: () =>
+          import('./_pages/Financials/financial-tuition/financial-tuition.component').then(m => m.FinancialTuitionComponent),
         outlet : 'ramRouter'
       },
       {
         path : 'financial-cash-flow',
-        component : FinancialCashFlowComponent,
+        loadComponent: () =>
+          import('./_pages/Financials/financial-cash-flow/financial-cash-flow.component').then(m => m.FinancialCashFlowComponent),
         outlet : 'ramRouter'
       },
       {

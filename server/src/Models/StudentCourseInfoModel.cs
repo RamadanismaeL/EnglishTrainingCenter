@@ -25,12 +25,13 @@ namespace server.src.Models
         public decimal QuizOne { get; set; } = 0.0M;
         public decimal QuizTwo { get; set; } = 0.0M;
         public decimal Exam { get; set; } = 0.0M;
-        public decimal FinalAverage { get; set; } = 0.0M;
+        public decimal FinalAverage { get; set; }
 
 
         public string Status { get; set; } = string.Empty; // Failed, Pass, In Progress
         public string TrainerName { get; set; } = string.Empty;
-        public DateTime DateUpdate { get; set; }
+        public DateTime? DateUpdate { get; set; }
+        public DateTime DateRegister { get; set; }
 
         public string StudentId { get; set; } = string.Empty;
         public StudentDataModel? StudentData { get; set; } // Navigation property to StudentDataModel
