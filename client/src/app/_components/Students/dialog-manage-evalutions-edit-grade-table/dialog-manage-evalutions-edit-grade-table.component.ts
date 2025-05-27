@@ -24,6 +24,7 @@ export class DialogManageEvalutionsEditGradeTableComponent implements OnInit, On
 
   constructor(public dialogRef : MatDialogRef<DialogManageEvalutionsEditGradeTableComponent>, @Inject(MAT_DIALOG_DATA) public data:
     {
+      studentName: string,
       order: number,
       quizOne: number,
       quizTwo: number

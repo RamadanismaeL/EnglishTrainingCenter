@@ -73,7 +73,7 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
       },
       {
         headerName: 'Age',
-        field: 'age', minWidth: 60, flex: 1,
+        field: 'age', minWidth: 61, flex: 1,
         cellClass: 'custom-cell-center'
       },
       {
@@ -1051,7 +1051,7 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
       doc.text(this.footer, pageWidth / 2, footerY + 10, { align: 'center' });
 
       // Salva o PDF
-      doc.save('ETC_filtered_trainer_subsidies.pdf');
+      doc.save('ETC_filtered_student_active.pdf');
       this.alert.show('Filtered data exported to PDF.', 'success');
     } catch (error) {
       console.error('PDF export error:', error);

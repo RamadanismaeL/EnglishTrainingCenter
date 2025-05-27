@@ -389,6 +389,7 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
 
   @ViewChild('agGrid') agGrid!: AgGridAngular;
 
+
   private async copyAllDataTable(): Promise<void> {
     try {
       // 1. Busca todos os dados dos trainers
@@ -400,8 +401,8 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
         return;
       }
 
-      const ignoreKeys = ['subsidyMT'];
-      const orderedKeys = ['profileImage', 'fullName', 'position', 'status', 'subsidyMTFormatted', 'dateUpdate']; // ordem desejada
+      const ignoreKeys = ['order', 'id'];
+      const orderedKeys = ['fullName', 'level', 'schedule', 'quizOne', 'quizTwo', 'exam', 'finalAverage', 'status']; // ordem desejada
 
       // Filtra a ordem excluindo colunas ignoradas
       const finalKeys = orderedKeys.filter(key => !ignoreKeys.includes(key));
@@ -467,21 +468,23 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
       }
 
        // 2. Ensure data is an array
-      const trainers = Array.isArray(response) ? response : [response];
+      const students = Array.isArray(response) ? response : [response];
 
       //console.log('Exporting:', trainers);
 
       // 4. Create Excel workbook
       const workbook = new ExcelJS.Workbook();
-      const worksheet = workbook.addWorksheet('Trainers');
+      const worksheet = workbook.addWorksheet('Students');
 
       const excelColumns = [
-        { header: 'Photo', key: 'profileImage', width: 45 },
         { header: 'Full Name', key: 'fullName', width: 40 },
-        { header: 'Position', key: 'position', width: 40 },
-        { header: 'Status', key: 'status', width: 10 },
-        { header: 'Subsidy (MT)', key: 'subsidyMTFormatted', width: 20 },
-        { header: 'Date Update', key: 'dateUpdate', width: 25 }
+        { header: 'Level', key: 'level', width: 15 },
+        { header: 'Schedule', key: 'schedule', width: 20 },
+        { header: 'Quiz 1', key: 'quizOne', width: 15 },
+        { header: 'Quiz 2', key: 'quizTwo', width: 15 },
+        { header: 'Exam', key: 'exam', width: 15 },
+        { header: 'Final Average', key: 'finalAverage', width: 20 },
+        { header: 'Status', key: 'status', width: 15 },
       ];
 
       // 2. Definir manualmente os valores do cabeçalho na linha 4
@@ -517,16 +520,49 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
       });
 
       // 5. Add data SAFELY (only mapped columns)
-      trainers.forEach((trainer, index) => {
-        const rowNumber = index + 5; // Começa da linha 5
-        worksheet.getRow(rowNumber).values = [
-          trainer.profileImage ?? '',
-          trainer.fullName ?? '',
-          trainer.position ?? '',
-          trainer.status ?? '',
-          trainer.subsidyMTFormatted ?? '',
-          trainer.dateUpdate ?? ''
+      students.forEach((student, index) => {
+        const rowNumber = index + 5; // Starting from row 5 (after header)
+
+        // Set row values
+        const row = worksheet.getRow(rowNumber);
+        row.values = [
+          student.fullName ?? '',
+          student.level ?? '',
+          student.schedule ?? '',
+          this.formatToPercentage(student.quizOne) ?? '',
+          this.formatToPercentage(student.quizTwo) ?? '',
+          this.formatToPercentage(student.exam) ?? '',
+          this.formatToPercentage(student.finalAverage) ?? '',
+          student.status ?? ''
         ];
+
+        row.height = 20;
+
+        row.eachCell((cell) => {
+          cell.font = { size: 12, bold: false };
+          cell.alignment = { vertical: 'middle', horizontal: 'center' };
+        });
+
+        // Apply styles to score cells
+        const scores = [student.quizOne, student.quizTwo, student.exam, student.finalAverage];
+        scores.forEach((score, scoreIndex) => {
+          const columnNumber = 4 + scoreIndex; // Starts at column D (4)
+          const cell = row.getCell(columnNumber);
+
+          if (score === 0) {
+            cell.font.color = { argb: 'FF1C1C1C' }; // Black/Greyish for 0
+          } else if (score > 0 && score < 50) {
+            cell.font.color = { argb: 'FFFF0000' }; // Red
+          } else if (score >= 50 && score <= 100) {
+            cell.font.color = { argb: 'FF3A86FF' }; // Blue
+          } else {
+            cell.font = {
+              size: 12,
+              color: { argb: 'FFFF0000' },
+              bold: true
+            }; // Error - red & bold
+          }
+        });
       });
 
       worksheet.eachRow((row, rowNumber) => {
@@ -534,18 +570,11 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
           worksheet.getRow(rowNumber).height = 20;
 
           row.eachCell({ includeEmpty: true }, cell => {
-            // Estilo padrão para todas as células de dados
-            cell.font = { size: 12, bold: false, color: { argb: 'FF000000' } }; // Preto
-            cell.alignment = { vertical: 'middle', horizontal: 'left' };
 
             const columnLetter = worksheet.getColumn(cell.col).letter;
 
-            if (['D', 'E', 'F'].includes(columnLetter)) {
-              cell.alignment = { vertical: 'middle', horizontal: 'center' };
-            }
-
-            if (['E'].includes(columnLetter)) {
-              cell.alignment = { vertical: 'middle', horizontal: 'right' };
+            if (['A'].includes(columnLetter)) {
+              cell.alignment = { vertical: 'middle', horizontal: 'left' };
             }
 
             cell.border = {
@@ -558,7 +587,7 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
         }
       });
 
-      // 1. Função auxiliar para converter imagem em base64 (adicione ao seu serviço)
+      // 1. Função auxiliar para converter imagem em base64
       async function imageToBase64(url: string): Promise<string> {
         const response = await fetch(url);
         const blob = await response.blob();
@@ -590,12 +619,13 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
       }
 
       // Descobre a última linha
+      // Pula duas linhas e adiciona o footer
       const lastRow = worksheet.lastRow?.number;
       const calc = lastRow! + 2;
-      console.log('LastRow + 2 = ', calc)
+      //console.log('LastRow + 2 = ', calc)
 
       const footer = worksheet.getRow(calc);
-      worksheet.mergeCells(`A${calc}:F${calc}`);
+      worksheet.mergeCells(`A${calc}:H${calc}`);
       footer.height = 20;
       const myName = worksheet.getCell(`A${calc}`);
       myName.value = this.footer;
@@ -606,31 +636,31 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
 
       worksheet.getRow(1).values = [];
       worksheet.getRow(1).height = 30;
-      worksheet.mergeCells('A1:E1');
+      worksheet.mergeCells('A1:F1');
       const titleCell1 = worksheet.getCell('A1');
       titleCell1.value = 'ENGLISH TRAINING CENTER';
       titleCell1.font = { size: 22, bold: true, color: { argb: 'FF2C2C2C' } };
       titleCell1.alignment = { vertical: 'middle', horizontal: 'center' };
 
-
-      worksheet.mergeCells('A2:E2');
+      worksheet.mergeCells('A2:F2');
       const titleCell2 = worksheet.getCell('A2');
-      titleCell2.value = 'Trainer Subsidies – Full List';
+      titleCell2.value = 'Students : Active / Manage Evaluations – Full List';
       titleCell2.font = { size: 20, bold: true, color: { argb: '2C2C2C' } };
       titleCell2.alignment = { vertical: 'middle', horizontal: 'center' };
 
       // Adicionar data
-      const dateCell = worksheet.getCell('F2');
+      const dateCell = worksheet.getCell('G2');
+      worksheet.mergeCells('G2:H2')
       dateCell.value = `Issued on: ${this.formatDate(new Date())}`;
       dateCell.font = { size: 12, bold: false, color: { argb: '2C2C2C' } };
-      dateCell.alignment = { vertical: 'middle', horizontal: 'center' };
+      dateCell.alignment = { vertical: 'middle', horizontal: 'right' };
 
       const buffer = await workbook.xlsx.writeBuffer();
       const blob = new Blob([buffer], {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
       });
 
-      FileSaver.saveAs(blob, 'ETC_trainer_subsidies_full_list_data.xlsx');
+      FileSaver.saveAs(blob, 'ETC_students_active_full_list_manage_evaluations_data.xlsx');
       this.alert.show('All data exported to Excel.', 'success');
     } catch (error) {
       console.error('Error exporting Excel:', error);
@@ -645,17 +675,17 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
       }
 
       // 1. Obter dados VISÍVEIS do grid (com filtros aplicados)
-      const rowData: any[] = [];
+      const students: any[] = [];
       this.gridApi.forEachNodeAfterFilter(node => {
         if (node.data) {
-          rowData.push(node.data);
+          students.push(node.data);
         }
       });
 
       // Alternativa para dados SELECIONADOS:
       // const rowData = this.gridApi.getSelectedRows();
 
-      if (!rowData.length) {
+      if (!students.length) {
         this.alert.show('No data available for export.', 'warning');
         return;
       }
@@ -665,12 +695,14 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
       const worksheet = workbook.addWorksheet('Trainers');
 
       const excelColumns = [
-        { header: 'Photo', key: 'profileImage', width: 45 },
         { header: 'Full Name', key: 'fullName', width: 40 },
-        { header: 'Position', key: 'position', width: 40 },
-        { header: 'Status', key: 'status', width: 10 },
-        { header: 'Subsidy (MT)', key: 'subsidyMTFormatted', width: 20 },
-        { header: 'Date Update', key: 'dateUpdate', width: 25 }
+        { header: 'Level', key: 'level', width: 15 },
+        { header: 'Schedule', key: 'schedule', width: 20 },
+        { header: 'Quiz 1', key: 'quizOne', width: 15 },
+        { header: 'Quiz 2', key: 'quizTwo', width: 15 },
+        { header: 'Exam', key: 'exam', width: 15 },
+        { header: 'Final Average', key: 'finalAverage', width: 20 },
+        { header: 'Status', key: 'status', width: 15 },
       ];
 
       // 2. Definir manualmente os valores do cabeçalho na linha 4
@@ -705,17 +737,50 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
         };
       });
 
-      // Adicionar dados
-      rowData.forEach((trainer, index) => {
-        const rowNumber = index + 5; // Começa da linha 5
-        worksheet.getRow(rowNumber).values = [
-          trainer.profileImage ?? '',
-          trainer.fullName ?? '',
-          trainer.position ?? '',
-          trainer.status ?? '',
-          trainer.subsidyMTFormatted ?? '',
-          trainer.dateUpdate ?? ''
+      // 5. Add data SAFELY (only mapped columns)
+      students.forEach((student, index) => {
+        const rowNumber = index + 5; // Starting from row 5 (after header)
+
+        // Set row values
+        const row = worksheet.getRow(rowNumber);
+        row.values = [
+          student.fullName ?? '',
+          student.level ?? '',
+          student.schedule ?? '',
+          this.formatToPercentage(student.quizOne) ?? '',
+          this.formatToPercentage(student.quizTwo) ?? '',
+          this.formatToPercentage(student.exam) ?? '',
+          this.formatToPercentage(student.finalAverage) ?? '',
+          student.status ?? ''
         ];
+
+        row.height = 20;
+
+        row.eachCell((cell) => {
+          cell.font = { size: 12, bold: false };
+          cell.alignment = { vertical: 'middle', horizontal: 'center' };
+        });
+
+        // Apply styles to score cells
+        const scores = [student.quizOne, student.quizTwo, student.exam, student.finalAverage];
+        scores.forEach((score, scoreIndex) => {
+          const columnNumber = 4 + scoreIndex; // Starts at column D (4)
+          const cell = row.getCell(columnNumber);
+
+          if (score === 0) {
+            cell.font.color = { argb: 'FF1C1C1C' }; // Black/Greyish for 0
+          } else if (score > 0 && score < 50) {
+            cell.font.color = { argb: 'FFFF0000' }; // Red
+          } else if (score >= 50 && score <= 100) {
+            cell.font.color = { argb: 'FF3A86FF' }; // Blue
+          } else {
+            cell.font = {
+              size: 12,
+              color: { argb: 'FFFF0000' },
+              bold: true
+            }; // Error - red & bold
+          }
+        });
       });
 
       worksheet.eachRow((row, rowNumber) => {
@@ -723,18 +788,11 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
           worksheet.getRow(rowNumber).height = 20;
 
           row.eachCell({ includeEmpty: true }, cell => {
-            // Estilo padrão para todas as células de dados
-            cell.font = { size: 12, bold: false, color: { argb: 'FF000000' } }; // Preto
-            cell.alignment = { vertical: 'middle', horizontal: 'left' };
 
             const columnLetter = worksheet.getColumn(cell.col).letter;
 
-            if (['D', 'E', 'F'].includes(columnLetter)) {
-              cell.alignment = { vertical: 'middle', horizontal: 'center' };
-            }
-
-            if (['E'].includes(columnLetter)) {
-              cell.alignment = { vertical: 'middle', horizontal: 'right' };
+            if (['A'].includes(columnLetter)) {
+              cell.alignment = { vertical: 'middle', horizontal: 'left' };
             }
 
             cell.border = {
@@ -747,7 +805,7 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
         }
       });
 
-      // 1. Função auxiliar para converter imagem em base64 (adicione ao seu serviço)
+      // 1. Função auxiliar para converter imagem em base64
       async function imageToBase64(url: string): Promise<string> {
         const response = await fetch(url);
         const blob = await response.blob();
@@ -779,12 +837,13 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
       }
 
       // Descobre a última linha
+      // Pula duas linhas e adiciona o footer
       const lastRow = worksheet.lastRow?.number;
       const calc = lastRow! + 2;
       //console.log('LastRow + 2 = ', calc)
 
       const footer = worksheet.getRow(calc);
-      worksheet.mergeCells(`A${calc}:F${calc}`);
+      worksheet.mergeCells(`A${calc}:H${calc}`);
       footer.height = 20;
       const myName = worksheet.getCell(`A${calc}`);
       myName.value = this.footer;
@@ -795,31 +854,31 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
 
       worksheet.getRow(1).values = [];
       worksheet.getRow(1).height = 30;
-      worksheet.mergeCells('A1:E1');
+      worksheet.mergeCells('A1:F1');
       const titleCell1 = worksheet.getCell('A1');
       titleCell1.value = 'ENGLISH TRAINING CENTER';
       titleCell1.font = { size: 22, bold: true, color: { argb: 'FF2C2C2C' } };
       titleCell1.alignment = { vertical: 'middle', horizontal: 'center' };
 
-
-      worksheet.mergeCells('A2:E2');
+      worksheet.mergeCells('A2:F2');
       const titleCell2 = worksheet.getCell('A2');
-      titleCell2.value = 'Filtered Trainer Subsidies';
+      titleCell2.value = 'Students : Active / Manage Evaluations – Filtered List';
       titleCell2.font = { size: 20, bold: true, color: { argb: '2C2C2C' } };
       titleCell2.alignment = { vertical: 'middle', horizontal: 'center' };
 
       // Adicionar data
-      const dateCell = worksheet.getCell('F2');
+      const dateCell = worksheet.getCell('G2');
+      worksheet.mergeCells('G2:H2')
       dateCell.value = `Issued on: ${this.formatDate(new Date())}`;
       dateCell.font = { size: 12, bold: false, color: { argb: '2C2C2C' } };
-      dateCell.alignment = { vertical: 'middle', horizontal: 'center' };
+      dateCell.alignment = { vertical: 'middle', horizontal: 'right' };
 
       const buffer = await workbook.xlsx.writeBuffer();
       const blob = new Blob([buffer], {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
       });
 
-      FileSaver.saveAs(blob, 'ETC_filtered_trainer_subsidies_data.xlsx');
+      FileSaver.saveAs(blob, 'ETC_filtered_students_active_manage_evaluations_data.xlsx');
       this.alert.show('Filtered data exported to Excel.', 'success');
     } catch (error) {
       console.error('Error exporting Excel:', error);
@@ -827,11 +886,18 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
     }
   }
 
+  getScoreColor(score?: number): string {
+    if (score === 0) return '#1C1C1C';
+    else if (score && score < 50) return 'red';
+    else if (score && score >= 50) return '#3A86FF';
+    else return 'black'; // Default
+  }
+
   private async exportPdfAllDataTable(): Promise<void> {
     try {
       // 1. Fetch all trainer data
       const response = await lastValueFrom(this.studentCourseInfo.getListStudentCourseInfoActive());
-      const trainers = Array.isArray(response) ? response : [response];
+      const students = Array.isArray(response) ? response : [response];
 
       if (!response) {
         this.alert.show('No data available for export.', 'warning');
@@ -840,22 +906,26 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
 
       // Preparar cabeçalhos
       const headers = [
-        'Photo',
         'Full Name',
-        'Position',
-        'Status',
-        'Subsidy (MT)',
-        'Date Update'
+        'Level',
+        'Schedule',
+        'Quiz 1',
+        'Quiz 2',
+        'Exam',
+        'Final Average',
+        'Status'
       ];
 
       // 4. Mapear os dados para o formato da tabela
-      const data = trainers.map(trainer => [
-          trainer.profileImage ?? '',
-          trainer.fullName ?? '',
-          trainer.position ?? '',
-          trainer.status ?? '',
-          trainer.subsidyMTFormatted ?? '',
-          trainer.dateUpdate ?? ''
+      const data = students.map(student => [
+          student.fullName ?? '',
+          student.level ?? '',
+          student.schedule ?? '',
+          { content: this.formatToPercentage(student.quizOne) ?? '', styles: { textColor: this.getScoreColor(student.quizOne) } },
+          { content: this.formatToPercentage(student.quizTwo) ?? '', styles: { textColor: this.getScoreColor(student.quizTwo) } },
+          { content: this.formatToPercentage(student.exam) ?? '', styles: { textColor: this.getScoreColor(student.exam) } },
+          { content: this.formatToPercentage(student.finalAverage) ?? '', styles: { textColor: this.getScoreColor(student.finalAverage) } },
+          student.status ?? ''
       ]);
 
       // Cria o documento PDF
@@ -884,7 +954,7 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
       doc.setFontSize(20);
       doc.setTextColor(44, 44, 44);
       doc.setFont('helvetica', 'normal');
-      doc.text('Trainer Subsidies – Full List', 100, 23);
+      doc.text('Students : Active / Manage Evaluations – Full List', 70, 23);
 
       // 5. Adicionar data de emissão
       doc.setFontSize(10);
@@ -903,11 +973,13 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
         columnStyles: {
           // Ajuste proporcional conforme suas colunas
           0: { cellWidth: 50, halign: 'left' },
-          1: { cellWidth: 50, halign: 'left' },
-          2: { cellWidth: 'auto', halign: 'left' },
+          1: { cellWidth: 'auto', halign: 'center' },
+          2: { cellWidth: 'auto', halign: 'center' },
           3: { cellWidth: 'auto', halign: 'center' },
-          4: { cellWidth: 'auto', halign: 'right' },
-          5: { cellWidth: 'auto', halign: 'center' }
+          4: { cellWidth: 'auto', halign: 'center' },
+          5: { cellWidth: 'auto', halign: 'center' },
+          6: { cellWidth: 'auto', halign: 'center' },
+          7: { cellWidth: 'auto', halign: 'center' }
         },
 
         headStyles: {
@@ -919,7 +991,7 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
         styles: {
           valign: 'middle',
           overflow: 'linebreak',
-          fontSize: 9,
+          fontSize: 10,
           cellPadding: 3
         },
       });
@@ -937,7 +1009,7 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
       doc.text(this.footer, pageWidth / 2, footerY + 10, { align: 'center' });
 
       // Salva o PDF
-      doc.save('ETC_trainer_subsidies_full_list_data.pdf');
+      doc.save('ETC_students_active_manage_evaluations_full_list_data.pdf');
       this.alert.show('All data exported to PDF.', 'success');
     } catch (error) {
       console.error('PDF export error:', error);
@@ -959,9 +1031,6 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
         }
       });
 
-      // Alternativa para dados SELECIONADOS:
-      // const rowData = this.gridApi.getSelectedRows();
-
       if (!rowData.length) {
         this.alert.show('No data available for export.', 'warning');
         return;
@@ -969,22 +1038,26 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
 
       // Preparar cabeçalhos
       const headers = [
-        'Photo',
         'Full Name',
-        'Position',
-        'Status',
-        'Subsidy (MT)',
-        'Date Update'
+        'Level',
+        'Schedule',
+        'Quiz 1',
+        'Quiz 2',
+        'Exam',
+        'Final Average',
+        'Status'
       ];
 
       // 4. Mapear os dados para o formato da tabela
-      const data = rowData.map(trainer => [
-          trainer.profileImage ?? '',
-          trainer.fullName ?? '',
-          trainer.position ?? '',
-          trainer.status ?? '',
-          trainer.subsidyMTFormatted ?? '',
-          trainer.dateUpdate ?? ''
+      const data = rowData.map(student => [
+          student.fullName ?? '',
+          student.level ?? '',
+          student.schedule ?? '',
+          { content: this.formatToPercentage(student.quizOne) ?? '', styles: { textColor: this.getScoreColor(student.quizOne) } },
+          { content: this.formatToPercentage(student.quizTwo) ?? '', styles: { textColor: this.getScoreColor(student.quizTwo) } },
+          { content: this.formatToPercentage(student.exam) ?? '', styles: { textColor: this.getScoreColor(student.exam) } },
+          { content: this.formatToPercentage(student.finalAverage) ?? '', styles: { textColor: this.getScoreColor(student.finalAverage) } },
+          student.status ?? ''
       ]);
 
       // Cria o documento PDF
@@ -1013,7 +1086,7 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
       doc.setFontSize(20);
       doc.setTextColor(44, 44, 44);
       doc.setFont('helvetica', 'normal');
-      doc.text('Filtered Trainer Subsidies', 105, 23);
+      doc.text('Students : Active / Manage Evaluations – Filtered List', 60, 23);
 
       // 5. Adicionar data de emissão
       doc.setFontSize(10);
@@ -1032,11 +1105,13 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
         columnStyles: {
           // Ajuste proporcional conforme suas colunas
           0: { cellWidth: 50, halign: 'left' },
-          1: { cellWidth: 50, halign: 'left' },
-          2: { cellWidth: 'auto', halign: 'left' },
+          1: { cellWidth: 'auto', halign: 'center' },
+          2: { cellWidth: 'auto', halign: 'center' },
           3: { cellWidth: 'auto', halign: 'center' },
-          4: { cellWidth: 'auto', halign: 'right' },
-          5: { cellWidth: 'auto', halign: 'center' }
+          4: { cellWidth: 'auto', halign: 'center' },
+          5: { cellWidth: 'auto', halign: 'center' },
+          6: { cellWidth: 'auto', halign: 'center' },
+          7: { cellWidth: 'auto', halign: 'center' }
         },
 
         headStyles: {
@@ -1048,7 +1123,7 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
         styles: {
           valign: 'middle',
           overflow: 'linebreak',
-          fontSize: 9,
+          fontSize: 10,
           cellPadding: 3
         },
       });
@@ -1066,7 +1141,7 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
       doc.text(this.footer, pageWidth / 2, footerY + 10, { align: 'center' });
 
       // Salva o PDF
-      doc.save('ETC_filtered_trainer_subsidies.pdf');
+      doc.save('ETC_students_active_manage_evaluations_filtered_list.pdf');
       this.alert.show('Filtered data exported to PDF.', 'success');
     } catch (error) {
       console.error('PDF export error:', error);
@@ -1078,7 +1153,7 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
     try {
       // 1. Fetch all trainer data
       const response = await lastValueFrom(this.studentCourseInfo.getListStudentCourseInfoActive());
-      const trainers = Array.isArray(response) ? response : [response];
+      const students = Array.isArray(response) ? response : [response];
 
       if (!response) {
         this.alert.show('Could not print all data.', 'warning');
@@ -1087,22 +1162,26 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
 
       // Preparar cabeçalhos
       const headers = [
-        'Photo',
         'Full Name',
-        'Position',
-        'Status',
-        'Subsidy (MT)',
-        'Date Update'
+        'Level',
+        'Schedule',
+        'Quiz 1',
+        'Quiz 2',
+        'Exam',
+        'Final Average',
+        'Status'
       ];
 
       // 4. Mapear os dados para o formato da tabela
-      const data = trainers.map(trainer => [
-          trainer.profileImage ?? '',
-          trainer.fullName ?? '',
-          trainer.position ?? '',
-          trainer.status ?? '',
-          trainer.subsidyMTFormatted ?? '',
-          trainer.dateUpdate ?? ''
+      const data = students.map(student => [
+          student.fullName ?? '',
+          student.level ?? '',
+          student.schedule ?? '',
+          { content: this.formatToPercentage(student.quizOne) ?? '', styles: { textColor: this.getScoreColor(student.quizOne) } },
+          { content: this.formatToPercentage(student.quizTwo) ?? '', styles: { textColor: this.getScoreColor(student.quizTwo) } },
+          { content: this.formatToPercentage(student.exam) ?? '', styles: { textColor: this.getScoreColor(student.exam) } },
+          { content: this.formatToPercentage(student.finalAverage) ?? '', styles: { textColor: this.getScoreColor(student.finalAverage) } },
+          student.status ?? ''
       ]);
 
       // Cria o documento PDF
@@ -1131,7 +1210,7 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
       doc.setFontSize(20);
       doc.setTextColor(44, 44, 44);
       doc.setFont('helvetica', 'normal');
-      doc.text('Trainer Subsidies – Full List', 100, 23);
+      doc.text('Students : Active / Manage Evaluations – Full List', 70, 23);
 
       // 5. Adicionar data de emissão
       doc.setFontSize(10);
@@ -1150,11 +1229,13 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
         columnStyles: {
           // Ajuste proporcional conforme suas colunas
           0: { cellWidth: 50, halign: 'left' },
-          1: { cellWidth: 50, halign: 'left' },
-          2: { cellWidth: 'auto', halign: 'left' },
+          1: { cellWidth: 'auto', halign: 'center' },
+          2: { cellWidth: 'auto', halign: 'center' },
           3: { cellWidth: 'auto', halign: 'center' },
-          4: { cellWidth: 'auto', halign: 'right' },
-          5: { cellWidth: 'auto', halign: 'center' }
+          4: { cellWidth: 'auto', halign: 'center' },
+          5: { cellWidth: 'auto', halign: 'center' },
+          6: { cellWidth: 'auto', halign: 'center' },
+          7: { cellWidth: 'auto', halign: 'center' }
         },
 
         headStyles: {
@@ -1166,7 +1247,7 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
         styles: {
           valign: 'middle',
           overflow: 'linebreak',
-          fontSize: 9,
+          fontSize: 10,
           cellPadding: 3
         },
       });
@@ -1200,7 +1281,7 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
          // console.error('PrintJS error:', error);
           this.alert.show('Oops! Direct printing failed.', 'error');
           // Fallback para download
-          doc.save('ETC_trainer_subsidies_full_list_data.pdf');
+          doc.save('ETC_students_active_manage_evaluations_full_list_data.pdf');
         }
       });
     } catch (error) {
@@ -1235,22 +1316,26 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
 
       // Preparar cabeçalhos
       const headers = [
-        'Photo',
         'Full Name',
-        'Position',
-        'Status',
-        'Subsidy (MT)',
-        'Date Update'
+        'Level',
+        'Schedule',
+        'Quiz 1',
+        'Quiz 2',
+        'Exam',
+        'Final Average',
+        'Status'
       ];
 
       // 4. Mapear os dados para o formato da tabela
-      const data = rowData.map(trainer => [
-          trainer.profileImage ?? '',
-          trainer.fullName ?? '',
-          trainer.position ?? '',
-          trainer.status ?? '',
-          trainer.subsidyMTFormatted ?? '',
-          trainer.dateUpdate ?? ''
+      const data = rowData.map(student => [
+          student.fullName ?? '',
+          student.level ?? '',
+          student.schedule ?? '',
+          { content: this.formatToPercentage(student.quizOne) ?? '', styles: { textColor: this.getScoreColor(student.quizOne) } },
+          { content: this.formatToPercentage(student.quizTwo) ?? '', styles: { textColor: this.getScoreColor(student.quizTwo) } },
+          { content: this.formatToPercentage(student.exam) ?? '', styles: { textColor: this.getScoreColor(student.exam) } },
+          { content: this.formatToPercentage(student.finalAverage) ?? '', styles: { textColor: this.getScoreColor(student.finalAverage) } },
+          student.status ?? ''
       ]);
 
       // Cria o documento PDF
@@ -1279,7 +1364,7 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
       doc.setFontSize(20);
       doc.setTextColor(44, 44, 44);
       doc.setFont('helvetica', 'normal');
-      doc.text('Filtered Trainer Subsidies', 105, 23);
+      doc.text('Students : Active / Manage Evaluations – Full List', 70, 23);
 
       // 5. Adicionar data de emissão
       doc.setFontSize(10);
@@ -1298,11 +1383,13 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
         columnStyles: {
           // Ajuste proporcional conforme suas colunas
           0: { cellWidth: 50, halign: 'left' },
-          1: { cellWidth: 50, halign: 'left' },
-          2: { cellWidth: 'auto', halign: 'left' },
+          1: { cellWidth: 'auto', halign: 'center' },
+          2: { cellWidth: 'auto', halign: 'center' },
           3: { cellWidth: 'auto', halign: 'center' },
-          4: { cellWidth: 'auto', halign: 'right' },
-          5: { cellWidth: 'auto', halign: 'center' }
+          4: { cellWidth: 'auto', halign: 'center' },
+          5: { cellWidth: 'auto', halign: 'center' },
+          6: { cellWidth: 'auto', halign: 'center' },
+          7: { cellWidth: 'auto', halign: 'center' }
         },
 
         headStyles: {
@@ -1314,7 +1401,7 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
         styles: {
           valign: 'middle',
           overflow: 'linebreak',
-          fontSize: 9,
+          fontSize: 10,
           cellPadding: 3
         },
       });
@@ -1348,7 +1435,7 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
          // console.error('PrintJS error:', error);
           this.alert.show('Oops! Direct printing failed.', 'error');
           // Fallback para download
-          doc.save('ETC_list_of_trainers_filtered_data.pdf');
+          doc.save('ETC_students_active_manage_evaluations_full_list_data.pdf');
         }
       });
     } catch (error) {

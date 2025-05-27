@@ -47,6 +47,7 @@ export class BtnStudentQuizzesExamActionTableComponent implements ICellRendererA
     this.dialog.open(DialogManageEvalutionsEditGradeTableComponent, {
       data:
       {
+        studentName: this.params.data.fullName,
         order: this.params.data.order,
         quizOne: this.params.data.quizOne,
         quizTwo: this.params.data.quizTwo
