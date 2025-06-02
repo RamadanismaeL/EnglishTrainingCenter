@@ -129,7 +129,12 @@ namespace server.src.Data.Maps
                 .WithOne(sm => sm.CourseInfoData)
                 .HasPrincipalKey(sc => sc.Id)
                 .HasForeignKey(sm => sm.CourseInfoId)
-                .OnDelete(DeleteBehavior.Restrict);          
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(s => s.CourseInfoScheduleExamData)
+                .WithOne(s => s.CourseInfoData)
+                .HasPrincipalKey<StudentCourseInfoModel>(s => s.Id)
+                .HasForeignKey<StudentCourseInfoScheduleExamModel>(s => s.CourseInfoId);
         }
     }
 }

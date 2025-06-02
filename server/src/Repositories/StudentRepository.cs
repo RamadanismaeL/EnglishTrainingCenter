@@ -125,7 +125,8 @@ namespace server.src.Repositories
                     GuardEmailAddress = studentCreateDto.GuardEmailAddress,
 
                     Status = "Active",
-                    TrainerName = trainerName!
+                    TrainerName = trainerName!,
+                    DateUpdate = DateTime.Now
                 };
 
                 var studentEnrollmentForm = new StudentEnrollmentFormModel
@@ -299,7 +300,7 @@ namespace server.src.Repositories
                 student.GuardSecondPhoneNumber = studentUpdateDto.GuardSecondPhoneNumber;
                 student.GuardEmailAddress = studentUpdateDto.GuardEmailAddress;
 
-                student.DateUpdate = DateTime.Now;
+                //student.DateUpdate = DateTime.Now;
                 student.TrainerName = trainerName!;
 
                 await _dbContext.SaveChangesAsync();
@@ -856,7 +857,9 @@ namespace server.src.Repositories
                         Level = x.ActiveCourse.Level,
                         Modality = x.ActiveCourse.Modality,
                         AcademicPeriod = x.ActiveCourse.AcademicPeriod,
-                        Schedule = x.ActiveCourse.Schedule
+                        Schedule = x.ActiveCourse.Schedule,
+                        Status = x.Student.Status,
+                        DateUpdate = x.Student.DateUpdate != null ? x.Student.DateUpdate.Value.ToString("dd/MM/yyyy") : ""
                     })
                     .OrderBy(s => s.FullName);
 

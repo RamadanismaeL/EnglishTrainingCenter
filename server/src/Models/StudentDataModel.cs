@@ -46,7 +46,7 @@ namespace server.src.Models
 
         public string Status { get; set; } = string.Empty; // Active, Inactive, Completed
         public string TrainerName { get; set; } = string.Empty;
-        public DateTime DateUpdate { get; set; }
+        public DateTime? DateUpdate { get; set; }
 
 
         public StudentEnrollmentFormModel? EnrollmentForm { get; set; }

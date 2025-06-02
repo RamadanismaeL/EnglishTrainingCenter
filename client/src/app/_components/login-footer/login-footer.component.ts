@@ -11,5 +11,5 @@ export class LoginFooterComponent {
   private institution = "English Training Center";
   //© 2025 | Ramadan I.A. Ismael · License: English Training Center · All rights reserved
 
-  footer = `© 2025 | ${this.author} · Licence: ${this.institution} · All rights reserved`
+  footer = `© 2025 · ${this.author} · Licence: ${this.institution} · All rights reserved`
 }

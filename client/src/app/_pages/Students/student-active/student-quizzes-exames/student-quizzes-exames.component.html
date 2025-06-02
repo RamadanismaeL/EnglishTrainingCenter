@@ -9,10 +9,10 @@
         <mat-select [(ngModel)]="pageSize"
           (selectionChange)="onPageSizeChanged()"
         >
-          <mat-option [value]="7">7</mat-option>
-          <mat-option [value]="14">14</mat-option>
-          <mat-option [value]="20">20</mat-option>
+          <mat-option [value]="8">8</mat-option>
+          <mat-option [value]="16">16</mat-option>
           <mat-option [value]="30">30</mat-option>
+          <mat-option [value]="40">40</mat-option>
           <mat-option [value]="50">50</mat-option>
         </mat-select>
       </mat-form-field>
@@ -87,16 +87,6 @@
       </a>
     </div>
 
-    <button [routerLink]="['/', { outlets : { ramRouter: ['student-progress-management'] } }]"
-    (click)="navigateTo({ label: 'SCHEDULE EXAM' })"
-    type="button" class="w-40 progress"
-    >
-      <span class="shadow"></span>
-      <span class="edge"></span>
-      <span class="front truncate"> Schedule Exam
-      </span>
-    </button>
-
     <div class="w-1/4 formField">
       <mat-form-field appearance="outline" class="w-full">
         <mat-label>Type to search...</mat-label>
@@ -116,7 +106,8 @@
     [pagination]="true"
     [paginationPageSize]="pageSize"
     [suppressPaginationPanel]="true"
-    [rowHeight]="60"
+    [headerHeight]="56"
+    [rowHeight]="56"
     [rowSelection]="rowSelection"
     (gridReady)="onGridReady($event)"
     #agGrid

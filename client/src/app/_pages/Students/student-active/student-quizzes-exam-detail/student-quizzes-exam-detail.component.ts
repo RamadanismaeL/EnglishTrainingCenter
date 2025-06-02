@@ -51,9 +51,10 @@ export class StudentQuizzesExamDetailComponent implements OnInit, OnDestroy {
   columnDefsQuizzesExamEdit: ColDef[] =
       [
         {
+          editable: false,
           headerName: 'Level',
           field: 'level', minWidth: 90, flex: 1,
-          cellClass: 'custom-cell-center'
+          cellClass: 'custom-cell-center'          
         },
         {
           headerName: 'Quiz 1',
@@ -101,6 +102,7 @@ export class StudentQuizzesExamDetailComponent implements OnInit, OnDestroy {
           }
         },
         {
+          editable: false,
           headerName: 'Final Average',
           field: 'finalAverage', flex: 1,
           cellClass: 'custom-cell-center',
@@ -116,6 +118,7 @@ export class StudentQuizzesExamDetailComponent implements OnInit, OnDestroy {
           }
         },
         {
+          editable: false,
           headerName: 'Status',
           field: 'status', flex: 1,
           cellClass: 'custom-cell-center',
@@ -131,6 +134,7 @@ export class StudentQuizzesExamDetailComponent implements OnInit, OnDestroy {
           }
         },
         {
+          editable: false,
           headerName: 'Date',
           field: 'dateUpdate', flex: 1,
           cellClass: 'custom-cell-center'

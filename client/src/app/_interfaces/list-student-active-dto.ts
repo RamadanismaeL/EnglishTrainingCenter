@@ -10,4 +10,6 @@ export interface ListStudentActiveDto {
   "modality": string
   "academicPeriod": string
   "schedule": string
+  "status": string
+  "dateUpdate": string
 }

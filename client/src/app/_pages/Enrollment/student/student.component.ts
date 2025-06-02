@@ -417,7 +417,9 @@ export class StudentComponent implements OnInit, OnDestroy {
       )
       .subscribe(value => {
         //console.log("Hello Data = ",value)
-        this.form.get('guardianResidentialAddress')?.patchValue(value);
+        if (value != null && value.length > 0) { this.form.get('guardianResidentialAddress')?.patchValue(value); }
+        else
+        { this.form.get('guardianResidentialAddress')?.patchValue(""); }
       })
     );
 

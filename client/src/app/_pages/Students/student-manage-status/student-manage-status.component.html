@@ -1,0 +1,101 @@
+<div class="table-toolbar text-[#525252]">
+  <div class="w-full flex items-center justify-between">
+    <label class="formField">
+      Show&nbsp;
+      <mat-form-field
+        appearance="outline"
+        class="w-17"
+      >
+        <mat-select [(ngModel)]="pageSize"
+          (selectionChange)="onPageSizeChanged()"
+        >
+          <mat-option [value]="8">8</mat-option>
+          <mat-option [value]="16">16</mat-option>
+          <mat-option [value]="30">30</mat-option>
+          <mat-option [value]="40">40</mat-option>
+          <mat-option [value]="50">50</mat-option>
+        </mat-select>
+      </mat-form-field>
+      &nbsp;entries
+    </label>
+
+    <div class="flex gap-2 h-11">
+      <button type="button" class="w-50 mark"
+      (click)="markCompleted()">
+        <span class="shadow"></span>
+        <span class="edge"></span>
+        <span class="front truncate">
+          <span class="flex justify-center items-center gap-2">
+            <span class="material-icons">task_alt</span>
+            Mark as Completed
+          </span>
+        </span>
+      </button>
+      <button type="button" class="w-45 unmark"
+      (click)="markInactive()">
+        <span class="shadow"></span>
+        <span class="edge"></span>
+        <span class="front truncate">
+          <span class="flex justify-center items-center gap-2">
+            <span class="material-icons">close</span>
+            Mark as Inactive
+          </span>
+        </span>
+      </button>
+    </div>
+
+    <div class="w-1/4 formField">
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Type to search...</mat-label>
+        <mat-icon matSuffix>search</mat-icon>
+          <input matInput [(ngModel)]="searchText" (input)="onSearch()"
+          type="text" maxlength="50"/>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <ag-grid-angular
+    class="ag-theme-alpine custom-scrollbar w-full h-full"
+    [rowData]="filteredData"
+    [columnDefs]="columnDefs"
+    [animateRows]="true"
+    [domLayout]="'autoHeight'"
+    [pagination]="true"
+    [paginationPageSize]="pageSize"
+    [suppressPaginationPanel]="true"
+    [headerHeight]="56"
+    [rowHeight]="56"
+    [rowSelection]="rowSelection"
+    (gridReady)="onGridReady($event)"
+    >
+  </ag-grid-angular>
+
+  <p>
+    Showing {{ startIndex + 1 }} to {{ endIndex }} of {{ rowData.length }} entries
+  </p>
+
+  <div class="pagination">
+    <button (click)="gotToPrevious()" [disabled]="currentPage === 1"
+    matTooltip="Previous"
+    [matTooltipPosition]="positionT.value!"
+    matTooltipHideDelay="50">
+      <mat-icon>chevron_left</mat-icon>
+    </button>
+
+    <ng-container *ngFor="let page of totalPagesArray">
+      <button *ngIf="isNumber(page)"
+              (click)="goToPage(page)"
+              [class.active]="currentPage === page">
+        {{ page }}
+      </button>
+      <span *ngIf="!isNumber(page)" class="cursor-default">...</span>
+    </ng-container>
+
+    <button (click)="goToNext()" [disabled]="currentPage === totalPages"
+    matTooltip="Next"
+    [matTooltipPosition]="positionT.value!"
+    matTooltipHideDelay="50">
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+  </div>
+</div>

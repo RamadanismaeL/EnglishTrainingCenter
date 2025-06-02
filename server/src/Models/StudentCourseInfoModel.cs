@@ -36,5 +36,7 @@ namespace server.src.Models
         public string StudentId { get; set; } = string.Empty;
         public StudentDataModel? StudentData { get; set; } // Navigation property to StudentDataModel
         public ICollection<StudentMonthlyTuitionModel>? MonthlyTuition { get; set; }
+        
+        public StudentCourseInfoScheduleExamModel? CourseInfoScheduleExamData { get; set; } // Navigation property to StudentCourseInfoScheduleExamModel
     }
 }

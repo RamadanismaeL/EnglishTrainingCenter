@@ -47,55 +47,73 @@ export class StudentProgressManagementComponent implements OnInit, OnDestroy {
   positionT = new FormControl(this.positionOptions[0]);
 
   columnDefs: ColDef[] =
-    [
-      {
-        headerName: 'Full Name',
-        field: 'fullName', minWidth: 280, flex: 1,
-        cellClass: 'custom-cell-start'
-      },
-      {
-        headerName: 'Level',
-        field: 'email',
-        minWidth: 90, flex: 1,
-        cellClass: 'custom-cell-center'
-      },
-      {
-        headerName: 'Quiz 1',
-        field: 'status', minWidth: 110, flex: 1,
-        cellClass: 'custom-cell-center',
-        cellRenderer: (params: any) => {
-          return params.value === 0
-            ? '<span style="color: red;">Inactive</span>'
-            : '<span style="color: green;">Active</span>';
+      [
+        {
+          headerName: 'Full Name',
+          field: 'fullName', minWidth: 280, flex: 1,
+          cellClass: 'custom-cell-start'
+        },
+        {
+          headerName: 'Level',
+          field: 'level', minWidth: 70, flex: 1,
+          cellClass: 'custom-cell-center'
+        },
+        {
+          headerName: 'Schedule',
+          field: 'schedule', minWidth: 110, flex: 1,
+          cellClass: 'custom-cell-center'
+        },
+        {
+          headerName: 'Quiz 1',
+          field: 'quizOne', minWidth: 110, flex: 1,
+          cellClass: 'custom-cell-center',
+          cellRenderer: (params: any) => {
+            if (params.value == 0)
+            { return `<span style="color: #1c1c1c;">${ this.formatToPercentage(params.value) }</span>` }
+            else if (params.value > 0 && params.value < 50)
+            { return `<span style="color: red;">${ this.formatToPercentage(params.value) }</span>` }
+            else if (params.value >= 50 && params.value <= 100)
+            { return `<span style="color: #3A86FF;">${ this.formatToPercentage(params.value) }</span>` }
+            else
+            { return '<span style="color: red; font-weight: bold;">Error</span>' }
+          }
+        },
+        {
+          headerName: 'Quiz 2',
+          field: 'quizTwo', minWidth: 110, flex: 1,
+          cellClass: 'custom-cell-center',
+          cellRenderer: (params: any) => {
+            if (params.value == 0)
+            { return `<span style="color: #1c1c1c;">${ this.formatToPercentage(params.value) }</span>` }
+            else if (params.value > 0 && params.value < 50)
+            { return `<span style="color: red;">${ this.formatToPercentage(params.value) }</span>` }
+            else if (params.value >= 50 && params.value <= 100)
+            { return `<span style="color: #3A86FF;">${ this.formatToPercentage(params.value) }</span>` }
+            else
+            { return '<span style="color: red; font-weight: bold;">Error</span>' }
+          }
+        },
+        {
+          headerName: 'Status',
+          field: 'status', minWidth: 110, flex: 1,
+          cellClass: 'custom-cell-center',
+          cellRenderer: (params: any) => {
+            if (params.value === 'In Progress')
+            { return `<span style="color: #1c1c1c;">${ params.value }</span>` }
+            else if (params.value == 'Failed')
+            { return `<span style="color: red;">${ params.value }</span>` }
+            else if (params.value == 'Pass')
+            { return `<span style="color: #3A86FF;">${ params.value }</span>` }
+            else
+            { return '<span style="color: red; font-weight: bold;">Error</span>' }
+          }
+        },
+        {
+          headerName: 'Scheduled Date',
+          field: 'scheduledDate', minWidth: 110, flex: 1,
+          cellClass: 'custom-cell-center'
         }
-      },
-      {
-        headerName: 'Quiz 2',
-        field: 'status', minWidth: 110, flex: 1,
-        cellClass: 'custom-cell-center',
-        cellRenderer: (params: any) => {
-          return params.value === 0
-            ? '<span style="color: red;">Inactive</span>'
-            : '<span style="color: green;">Active</span>';
-        }
-      },
-      {
-        headerName: 'Average',
-        field: 'status', minWidth: 110, flex: 1,
-        cellClass: 'custom-cell-center',
-        cellRenderer: (params: any) => {
-          return params.value === 0
-            ? '<span style="color: red;">Inactive</span>'
-            : '<span style="color: green;">Active</span>';
-        }
-      },
-      {
-        headerName: 'Date',
-        field: 'email',
-        minWidth: 90, flex: 1,
-        cellClass: 'custom-cell-center'
-      }
-    ];
+      ];
 
   rowData: any[] = [];
   filteredData: any[] = [];
@@ -109,21 +127,16 @@ export class StudentProgressManagementComponent implements OnInit, OnDestroy {
 
   private subs = new Subscription();
   gridApi!: GridApi;
-  //tableModules = [ ExcelExportModule ] //Versão enterprise do ag-grid
-  // html := [modules]="tableModules"
 
-  private currentYear = new Date().getFullYear();
-  private author = "Ramadan IsmaeL";
-  private country = "Mozambique";
-  private institution = "English Training Center";
-
-  private footer = `Generated for ${this.institution} · Made in ${this.country} by ${this.author} · © ${this.currentYear} · All rights reserved.`;
-
-  constructor(private trainerService: TrainersService, private notificationHub: NotificationHubService, private alert: SnackBarService, private clipboard: Clipboard, private titleNavbarService: TitleNavbarService)
+  constructor(private trainerService: TrainersService, private notificationHub: NotificationHubService, private titleNavbarService: TitleNavbarService)
   {}
 
   navigateTo (breadcrumbs: { label: string, url?: any[] }) {
     this.titleNavbarService.addBreadcrumb(breadcrumbs);
+  }
+
+  private formatToPercentage(value: number): string {
+    return `${value.toFixed(2)}%`;
   }
 
   formatDate(date: Date | string | null): string {

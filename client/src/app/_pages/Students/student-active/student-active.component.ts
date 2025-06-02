@@ -118,7 +118,7 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
         cellClass: 'custom-cell-center'
       },
       {
-        headerName: 'Actions',
+        headerName: 'Profile',
         minWidth: 100, flex: 1,
         cellRenderer: BtnStudentActiveActionTableComponent,
         cellClass: 'custom-cell-center'
@@ -128,7 +128,7 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
   rowData: any[] = [];
   filteredData: any[] = [];
   searchText: string = '';
-  pageSize: number = 7;
+  pageSize: number = 8;
   currentPage: number = 1;
   totalPages: number = 1;
   startIndex: number = 0;

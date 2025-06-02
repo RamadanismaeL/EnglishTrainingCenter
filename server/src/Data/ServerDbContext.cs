@@ -24,6 +24,7 @@ namespace server.src.Data
         public required DbSet<StudentPaymentModel> StudentPayments { get; set; }
         public required DbSet<StudentMonthlyTuitionModel> StudentMonthlyTuition { get; set; }
         public required DbSet<StudentCourseFeeModel> StudentCourseFee { get; set; }
+        public required DbSet<StudentCourseInfoScheduleExamModel> StudentCourseInfoScheduleExam { get; set; }
  
 
         // Settings
@@ -47,6 +48,7 @@ namespace server.src.Data
             builder.ApplyConfiguration(new StudentPaymentMap());
             builder.ApplyConfiguration(new StudentMonthlyTuitionMap());
             builder.ApplyConfiguration(new StudentCourseFeeMap());
+            builder.ApplyConfiguration(new StudentCourseInfoScheduleExamMap());
             
 
             // Settings

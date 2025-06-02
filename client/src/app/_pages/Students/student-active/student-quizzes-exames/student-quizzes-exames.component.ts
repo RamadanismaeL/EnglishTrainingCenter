@@ -43,8 +43,7 @@ ModuleRegistry.registerModules([ AllCommunityModule]);
     MatCardModule,
     MatDialogModule,
     MatButtonModule,
-    MatMenuModule,
-    RouterLink
+    MatMenuModule
   ],
   templateUrl: './student-quizzes-exames.component.html',
   styleUrl: './student-quizzes-exames.component.scss'
@@ -157,7 +156,7 @@ export class StudentQuizzesExamesComponent implements OnInit, OnDestroy {
   rowData: any[] = [];
   filteredData: any[] = [];
   searchText: string = '';
-  pageSize: number = 7;
+  pageSize: number = 8;
   currentPage: number = 1;
   totalPages: number = 1;
   startIndex: number = 0;

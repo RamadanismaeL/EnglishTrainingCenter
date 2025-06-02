@@ -5,13 +5,13 @@ import { authGuard } from './_guards/auth.guard';
 import { loginGuard } from './_guards/login.guard';
 import { LoginComponent } from './_components/login/login.component';
 import { EnrollmentComponent } from './_components/enrollment/enrollment.component';
-import { PaymentComponent } from './_components/payment/payment.component';
 import { StudentActiveComponent } from './_pages/Students/student-active/student-active.component';
 import { StudentQuizzesExamesComponent } from './_pages/Students/student-active/student-quizzes-exames/student-quizzes-exames.component';
 import { StudentScheduledExamsComponent } from './_pages/Students/student-scheduled-exams/student-scheduled-exams.component';
 import { FinancialExpenseComponent } from './_pages/Financials/financial-expense/financial-expense.component';
 import { FinancialDailyReportComponent } from './_pages/Financials/financial-daily-report/financial-daily-report.component';
 import { LoginSigninComponent } from './_pages/login-signin/login-signin.component';
+import { PaymentMainComponent } from './_components/payment/payment-main/payment-main.component';
 
 export const routes: Routes = [
     {
@@ -98,7 +98,7 @@ export const routes: Routes = [
       ,
       {
         path : 'payments',
-        component : PaymentComponent,
+        component : PaymentMainComponent,
         outlet : 'ramRouter'
       },
       {
@@ -130,15 +130,15 @@ export const routes: Routes = [
         outlet : 'ramRouter'
       },
       {
-        path : 'student-quizzes-exams-details',
+        path : 'student-manage-status',
         loadComponent : () =>
-          import('./_pages/Students/student-active/student-quizzes-exam-detail/student-quizzes-exam-detail.component').then(s => s.StudentQuizzesExamDetailComponent),
+          import('./_pages/Students/student-manage-status/student-manage-status.component').then(m => m.StudentManageStatusComponent),
         outlet : 'ramRouter'
       },
       {
-        path : 'student-progress-management',
-        loadComponent: () =>
-          import('./_pages/Students/student-active/student-progress-management/student-progress-management.component').then(s => s.StudentProgressManagementComponent),
+        path : 'student-quizzes-exams-details',
+        loadComponent : () =>
+          import('./_pages/Students/student-active/student-quizzes-exam-detail/student-quizzes-exam-detail.component').then(s => s.StudentQuizzesExamDetailComponent),
         outlet : 'ramRouter'
       },
       {

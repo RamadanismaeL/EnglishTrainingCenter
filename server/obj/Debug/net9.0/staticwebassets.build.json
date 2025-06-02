@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "9ZOzm4iuGc/xaLTqjGts9HdhFcKdh4WdbLXniyqtcXc=",
+  "Hash": "G2VH/ni7+QpW0z6E1gsegZvPSUEHTaVIKhWLheQTbCg=",
   "Source": "server",
   "BasePath": "_content/server",
   "Mode": "Default",
@@ -36,6 +36,27 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot/images/marca.png"
+    },
+    {
+      "Identity": "/home/ramadan/Documents/Projects/EnglishTrainingCenter/server/wwwroot/uploads/31f2f87c-1069-409b-87a3-9cc96842ac43.jpg",
+      "SourceId": "server",
+      "SourceType": "Discovered",
+      "ContentRoot": "/home/ramadan/Documents/Projects/EnglishTrainingCenter/server/wwwroot/",
+      "BasePath": "_content/server",
+      "RelativePath": "uploads/31f2f87c-1069-409b-87a3-9cc96842ac43#[.{fingerprint}]?.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "gkzyy8f7jo",
+      "Integrity": "cOWBxv5AsGvzSR4/NO1zweOUQ5EZExPb7ZbKrE1hDsE=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/uploads/31f2f87c-1069-409b-87a3-9cc96842ac43.jpg"
     },
     {
       "Identity": "/home/ramadan/Documents/Projects/EnglishTrainingCenter/server/wwwroot/uploads/f08f876e-9a90-4451-9217-013ec92ffe8f.jpg",
@@ -139,6 +160,88 @@
         {
           "Name": "integrity",
           "Value": "sha256-7w0/1fCVo7fjYsPcMK7xG7L0H8vbEvtvvGXu/Bdmc1I="
+        }
+      ]
+    },
+    {
+      "Route": "uploads/31f2f87c-1069-409b-87a3-9cc96842ac43.gkzyy8f7jo.jpg",
+      "AssetFile": "/home/ramadan/Documents/Projects/EnglishTrainingCenter/server/wwwroot/uploads/31f2f87c-1069-409b-87a3-9cc96842ac43.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "74556"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"cOWBxv5AsGvzSR4/NO1zweOUQ5EZExPb7ZbKrE1hDsE=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 28 May 2025 13:27:10 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "gkzyy8f7jo"
+        },
+        {
+          "Name": "label",
+          "Value": "uploads/31f2f87c-1069-409b-87a3-9cc96842ac43.jpg"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-cOWBxv5AsGvzSR4/NO1zweOUQ5EZExPb7ZbKrE1hDsE="
+        }
+      ]
+    },
+    {
+      "Route": "uploads/31f2f87c-1069-409b-87a3-9cc96842ac43.jpg",
+      "AssetFile": "/home/ramadan/Documents/Projects/EnglishTrainingCenter/server/wwwroot/uploads/31f2f87c-1069-409b-87a3-9cc96842ac43.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "74556"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"cOWBxv5AsGvzSR4/NO1zweOUQ5EZExPb7ZbKrE1hDsE=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 28 May 2025 13:27:10 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-cOWBxv5AsGvzSR4/NO1zweOUQ5EZExPb7ZbKrE1hDsE="
         }
       ]
     },

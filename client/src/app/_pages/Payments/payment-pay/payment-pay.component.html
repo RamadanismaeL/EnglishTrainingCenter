@@ -1,11 +1,11 @@
-<div class="w-full mt-5">
-  <div class="w-full h-auto">
+<div class="w-full mt-5 h-auto">
+  <div class="w-full">
     <div class="mb-1 flex text-center justify-center">
-      <h6 class="w-full text-slate-600 text-lg">
+      <h6 class="w-full text-slate-600 text-lg 2xl:px-50">
         <p>To ensure a secure and seamless payment process, it is mandatory to accurately complete all required fields. Please verify the provided information thoroughly before proceeding with confirmation.</p>
       </h6>
     </div>
-    <div class="w-full flex items-start justify-between gap-3 px-4 sm:px-6 lg:px-8 py-5">
+    <div class="w-full flex items-start justify-between gap-3 2xl:px-50 py-5">
       <div>
         <form
           [formGroup]="form"
@@ -52,7 +52,6 @@
               <mat-select panelClass="scrollbar-custom"
               formControlName="transactionType">
                 <mat-option value="Certificate">Certificate</mat-option>
-                <mat-option value="Examination">Examination</mat-option>
                 <mat-option value="CourseFee">Course Fee</mat-option>
               </mat-select>
               @if (getErrorForms('transactionType')?.hasError('required')) {
