@@ -7,10 +7,8 @@ import { AllCommunityModule, ModuleRegistry, ColDef, GridApi, GridReadyEvent, Ro
 import { MatInputModule } from '@angular/material/input';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
-import { NotificationHubService } from '../../../_services/notification-hub.service';
 import { Subscription } from 'rxjs';
 import { MatDialogModule } from '@angular/material/dialog';
-import { SnackBarService } from '../../../_services/snack-bar.service';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { lastValueFrom } from 'rxjs';
 import ExcelJS from 'exceljs';
@@ -23,16 +21,16 @@ import { MatMenuModule } from '@angular/material/menu';
 
 import printJS from 'print-js';
 import { MatSelectModule } from '@angular/material/select';
-import { RouterLink } from '@angular/router';
-import { TitleNavbarService } from '../../../_services/title-navbar.service';
-import { BtnStudentActiveActionTableComponent } from '../../../_components/Students/btn-student-active-action-table/btn-student-active-action-table.component';
-import { StudentsService } from '../../../_services/students.service';
+import { NotificationHubService } from '../../../../_services/notification-hub.service';
+import { SnackBarService } from '../../../../_services/snack-bar.service';
+import { TitleNavbarService } from '../../../../_services/title-navbar.service';
+import { StudentCourseInfoService } from '../../../../_services/student-course-info.service';
+import { BtnStudentFinishedManageEvaluationsActionTableComponent } from '../../../../_components/Students/btn-student-finished-manage-evaluations-action-table/btn-student-finished-manage-evaluations-action-table.component';
 
 ModuleRegistry.registerModules([ AllCommunityModule]);
 
 @Component({
-  standalone: true,
-  selector: 'app-student-dropouts',
+  selector: 'app-student-finished-manage-evaluations',
   imports: [
     AgGridAngular,
     MatIconModule,
@@ -44,13 +42,12 @@ ModuleRegistry.registerModules([ AllCommunityModule]);
     MatCardModule,
     MatDialogModule,
     MatButtonModule,
-    MatMenuModule,
-    RouterLink
+    MatMenuModule
   ],
-  templateUrl: './student-dropouts.component.html',
-  styleUrl: './student-dropouts.component.scss'
+  templateUrl: './student-finished-manage-evaluations.component.html',
+  styleUrl: './student-finished-manage-evaluations.component.scss'
 })
-export class StudentDropoutsComponent implements OnInit, OnDestroy {
+export class StudentFinishedManageEvaluationsComponent implements OnInit, OnDestroy {
   positionOptions: TooltipPosition[] = ['below', 'above', 'left', 'right'];
   position = new FormControl(this.positionOptions[1]);
   positionT = new FormControl(this.positionOptions[0]);
@@ -58,70 +55,99 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
   columnDefs: ColDef[] =
     [
       {
-        headerName: 'Code',
-        field: 'id', minWidth: 130, flex: 1,
-        cellClass: 'custom-cell-center'
-      },
-      {
         headerName: 'Full Name',
-        field: 'fullName', minWidth: 250, flex: 1,
+        field: 'fullName', minWidth: 280, flex: 1,
         cellClass: 'custom-cell-start'
       },
       {
-        headerName: 'Gender',
-        field: 'gender', minWidth: 90, flex: 1,
-        cellClass: 'custom-cell-center'
-      },
-      {
-        headerName: 'Age',
-        field: 'age', minWidth: 61, flex: 1,
-        cellClass: 'custom-cell-center'
-      },
-      {
-        headerName: 'Package',
-        field: 'package', minWidth: 110, flex: 1,
-        cellClass: 'custom-cell-center',
-        cellRenderer: (params: any) => {
-          if (params.value === "Intensive")
-          { return '<span style="color: #6A040F;">Intensive</span>'; }
-          else if (params.value === "Private")
-          { return '<span style="color: #023047;">Private</span>'; }
-          else if (params.value === "Regular")
-          { return '<span style="color: #014F43;">Regular</span>'; }
-
-          return ""
-        }
-      },
-      {
         headerName: 'Level',
-        field: 'level', minWidth: 80, flex: 1,
-        cellClass: 'custom-cell-center'
-      },
-      {
-        headerName: 'Modality',
-        field: 'modality', minWidth: 110, flex: 1,
-        cellClass: 'custom-cell-center',
-        cellRenderer: (params: any) => {
-          if (params.value === "Online")
-          { return '<span style="color: #3A86FF;">Online</span>'; }
-          else
-          { return '<span style="color: #43AA8B;">In-Person</span>'; }
-        }
-      },
-      {
-        headerName: 'Period',
-        field: 'academicPeriod', minWidth: 110, flex: 1,
+        field: 'level', minWidth: 70, flex: 1,
         cellClass: 'custom-cell-center'
       },
       {
         headerName: 'Schedule',
-        field: 'schedule', minWidth: 110, flex: 1,
+        field: 'schedule', minWidth: 120, flex: 1,
         cellClass: 'custom-cell-center'
       },
       {
-        headerName: 'Profile',
-        minWidth: 100, flex: 1,
-        cellRenderer: BtnStudentActiveActionTableComponent,
+        headerName: 'Quiz 1',
+        field: 'quizOne', minWidth: 110, flex: 1,
+        cellClass: 'custom-cell-center',
+        cellRenderer: (params: any) => {
+          if (params.value == 0)
+          { return `<span style="color: #1c1c1c;">${ this.formatToPercentage(params.value) }</span>` }
+          else if (params.value > 0 && params.value < 50)
+          { return `<span style="color: red;">${ this.formatToPercentage(params.value) }</span>` }
+          else if (params.value >= 50 && params.value <= 100)
+          { return `<span style="color: #3A86FF;">${ this.formatToPercentage(params.value) }</span>` }
+          else
+          { return '<span style="color: red; font-weight: bold;">Error</span>' }
+        }
+      },
+      {
+        headerName: 'Quiz 2',
+        field: 'quizTwo', minWidth: 110, flex: 1,
+        cellClass: 'custom-cell-center',
+        cellRenderer: (params: any) => {
+          if (params.value == 0)
+          { return `<span style="color: #1c1c1c;">${ this.formatToPercentage(params.value) }</span>` }
+          else if (params.value > 0 && params.value < 50)
+          { return `<span style="color: red;">${ this.formatToPercentage(params.value) }</span>` }
+          else if (params.value >= 50 && params.value <= 100)
+          { return `<span style="color: #3A86FF;">${ this.formatToPercentage(params.value) }</span>` }
+          else
+          { return '<span style="color: red; font-weight: bold;">Error</span>' }
+        }
+      },
+      {
+        headerName: 'Exam',
+        field: 'exam', minWidth: 110, flex: 1,
+        cellClass: 'custom-cell-center',
+        cellRenderer: (params: any) => {
+          if (params.value == 0)
+          { return `<span style="color: #1c1c1c;">${ this.formatToPercentage(params.value) }</span>` }
+          else if (params.value > 0 && params.value < 50)
+          { return `<span style="color: red;">${ this.formatToPercentage(params.value) }</span>` }
+          else if (params.value >= 50 && params.value <= 100)
+          { return `<span style="color: #3A86FF;">${ this.formatToPercentage(params.value) }</span>` }
+          else
+          { return '<span style="color: red; font-weight: bold;">Error</span>' }
+        }
+      },
+      {
+        headerName: 'Final Average',
+        field: 'finalAverage', minWidth: 170, flex: 1,
+        cellClass: 'custom-cell-center',
+        cellRenderer: (params: any) => {
+          if (params.value == 0)
+          { return `<span style="color: #1c1c1c;">${ this.formatToPercentage(params.value) }</span>` }
+          else if (params.value > 0 && params.value < 50)
+          { return `<span style="color: red;">${ this.formatToPercentage(params.value) }</span>` }
+          else if (params.value >= 50 && params.value <= 100)
+          { return `<span style="color: #3A86FF;">${ this.formatToPercentage(params.value) }</span>` }
+          else
+          { return '<span style="color: red; font-weight: bold;">Error</span>' }
+        }
+      },
+      {
+        headerName: 'Status',
+        field: 'status', minWidth: 90, flex: 1,
+        cellClass: 'custom-cell-center',
+        cellRenderer: (params: any) => {
+          if (params.value === 'In Progress')
+          { return `<span style="color: #1c1c1c;">${ params.value }</span>` }
+          else if (params.value == 'Failed')
+          { return `<span style="color: red;">${ params.value }</span>` }
+          else if (params.value == 'Pass')
+          { return `<span style="color: #3A86FF;">${ params.value }</span>` }
+          else
+          { return '<span style="color: red; font-weight: bold;">Error</span>' }
+        }
+      },
+      {
+        headerName: 'Actions',
+        minWidth: 110, flex: 1,
+        cellRenderer: BtnStudentFinishedManageEvaluationsActionTableComponent,
         cellClass: 'custom-cell-center'
       }
     ];
@@ -143,20 +169,20 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
 
   private subs = new Subscription();
   gridApi!: GridApi;
-  //tableModules = [ ExcelExportModule ] //Versão enterprise do ag-grid
-  // html := [modules]="tableModules"
 
-  //private currentYear = new Date().getFullYear();
   private author = "Ramadan IsmaeL";
   private institution = "English Training Center";
-// &copy; 2025 | Ramadan I.A. Ismael · License: English Training Center · All rights reserved
   private footer = `© 2025 | ${this.author} · License: ${this.institution} · All rights reserved.`;
 
-  constructor(private studentService: StudentsService, private notificationHub: NotificationHubService, private alert: SnackBarService, private clipboard: Clipboard, private titleNavbarService: TitleNavbarService)
+  constructor(private studentCourseInfo: StudentCourseInfoService, private notificationHub: NotificationHubService, private alert: SnackBarService, private clipboard: Clipboard, private titleNavbarService: TitleNavbarService)
   {}
 
   navigateTo (breadcrumbs: { label: string, url?: any[] }) {
     this.titleNavbarService.addBreadcrumb(breadcrumbs);
+  }
+
+  private formatToPercentage(value: number): string {
+    return `${value.toFixed(2)}%`;
   }
 
   formatDate(date: Date | string | null): string {
@@ -167,6 +193,12 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
       ? ''
       : `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth()+1).toString().padStart(2, '0')}/${d.getFullYear()}`;
   }
+
+  /*
+  ngAfterViewInit() {
+    console.log(typeof this.pageSize); // Deve mostrar "number"
+  }
+    */
 
   ngOnInit(): void
   {
@@ -186,7 +218,7 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
   private loadData(): void
   {
     this.subs.add(
-      this.studentService.getListStudentInactive().subscribe((data: any) => {
+      this.studentCourseInfo.getListStudentCourseInfoCompleted().subscribe((data: any) => {
         this.rowData = data;
         this.applyPagination();
       })
@@ -355,10 +387,11 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
 
   @ViewChild('agGrid') agGrid!: AgGridAngular;
 
+
   private async copyAllDataTable(): Promise<void> {
     try {
       // 1. Busca todos os dados dos trainers
-      const response = await lastValueFrom(this.studentService.getListStudentInactive());
+      const response = await lastValueFrom(this.studentCourseInfo.getListStudentCourseInfoCompleted());
       const trainers = Array.isArray(response) ? response : [response];
 
       if (!trainers.length) {
@@ -366,8 +399,8 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
         return;
       }
 
-      const ignoreKeys = ['order'];
-      const orderedKeys = ['id', 'fullName', 'gender', 'age', 'package', 'level', 'modality', 'academicPeriod', 'schedule']; // ordem desejada
+      const ignoreKeys = ['order', 'id'];
+      const orderedKeys = ['fullName', 'level', 'schedule', 'quizOne', 'quizTwo', 'exam', 'finalAverage', 'status']; // ordem desejada
 
       // Filtra a ordem excluindo colunas ignoradas
       const finalKeys = orderedKeys.filter(key => !ignoreKeys.includes(key));
@@ -424,7 +457,7 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
   private async exportExcelAllDataTable(): Promise<void> {
     try {
       // 1. Fetch all trainer data
-      const response = await lastValueFrom(this.studentService.getListStudentInactive());
+      const response = await lastValueFrom(this.studentCourseInfo.getListStudentCourseInfoCompleted());
 
       // Validate response
       if (!response) {
@@ -439,18 +472,17 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
 
       // 4. Create Excel workbook
       const workbook = new ExcelJS.Workbook();
-      const worksheet = workbook.addWorksheet('Trainers');
+      const worksheet = workbook.addWorksheet('Students');
 
       const excelColumns = [
-        { header: 'Code', key: 'id', width: 20 },
         { header: 'Full Name', key: 'fullName', width: 40 },
-        { header: 'Gender', key: 'gender', width: 15 },
-        { header: 'Age', key: 'age', width: 10 },
-        { header: 'Package', key: 'package', width: 20 },
-        { header: 'Level', key: 'level', width: 10 },
-        { header: 'Modality', key: 'modality', width: 20 },
-        { header: 'Period', key: 'academicPeriod', width: 15 },
-        { header: 'Schedule', key: 'schedule', width: 15 },
+        { header: 'Level', key: 'level', width: 15 },
+        { header: 'Schedule', key: 'schedule', width: 20 },
+        { header: 'Quiz 1', key: 'quizOne', width: 15 },
+        { header: 'Quiz 2', key: 'quizTwo', width: 15 },
+        { header: 'Exam', key: 'exam', width: 15 },
+        { header: 'Final Average', key: 'finalAverage', width: 20 },
+        { header: 'Status', key: 'status', width: 15 },
       ];
 
       // 2. Definir manualmente os valores do cabeçalho na linha 4
@@ -487,18 +519,48 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
 
       // 5. Add data SAFELY (only mapped columns)
       students.forEach((student, index) => {
-        const rowNumber = index + 5; // Começa da linha 5
-        worksheet.getRow(rowNumber).values = [
-          student.id ?? '',
+        const rowNumber = index + 5; // Starting from row 5 (after header)
+
+        // Set row values
+        const row = worksheet.getRow(rowNumber);
+        row.values = [
           student.fullName ?? '',
-          student.gender ?? '',
-          student.age ?? '',
-          student.package ?? '',
           student.level ?? '',
-          student.modality ?? '',
-          student.academicPeriod ?? '',
-          student.schedule ?? ''
+          student.schedule ?? '',
+          this.formatToPercentage(student.quizOne) ?? '',
+          this.formatToPercentage(student.quizTwo) ?? '',
+          this.formatToPercentage(student.exam) ?? '',
+          this.formatToPercentage(student.finalAverage) ?? '',
+          student.status ?? ''
         ];
+
+        row.height = 20;
+
+        row.eachCell((cell) => {
+          cell.font = { size: 12, bold: false };
+          cell.alignment = { vertical: 'middle', horizontal: 'center' };
+        });
+
+        // Apply styles to score cells
+        const scores = [student.quizOne, student.quizTwo, student.exam, student.finalAverage];
+        scores.forEach((score, scoreIndex) => {
+          const columnNumber = 4 + scoreIndex; // Starts at column D (4)
+          const cell = row.getCell(columnNumber);
+
+          if (score === 0) {
+            cell.font.color = { argb: 'FF1C1C1C' }; // Black/Greyish for 0
+          } else if (score > 0 && score < 50) {
+            cell.font.color = { argb: 'FFFF0000' }; // Red
+          } else if (score >= 50 && score <= 100) {
+            cell.font.color = { argb: 'FF3A86FF' }; // Blue
+          } else {
+            cell.font = {
+              size: 12,
+              color: { argb: 'FFFF0000' },
+              bold: true
+            }; // Error - red & bold
+          }
+        });
       });
 
       worksheet.eachRow((row, rowNumber) => {
@@ -506,13 +568,10 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
           worksheet.getRow(rowNumber).height = 20;
 
           row.eachCell({ includeEmpty: true }, cell => {
-            // Estilo padrão para todas as células de dados
-            cell.font = { size: 12, bold: false, color: { argb: 'FF000000' } }; // Preto
-            cell.alignment = { vertical: 'middle', horizontal: 'center' };
 
             const columnLetter = worksheet.getColumn(cell.col).letter;
 
-            if (['B'].includes(columnLetter)) {
+            if (['A'].includes(columnLetter)) {
               cell.alignment = { vertical: 'middle', horizontal: 'left' };
             }
 
@@ -564,7 +623,7 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
       //console.log('LastRow + 2 = ', calc)
 
       const footer = worksheet.getRow(calc);
-      worksheet.mergeCells(`A${calc}:I${calc}`);
+      worksheet.mergeCells(`A${calc}:H${calc}`);
       footer.height = 20;
       const myName = worksheet.getCell(`A${calc}`);
       myName.value = this.footer;
@@ -575,21 +634,21 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
 
       worksheet.getRow(1).values = [];
       worksheet.getRow(1).height = 30;
-      worksheet.mergeCells('A1:G1');
+      worksheet.mergeCells('A1:F1');
       const titleCell1 = worksheet.getCell('A1');
       titleCell1.value = 'ENGLISH TRAINING CENTER';
       titleCell1.font = { size: 22, bold: true, color: { argb: 'FF2C2C2C' } };
       titleCell1.alignment = { vertical: 'middle', horizontal: 'center' };
 
-      worksheet.mergeCells('A2:G2');
+      worksheet.mergeCells('A2:F2');
       const titleCell2 = worksheet.getCell('A2');
-      titleCell2.value = 'Students : Active – Full List';
+      titleCell2.value = 'Students : Completed / Manage Evaluations – Full List';
       titleCell2.font = { size: 20, bold: true, color: { argb: '2C2C2C' } };
       titleCell2.alignment = { vertical: 'middle', horizontal: 'center' };
 
       // Adicionar data
-      const dateCell = worksheet.getCell('H2');
-      worksheet.mergeCells('H2:I2')
+      const dateCell = worksheet.getCell('G2');
+      worksheet.mergeCells('G2:H2')
       dateCell.value = `Issued on: ${this.formatDate(new Date())}`;
       dateCell.font = { size: 12, bold: false, color: { argb: '2C2C2C' } };
       dateCell.alignment = { vertical: 'middle', horizontal: 'right' };
@@ -599,7 +658,7 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
       });
 
-      FileSaver.saveAs(blob, 'ETC_students_active_full_list_data.xlsx');
+      FileSaver.saveAs(blob, 'ETC_students_completed_full_list_manage_evaluations_data.xlsx');
       this.alert.show('All data exported to Excel.', 'success');
     } catch (error) {
       console.error('Error exporting Excel:', error);
@@ -634,15 +693,14 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
       const worksheet = workbook.addWorksheet('Trainers');
 
       const excelColumns = [
-        { header: 'Code', key: 'id', width: 20 },
-        { header: 'Full Name', key: 'fullName', width: 40 },
-        { header: 'Gender', key: 'gender', width: 15 },
-        { header: 'Age', key: 'age', width: 10 },
-        { header: 'Package', key: 'package', width: 20 },
-        { header: 'Level', key: 'level', width: 10 },
-        { header: 'Modality', key: 'modality', width: 20 },
-        { header: 'Period', key: 'academicPeriod', width: 15 },
-        { header: 'Schedule', key: 'schedule', width: 15 },
+        { header: 'Full Name', key: 'fullName', width: 50 },
+        { header: 'Level', key: 'level', width: 15 },
+        { header: 'Schedule', key: 'schedule', width: 20 },
+        { header: 'Quiz 1', key: 'quizOne', width: 15 },
+        { header: 'Quiz 2', key: 'quizTwo', width: 15 },
+        { header: 'Exam', key: 'exam', width: 15 },
+        { header: 'Final Average', key: 'finalAverage', width: 20 },
+        { header: 'Status', key: 'status', width: 15 },
       ];
 
       // 2. Definir manualmente os valores do cabeçalho na linha 4
@@ -679,18 +737,48 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
 
       // 5. Add data SAFELY (only mapped columns)
       students.forEach((student, index) => {
-        const rowNumber = index + 5; // Começa da linha 5
-        worksheet.getRow(rowNumber).values = [
-          student.id ?? '',
+        const rowNumber = index + 5; // Starting from row 5 (after header)
+
+        // Set row values
+        const row = worksheet.getRow(rowNumber);
+        row.values = [
           student.fullName ?? '',
-          student.gender ?? '',
-          student.age ?? '',
-          student.package ?? '',
           student.level ?? '',
-          student.modality ?? '',
-          student.academicPeriod ?? '',
-          student.schedule ?? ''
+          student.schedule ?? '',
+          this.formatToPercentage(student.quizOne) ?? '',
+          this.formatToPercentage(student.quizTwo) ?? '',
+          this.formatToPercentage(student.exam) ?? '',
+          this.formatToPercentage(student.finalAverage) ?? '',
+          student.status ?? ''
         ];
+
+        row.height = 20;
+
+        row.eachCell((cell) => {
+          cell.font = { size: 12, bold: false };
+          cell.alignment = { vertical: 'middle', horizontal: 'center' };
+        });
+
+        // Apply styles to score cells
+        const scores = [student.quizOne, student.quizTwo, student.exam, student.finalAverage];
+        scores.forEach((score, scoreIndex) => {
+          const columnNumber = 4 + scoreIndex; // Starts at column D (4)
+          const cell = row.getCell(columnNumber);
+
+          if (score === 0) {
+            cell.font.color = { argb: 'FF1C1C1C' }; // Black/Greyish for 0
+          } else if (score > 0 && score < 50) {
+            cell.font.color = { argb: 'FFFF0000' }; // Red
+          } else if (score >= 50 && score <= 100) {
+            cell.font.color = { argb: 'FF3A86FF' }; // Blue
+          } else {
+            cell.font = {
+              size: 12,
+              color: { argb: 'FFFF0000' },
+              bold: true
+            }; // Error - red & bold
+          }
+        });
       });
 
       worksheet.eachRow((row, rowNumber) => {
@@ -698,13 +786,10 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
           worksheet.getRow(rowNumber).height = 20;
 
           row.eachCell({ includeEmpty: true }, cell => {
-            // Estilo padrão para todas as células de dados
-            cell.font = { size: 12, bold: false, color: { argb: 'FF000000' } }; // Preto
-            cell.alignment = { vertical: 'middle', horizontal: 'center' };
 
             const columnLetter = worksheet.getColumn(cell.col).letter;
 
-            if (['B'].includes(columnLetter)) {
+            if (['A'].includes(columnLetter)) {
               cell.alignment = { vertical: 'middle', horizontal: 'left' };
             }
 
@@ -756,7 +841,7 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
       //console.log('LastRow + 2 = ', calc)
 
       const footer = worksheet.getRow(calc);
-      worksheet.mergeCells(`A${calc}:I${calc}`);
+      worksheet.mergeCells(`A${calc}:H${calc}`);
       footer.height = 20;
       const myName = worksheet.getCell(`A${calc}`);
       myName.value = this.footer;
@@ -767,21 +852,21 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
 
       worksheet.getRow(1).values = [];
       worksheet.getRow(1).height = 30;
-      worksheet.mergeCells('A1:G1');
+      worksheet.mergeCells('A1:F1');
       const titleCell1 = worksheet.getCell('A1');
       titleCell1.value = 'ENGLISH TRAINING CENTER';
       titleCell1.font = { size: 22, bold: true, color: { argb: 'FF2C2C2C' } };
       titleCell1.alignment = { vertical: 'middle', horizontal: 'center' };
 
-      worksheet.mergeCells('A2:G2');
+      worksheet.mergeCells('A2:F2');
       const titleCell2 = worksheet.getCell('A2');
-      titleCell2.value = 'Students : Active – Filtered List';
+      titleCell2.value = 'Students : Completed / Manage Evaluations – Filtered List';
       titleCell2.font = { size: 20, bold: true, color: { argb: '2C2C2C' } };
       titleCell2.alignment = { vertical: 'middle', horizontal: 'center' };
 
       // Adicionar data
-      const dateCell = worksheet.getCell('H2');
-      worksheet.mergeCells('H2:I2')
+      const dateCell = worksheet.getCell('G2');
+      worksheet.mergeCells('G2:H2')
       dateCell.value = `Issued on: ${this.formatDate(new Date())}`;
       dateCell.font = { size: 12, bold: false, color: { argb: '2C2C2C' } };
       dateCell.alignment = { vertical: 'middle', horizontal: 'right' };
@@ -791,7 +876,7 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
       });
 
-      FileSaver.saveAs(blob, 'ETC_filtered_students_active_data.xlsx');
+      FileSaver.saveAs(blob, 'ETC_filtered_students_completed_manage_evaluations_data.xlsx');
       this.alert.show('Filtered data exported to Excel.', 'success');
     } catch (error) {
       console.error('Error exporting Excel:', error);
@@ -799,10 +884,17 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
     }
   }
 
+  getScoreColor(score?: number): string {
+    if (score === 0) return '#1C1C1C';
+    else if (score && score < 50) return 'red';
+    else if (score && score >= 50) return '#3A86FF';
+    else return 'black'; // Default
+  }
+
   private async exportPdfAllDataTable(): Promise<void> {
     try {
       // 1. Fetch all trainer data
-      const response = await lastValueFrom(this.studentService.getListStudentInactive());
+      const response = await lastValueFrom(this.studentCourseInfo.getListStudentCourseInfoCompleted());
       const students = Array.isArray(response) ? response : [response];
 
       if (!response) {
@@ -812,28 +904,26 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
 
       // Preparar cabeçalhos
       const headers = [
-        'Code',
         'Full Name',
-        'Gender',
-        'Age',
-        'Package',
         'Level',
-        'Modality',
-        'Period',
-        'Schedule'
+        'Schedule',
+        'Quiz 1',
+        'Quiz 2',
+        'Exam',
+        'Final Average',
+        'Status'
       ];
 
       // 4. Mapear os dados para o formato da tabela
       const data = students.map(student => [
-          student.id ?? '',
           student.fullName ?? '',
-          student.gender ?? '',
-          student.age ?? '',
-          student.package ?? '',
           student.level ?? '',
-          student.modality ?? '',
-          student.academicPeriod ?? '',
-          student.schedule ?? ''
+          student.schedule ?? '',
+          { content: this.formatToPercentage(student.quizOne) ?? '', styles: { textColor: this.getScoreColor(student.quizOne) } },
+          { content: this.formatToPercentage(student.quizTwo) ?? '', styles: { textColor: this.getScoreColor(student.quizTwo) } },
+          { content: this.formatToPercentage(student.exam) ?? '', styles: { textColor: this.getScoreColor(student.exam) } },
+          { content: this.formatToPercentage(student.finalAverage) ?? '', styles: { textColor: this.getScoreColor(student.finalAverage) } },
+          student.status ?? ''
       ]);
 
       // Cria o documento PDF
@@ -862,7 +952,7 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
       doc.setFontSize(20);
       doc.setTextColor(44, 44, 44);
       doc.setFont('helvetica', 'normal');
-      doc.text('Students : Active – Full List', 100, 23);
+      doc.text('Students : Completed / Manage Evaluations – Full List', 60, 23);
 
       // 5. Adicionar data de emissão
       doc.setFontSize(10);
@@ -880,15 +970,14 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
 
         columnStyles: {
           // Ajuste proporcional conforme suas colunas
-          0: { cellWidth: 'auto', halign: 'center' },
-          1: { cellWidth: 50, halign: 'left' },
+          0: { cellWidth: 50, halign: 'left' },
+          1: { cellWidth: 'auto', halign: 'center' },
           2: { cellWidth: 'auto', halign: 'center' },
           3: { cellWidth: 'auto', halign: 'center' },
           4: { cellWidth: 'auto', halign: 'center' },
           5: { cellWidth: 'auto', halign: 'center' },
           6: { cellWidth: 'auto', halign: 'center' },
-          7: { cellWidth: 'auto', halign: 'center' },
-          8: { cellWidth: 'auto', halign: 'center' }
+          7: { cellWidth: 'auto', halign: 'center' }
         },
 
         headStyles: {
@@ -900,7 +989,7 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
         styles: {
           valign: 'middle',
           overflow: 'linebreak',
-          fontSize: 9,
+          fontSize: 10,
           cellPadding: 3
         },
       });
@@ -918,7 +1007,7 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
       doc.text(this.footer, pageWidth / 2, footerY + 10, { align: 'center' });
 
       // Salva o PDF
-      doc.save('ETC_students_active_full_list_data.pdf');
+      doc.save('ETC_students_Completed_manage_evaluations_full_list_data.pdf');
       this.alert.show('All data exported to PDF.', 'success');
     } catch (error) {
       console.error('PDF export error:', error);
@@ -947,28 +1036,26 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
 
       // Preparar cabeçalhos
       const headers = [
-        'Code',
         'Full Name',
-        'Gender',
-        'Age',
-        'Package',
         'Level',
-        'Modality',
-        'Period',
-        'Schedule'
+        'Schedule',
+        'Quiz 1',
+        'Quiz 2',
+        'Exam',
+        'Final Average',
+        'Status'
       ];
 
       // 4. Mapear os dados para o formato da tabela
       const data = rowData.map(student => [
-          student.id ?? '',
           student.fullName ?? '',
-          student.gender ?? '',
-          student.age ?? '',
-          student.package ?? '',
           student.level ?? '',
-          student.modality ?? '',
-          student.academicPeriod ?? '',
-          student.schedule ?? ''
+          student.schedule ?? '',
+          { content: this.formatToPercentage(student.quizOne) ?? '', styles: { textColor: this.getScoreColor(student.quizOne) } },
+          { content: this.formatToPercentage(student.quizTwo) ?? '', styles: { textColor: this.getScoreColor(student.quizTwo) } },
+          { content: this.formatToPercentage(student.exam) ?? '', styles: { textColor: this.getScoreColor(student.exam) } },
+          { content: this.formatToPercentage(student.finalAverage) ?? '', styles: { textColor: this.getScoreColor(student.finalAverage) } },
+          student.status ?? ''
       ]);
 
       // Cria o documento PDF
@@ -997,7 +1084,7 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
       doc.setFontSize(20);
       doc.setTextColor(44, 44, 44);
       doc.setFont('helvetica', 'normal');
-      doc.text('Students : Active – Filtered List', 100, 23);
+      doc.text('Students : Completed / Manage Evaluations – Filtered List', 50, 23);
 
       // 5. Adicionar data de emissão
       doc.setFontSize(10);
@@ -1014,15 +1101,15 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
         tableWidth: 'auto', // ou 'auto' para ajuste automático
 
         columnStyles: {
-          0: { cellWidth: 'auto', halign: 'center' },
-          1: { cellWidth: 50, halign: 'left' },
+          // Ajuste proporcional conforme suas colunas
+          0: { cellWidth: 50, halign: 'left' },
+          1: { cellWidth: 'auto', halign: 'center' },
           2: { cellWidth: 'auto', halign: 'center' },
           3: { cellWidth: 'auto', halign: 'center' },
           4: { cellWidth: 'auto', halign: 'center' },
           5: { cellWidth: 'auto', halign: 'center' },
           6: { cellWidth: 'auto', halign: 'center' },
-          7: { cellWidth: 'auto', halign: 'center' },
-          8: { cellWidth: 'auto', halign: 'center' }
+          7: { cellWidth: 'auto', halign: 'center' }
         },
 
         headStyles: {
@@ -1034,7 +1121,7 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
         styles: {
           valign: 'middle',
           overflow: 'linebreak',
-          fontSize: 9,
+          fontSize: 10,
           cellPadding: 3
         },
       });
@@ -1052,7 +1139,7 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
       doc.text(this.footer, pageWidth / 2, footerY + 10, { align: 'center' });
 
       // Salva o PDF
-      doc.save('ETC_filtered_student_active.pdf');
+      doc.save('ETC_students_completed_manage_evaluations_filtered_list.pdf');
       this.alert.show('Filtered data exported to PDF.', 'success');
     } catch (error) {
       console.error('PDF export error:', error);
@@ -1063,7 +1150,7 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
   private async printAllDataTable(): Promise<void> {
     try {
       // 1. Fetch all trainer data
-      const response = await lastValueFrom(this.studentService.getListStudentInactive());
+      const response = await lastValueFrom(this.studentCourseInfo.getListStudentCourseInfoCompleted());
       const students = Array.isArray(response) ? response : [response];
 
       if (!response) {
@@ -1073,28 +1160,26 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
 
       // Preparar cabeçalhos
       const headers = [
-        'Code',
         'Full Name',
-        'Gender',
-        'Age',
-        'Package',
         'Level',
-        'Modality',
-        'Period',
-        'Schedule'
+        'Schedule',
+        'Quiz 1',
+        'Quiz 2',
+        'Exam',
+        'Final Average',
+        'Status'
       ];
 
       // 4. Mapear os dados para o formato da tabela
       const data = students.map(student => [
-          student.id ?? '',
           student.fullName ?? '',
-          student.gender ?? '',
-          student.age ?? '',
-          student.package ?? '',
           student.level ?? '',
-          student.modality ?? '',
-          student.academicPeriod ?? '',
-          student.schedule ?? ''
+          student.schedule ?? '',
+          { content: this.formatToPercentage(student.quizOne) ?? '', styles: { textColor: this.getScoreColor(student.quizOne) } },
+          { content: this.formatToPercentage(student.quizTwo) ?? '', styles: { textColor: this.getScoreColor(student.quizTwo) } },
+          { content: this.formatToPercentage(student.exam) ?? '', styles: { textColor: this.getScoreColor(student.exam) } },
+          { content: this.formatToPercentage(student.finalAverage) ?? '', styles: { textColor: this.getScoreColor(student.finalAverage) } },
+          student.status ?? ''
       ]);
 
       // Cria o documento PDF
@@ -1123,7 +1208,7 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
       doc.setFontSize(20);
       doc.setTextColor(44, 44, 44);
       doc.setFont('helvetica', 'normal');
-      doc.text('Students : Active – Full List', 100, 23);
+      doc.text('Students : Completed / Manage Evaluations – Full List', 60, 23);
 
       // 5. Adicionar data de emissão
       doc.setFontSize(10);
@@ -1140,15 +1225,15 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
         tableWidth: 'auto', // ou 'auto' para ajuste automático
 
         columnStyles: {
-          0: { cellWidth: 'auto', halign: 'center' },
-          1: { cellWidth: 50, halign: 'left' },
+          // Ajuste proporcional conforme suas colunas
+          0: { cellWidth: 50, halign: 'left' },
+          1: { cellWidth: 'auto', halign: 'center' },
           2: { cellWidth: 'auto', halign: 'center' },
           3: { cellWidth: 'auto', halign: 'center' },
           4: { cellWidth: 'auto', halign: 'center' },
           5: { cellWidth: 'auto', halign: 'center' },
           6: { cellWidth: 'auto', halign: 'center' },
-          7: { cellWidth: 'auto', halign: 'center' },
-          8: { cellWidth: 'auto', halign: 'center' }
+          7: { cellWidth: 'auto', halign: 'center' }
         },
 
         headStyles: {
@@ -1160,7 +1245,7 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
         styles: {
           valign: 'middle',
           overflow: 'linebreak',
-          fontSize: 9,
+          fontSize: 10,
           cellPadding: 3
         },
       });
@@ -1194,7 +1279,7 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
          // console.error('PrintJS error:', error);
           this.alert.show('Oops! Direct printing failed.', 'error');
           // Fallback para download
-          doc.save('ETC_students_active_full_list_data.pdf');
+          doc.save('ETC_students_completed_manage_evaluations_full_list_data.pdf');
         }
       });
     } catch (error) {
@@ -1229,28 +1314,26 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
 
       // Preparar cabeçalhos
       const headers = [
-        'Code',
         'Full Name',
-        'Gender',
-        'Age',
-        'Package',
         'Level',
-        'Modality',
-        'Period',
-        'Schedule'
+        'Schedule',
+        'Quiz 1',
+        'Quiz 2',
+        'Exam',
+        'Final Average',
+        'Status'
       ];
 
       // 4. Mapear os dados para o formato da tabela
       const data = rowData.map(student => [
-          student.id ?? '',
           student.fullName ?? '',
-          student.gender ?? '',
-          student.age ?? '',
-          student.package ?? '',
           student.level ?? '',
-          student.modality ?? '',
-          student.academicPeriod ?? '',
-          student.schedule ?? ''
+          student.schedule ?? '',
+          { content: this.formatToPercentage(student.quizOne) ?? '', styles: { textColor: this.getScoreColor(student.quizOne) } },
+          { content: this.formatToPercentage(student.quizTwo) ?? '', styles: { textColor: this.getScoreColor(student.quizTwo) } },
+          { content: this.formatToPercentage(student.exam) ?? '', styles: { textColor: this.getScoreColor(student.exam) } },
+          { content: this.formatToPercentage(student.finalAverage) ?? '', styles: { textColor: this.getScoreColor(student.finalAverage) } },
+          student.status ?? ''
       ]);
 
       // Cria o documento PDF
@@ -1279,7 +1362,7 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
       doc.setFontSize(20);
       doc.setTextColor(44, 44, 44);
       doc.setFont('helvetica', 'normal');
-      doc.text('Students : Active – Filtered List', 100, 23);
+      doc.text('Students : Completed / Manage Evaluations – Filtered List', 50, 23);
 
       // 5. Adicionar data de emissão
       doc.setFontSize(10);
@@ -1296,15 +1379,15 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
         tableWidth: 'auto', // ou 'auto' para ajuste automático
 
         columnStyles: {
-          0: { cellWidth: 'auto', halign: 'center' },
-          1: { cellWidth: 50, halign: 'left' },
+          // Ajuste proporcional conforme suas colunas
+          0: { cellWidth: 50, halign: 'left' },
+          1: { cellWidth: 'auto', halign: 'center' },
           2: { cellWidth: 'auto', halign: 'center' },
           3: { cellWidth: 'auto', halign: 'center' },
           4: { cellWidth: 'auto', halign: 'center' },
           5: { cellWidth: 'auto', halign: 'center' },
           6: { cellWidth: 'auto', halign: 'center' },
-          7: { cellWidth: 'auto', halign: 'center' },
-          8: { cellWidth: 'auto', halign: 'center' }
+          7: { cellWidth: 'auto', halign: 'center' }
         },
 
         headStyles: {
@@ -1316,7 +1399,7 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
         styles: {
           valign: 'middle',
           overflow: 'linebreak',
-          fontSize: 9,
+          fontSize: 10,
           cellPadding: 3
         },
       });
@@ -1350,7 +1433,7 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
          // console.error('PrintJS error:', error);
           this.alert.show('Oops! Direct printing failed.', 'error');
           // Fallback para download
-          doc.save('ETC_list_of_student_active_filtered_data.pdf');
+          doc.save('ETC_students_completed_manage_evaluations_filtered_list_data.pdf');
         }
       });
     } catch (error) {

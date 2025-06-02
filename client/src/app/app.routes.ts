@@ -132,7 +132,7 @@ export const routes: Routes = [
       {
         path : 'student-manage-status',
         loadComponent : () =>
-          import('./_pages/Students/student-manage-status/student-manage-status.component').then(m => m.StudentManageStatusComponent),
+          import('./_pages/Students/student-active/student-manage-status/student-manage-status.component').then(m => m.StudentManageStatusComponent),
         outlet : 'ramRouter'
       },
       {
@@ -150,6 +150,42 @@ export const routes: Routes = [
         path : 'student-finished',
         loadComponent: () =>
           import('./_pages/Students/student-finished/student-finished.component').then(m => m.StudentFinishedComponent),
+        outlet : 'ramRouter'
+      },
+      {
+        path : 'student-finished-manage-evaluations',
+        loadComponent: () =>
+          import('./_pages/Students/student-finished/student-finished-manage-evaluations/student-finished-manage-evaluations.component').then(m => m.StudentFinishedManageEvaluationsComponent),
+        outlet : 'ramRouter'
+      },
+      {
+        path : 'student-finished-manage-evaluations-details',
+        loadComponent: () =>
+          import('./_pages/Students/student-finished/student-finished-manage-evaluations-detail/student-finished-manage-evaluations-detail.component').then(m => m.StudentFinishedManageEvaluationsDetailComponent),
+        outlet : 'ramRouter'
+      },
+      {
+        path : 'student-finished-manage-status',
+        loadComponent: () =>
+          import('./_pages/Students/student-finished/student-finished-manage-status/student-finished-manage-status.component').then(m => m.StudentFinishedManageStatusComponent),
+        outlet : 'ramRouter'
+      },
+      {
+        path : 'student-finished-profile',
+        loadComponent: () =>
+          import('./_pages/Students/student-finished/student-finished-profile/student-finished-profile.component').then(m => m.StudentFinishedProfileComponent),
+        outlet : 'ramRouter'
+      },
+      {
+        path : 'student-finished-edit-personal-data',
+        loadComponent: () =>
+          import('./_pages/Students/student-finished/student-finished-edit-personal-data/student-finished-edit-personal-data.component').then(m => m.StudentFinishedEditPersonalDataComponent),
+        outlet : 'ramRouter'
+      },
+      {
+        path : 'student-finished-enrollment-form',
+        loadComponent: () =>
+          import('./_pages/Students/student-finished/student-finished-edit-enrollment-form/student-finished-edit-enrollment-form.component').then(m => m.StudentFinishedEditEnrollmentFormComponent),
         outlet : 'ramRouter'
       },
       {

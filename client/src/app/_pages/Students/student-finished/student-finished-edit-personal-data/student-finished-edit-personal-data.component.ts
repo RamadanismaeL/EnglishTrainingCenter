@@ -29,8 +29,7 @@ export const _filter = (opt: string[], value: string): string[] => {
 };
 
 @Component({
-  standalone: true,
-  selector: 'app-student-edit-personal-data',
+  selector: 'app-student-finished-edit-personal-data',
   imports: [
     MatInputModule,
     MatIconModule,
@@ -43,10 +42,10 @@ export const _filter = (opt: string[], value: string): string[] => {
     AsyncPipe,
     FormsModule
   ],
-  templateUrl: './student-edit-personal-data.component.html',
-  styleUrl: './student-edit-personal-data.component.scss'
+  templateUrl: './student-finished-edit-personal-data.component.html',
+  styleUrl: './student-finished-edit-personal-data.component.scss'
 })
-export class StudentEditPersonalDataComponent implements OnInit, OnDestroy {
+export class StudentFinishedEditPersonalDataComponent implements OnInit, OnDestroy {
   expirationDate: DateAdapter<Date, any>;
   private readonly alert = inject(SnackBarService);
   private readonly fb = inject(FormBuilder);

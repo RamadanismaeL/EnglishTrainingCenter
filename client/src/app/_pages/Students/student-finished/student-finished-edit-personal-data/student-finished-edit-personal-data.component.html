@@ -1,0 +1,301 @@
+<div class="container max-auto bg-white shadow-md rounded-[15px] p-5">
+  <form
+    [formGroup]="form"
+    (ngSubmit)="update()"
+    >
+    <div class="flex flex-col gap-7">
+      <div>
+        <div class="mb-4">
+          <h1 class="text-lg text-gray-600 font-bold mb-1 text-start">
+            IDENTIFICATION&nbsp;&nbsp;DOCUMENT
+          </h1>
+          <hr class="border-slate-400">
+        </div>
+        <div class="flex flex-col gap-x-7 gap-y-0 md:grid md:grid-cols-2 lg:grid-cols-4">
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Document Type</mat-label>
+            <mat-select panelClass="scrollbar-custom"
+            formControlName="documentType">
+              <mat-option value="BI">BI</mat-option>
+              <mat-option value="Birth Certificate">Birth Certificate</mat-option>
+              <mat-option value="Driver's Licence">Driver's Licence</mat-option>
+              <mat-option value="Passport">Passport</mat-option>
+              <mat-option value="Voter's Card">Voter's Card</mat-option>
+              <mat-option value="Work Card">Work Card</mat-option>
+            </mat-select>
+            @if (getErrorForms('documentType')?.hasError('required')) {
+              <mat-error>Document Type is required</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Id Number</mat-label>
+              <input matInput
+              type="text" maxlength="50"
+              formControlName="idNumber"/>
+              @if (getErrorForms('idNumber')?.hasError('required')) {
+                <mat-error>Id Number is required</mat-error>
+              }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Place of Issue</mat-label>
+              <input matInput
+              type="text" maxlength="50"
+              formControlName="placeOfIssue"
+              [matAutocomplete]="autoGroupPlaceOfIssue"/>
+              <mat-autocomplete #autoGroupPlaceOfIssue="matAutocomplete" class="scrollbar-custom">
+                @for (group of statePlaceOfIssue | async; track group.letter)
+                {
+                  @for (name of group.names; track name)
+                  {
+                    <mat-option [value]="name">{{name}}</mat-option>
+                  }
+                }
+              </mat-autocomplete>
+              @if (getErrorForms('placeOfIssue')?.hasError('required')) {
+                <mat-error>Place of Issue is required</mat-error>
+              }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Expiration Date</mat-label>
+            <input matInput [matDatepicker]="idPicker" [value]="expirationDate" maxlength="25"
+            formControlName="expirationDate">
+            <mat-datepicker-toggle matSuffix [for]="idPicker">
+              <mat-icon matDatepickerToggleIcon>date_range</mat-icon>
+            </mat-datepicker-toggle>
+            <mat-datepicker #idPicker></mat-datepicker>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div>
+        <div class="mb-4">
+          <h1 class="text-lg text-gray-600 font-bold mb-1 text-start">
+            PERSONAL&nbsp;&nbsp;DATA
+          </h1>
+          <hr class="border-slate-400">
+        </div>
+        <div class="flex flex-col gap-x-7 gap-y-0 md:grid md:grid-cols-2 lg:grid-cols-4">
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Full Name</mat-label>
+              <input matInput
+              type="text" maxlength="50"
+              formControlName="fullName"/>
+              @if (getErrorForms('fullName')?.hasError('required')) {
+                <mat-error>Full Name is required</mat-error>
+              }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Date of Birth</mat-label>
+            <input matInput [matDatepicker]="pdPicker" maxlength="25" formControlName="dateOfBirth">
+            @if (getErrorForms('dateOfBirth')?.hasError('required')) {
+              <mat-error>Date of Birth is required</mat-error>
+            }
+            <mat-datepicker-toggle matSuffix [for]="pdPicker">
+              <mat-icon matDatepickerToggleIcon>date_range</mat-icon>
+            </mat-datepicker-toggle>
+            <mat-datepicker #pdPicker></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Gender</mat-label>
+            <mat-select panelClass="scrollbar-custom"
+            formControlName="gender">
+              <mat-option value="F">Female</mat-option>
+              <mat-option value="M">Male</mat-option>
+            </mat-select>
+            @if (getErrorForms('gender')?.hasError('required')) {
+              <mat-error>Gender is required</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Marital Status</mat-label>
+            <mat-select panelClass="scrollbar-custom"
+            formControlName="maritalStatus">
+              <mat-option value="Single">Single</mat-option>
+              <mat-option value="Married">Married</mat-option>
+              <mat-option value="Divorced">Divorced</mat-option>
+              <mat-option value="Widowed">Widowed</mat-option>
+              <mat-option value="Separated">Separated</mat-option>
+            </mat-select>
+            @if (getErrorForms('maritalStatus')?.hasError('required')) {
+              <mat-error>Marital Status is required</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Nationality</mat-label>
+              <input matInput
+              type="text" maxlength="50"
+              formControlName="nationality"
+              [matAutocomplete]="autoGroupNationality"/>
+              <mat-autocomplete #autoGroupNationality="matAutocomplete" class="scrollbar-custom">
+                @for (group of stateNationality | async; track group.letter)
+                {
+                  @for (name of group.names; track name)
+                  {
+                    <mat-option [value]="name">{{name}}</mat-option>
+                  }
+                }
+              </mat-autocomplete>
+              @if (getErrorForms('nationality')?.hasError('required')) {
+                <mat-error>Nationality is required</mat-error>
+              }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Place of Birth</mat-label>
+              <input matInput
+              type="text" maxlength="50"
+              formControlName="placeOfBirth"
+              [matAutocomplete]="autoGroupPlaceOfBirth"/>
+              <mat-autocomplete #autoGroupPlaceOfBirth="matAutocomplete" class="scrollbar-custom">
+                @for (group of statePlaceOfBirth | async; track group.letter)
+                {
+                  @for (name of group.names; track name)
+                  {
+                    <mat-option [value]="name">{{name}}</mat-option>
+                  }
+                }
+              </mat-autocomplete>
+              @if (getErrorForms('placeOfBirth')?.hasError('required')) {
+                <mat-error>Place of Birth is required</mat-error>
+              }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Residential Address</mat-label>
+              <input matInput
+              type="text" maxlength="50"
+              formControlName="residentialAddress"
+              [matAutocomplete]="autoGroup"/>
+              <mat-autocomplete #autoGroup="matAutocomplete" class="scrollbar-custom">
+                @for (group of stateGroupOptions | async; track group.letter)
+                {
+                  <mat-optgroup [label]="group.letter">
+                    @for (name of group.names; track name)
+                    {
+                      <mat-option [value]="name">{{name}}</mat-option>
+                    }
+                  </mat-optgroup>
+                }
+              </mat-autocomplete>
+              @if (getErrorForms('residentialAddress')?.hasError('required')) {
+                <mat-error>Residential Address is required</mat-error>
+              }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Primary Phone Number</mat-label>
+              <input matInput type="tel" mask="00 000 0000"
+              formControlName="primaryPhoneNumber" placeholder="8X XXX XXXX"/>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Alternative Phone Number</mat-label>
+              <input matInput type="tel" mask="00 000 0000"
+              formControlName="alternativePhoneNumber" placeholder="8X XXX XXXX"/>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Email Address</mat-label>
+              <input matInput
+              type="email" maxlength="50"
+              formControlName="emailAddress"/>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Additional Notes</mat-label>
+              <input matInput
+              type="text" maxlength="120"
+              formControlName="additionalNotes"/>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div>
+        <div class="mb-4">
+          <h1 class="text-lg text-gray-600 font-bold mb-1 text-start">
+            EMERGENCY&nbsp;&nbsp;CONTACT / GUARDIAN
+          </h1>
+          <hr class="border-slate-400">
+        </div>
+        <div class="flex flex-col gap-x-7 gap-y-0 md:grid md:grid-cols-2 lg:grid-cols-4">
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Full Name</mat-label>
+              <input matInput
+              type="text" maxlength="50"
+              formControlName="guardianFullName"/>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Relationship</mat-label>
+            <mat-select panelClass="scrollbar-custom"
+            formControlName="guardianRelationship">
+              <mat-option value="Spouse">Spouse</mat-option>
+              <mat-option value="Parent">Parent</mat-option>
+              <mat-option value="Sibling">Sibling</mat-option>
+              <mat-option value="Child">Child</mat-option>
+              <mat-option value="Friend">Friend</mat-option>
+              <mat-option value="Colleague">Colleague</mat-option>
+              <mat-option value="Other">Other</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Residential Address</mat-label>
+              <input matInput
+              type="text" maxlength="50"
+              formControlName="guardianResidentialAddress"
+              [matAutocomplete]="autoGroupGuardian"/>
+              <mat-autocomplete #autoGroupGuardian="matAutocomplete" class="scrollbar-custom">
+                @for (group of stateGroupOptionsGuardian | async; track group.letter)
+                {
+                  <mat-optgroup [label]="group.letter">
+                    @for (name of group.names; track name)
+                    {
+                      <mat-option [value]="name">{{name}}</mat-option>
+                    }
+                  </mat-optgroup>
+                }
+              </mat-autocomplete>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Primary Phone Number</mat-label>
+            <input matInput type="tel" mask="00 000 0000"
+            formControlName="guardianPrimaryPhoneNumber" placeholder="8X XXX XXXX"/>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Alternative Phone Number</mat-label>
+            <input matInput type="tel" mask="00 000 0000"
+            formControlName="guardianAlternativePhoneNumber" placeholder="8X XXX XXXX"/>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Email Address</mat-label>
+              <input matInput
+              type="email" maxlength="50"
+              formControlName="guardianEmailAddress"/>
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+    <div class="w-full flex items-center justify-end gap-2 mt-10 ">
+      <button
+      type="submit"
+      class="w-30 btnAdd"
+      >
+        <span class="shadow"></span>
+        <span class="edge"></span>
+        <span class="front text"> Update
+        </span>
+      </button>
+    </div>
+  </form>
+</div>

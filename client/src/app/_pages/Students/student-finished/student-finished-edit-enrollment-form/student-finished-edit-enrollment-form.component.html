@@ -1,0 +1,311 @@
+<div class="w-full shadow-xl rounded-xl p-7 bg-white cursor-default">
+  <div *ngIf="profileDetail$ | async as student"
+  class="w-full h-full overflow-auto"
+  >
+    <div class="ficha-container">
+      <header class="flex">
+        <div>
+          <img src="images/marca.png" width="100" alt="Logo">
+        </div>
+        <div class="w-full mb-4">
+          <div>
+            <h1>ENGLISH TRAINING CENTER</h1>
+            <h2>FICHA DE INSCRIÇÃO PARA FORMAÇÃO</h2>
+          </div>
+        </div>
+      </header>
+
+      <section class="w-full h-full flex flex-col gap-1">
+        <div>
+          <span class="flex justify-end mb-2">N&uacute;mero de Estudante: {{ sutdentId }}</span>
+          <div class="h-full retang">
+            <h2 class="my-2">DADOS DO CURSO</h2>
+            <div class="p-2">
+              <p class="text-center">
+                Curso:
+                <span class="input-line">{{ student.courseName }}</span>
+                ,&nbsp;&nbsp;
+                Pacote:
+                <span class="input-line">{{ student.package }}</span>
+                ,&nbsp;&nbsp;
+                Nível:
+                <span class="input-line">{{ student.level }}</span>
+                ,&nbsp;&nbsp;
+                Modalidade:
+                <span class="input-line">Presencial</span>,&nbsp;&nbsp;
+                Período:<span class="input-line">{{ student.modality }}</span>
+                ,
+              </p>
+              <p class="text-center">
+
+                Horário:<span class="input-line">{{ student.schedule }}</span>
+                ,&nbsp;&nbsp;
+                Dura&ccedil;&atilde;o:
+                <span class="input-line">{{ student.duration }}</span>
+                ,&nbsp;&nbsp;
+                Mensalidade:
+                <span class="input-line">{{ formatAmount(student.monthlyFee) }} MT</span>,
+              </p>
+              <p class="text-center">
+                Dias de aulas: De segunda-feira a quinta-feira
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="retang">
+          <h2 class="my-2">DOCUMENTO DE IDENTIFICA&Ccedil;&Atilde;O</h2>
+          <div class="p-2">
+            <p class="text-center">
+              Tipo:
+              <span class="input-line">{{ OnConvertData(student.documentType) }}</span>
+              ,&nbsp;&nbsp;
+              N&uacute;mero:
+              <span class="input-line">{{ student.idNumber }}</span>,
+            </p>
+            <p class="text-center">
+              Local de Emissão:<span class="input-line">{{ student.placeOfIssue }}</span>
+              ,&nbsp;&nbsp;
+              Validade:<span class="input-line">{{ checkIsNull(student.expirationDate) }}</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="retang">
+          <h2 class="my-2">DADOS PESSOAIS</h2>
+          <div class="p-2">
+            <p class="text-center">
+              Nome Completo:
+              <span class="input-line">{{ student.fullName }}</span>
+              ,&nbsp;&nbsp;
+              Data de Nascimento:
+              <span class="input-line">{{ student.dateOfBirth }}</span>
+              ,&nbsp;&nbsp;
+              Idade:
+              <span class="input-line">{{ student.age }}</span>
+              ,
+            </p>
+            <p class="text-center">
+              Gênero:
+              <span class="input-line">
+                @if(student.gender == 'M')
+                { Masculino }
+                @else
+                { Feminino }
+              </span>
+              ,&nbsp;&nbsp;
+              Estado Civil:
+              <span class="input-line">{{ OnConvertData(student.maritalStatus) }}</span>
+              ,&nbsp;&nbsp;
+              Nacionalidade:
+              <span class="input-line">{{ checkIsNull(student.nationality) }}</span>
+              ,
+            </p>
+            <p class="text-center">
+              Natural:
+              <span class="input-line">{{ checkIsNull(student.placeOfBirth) }}</span>
+              ,&nbsp;&nbsp;
+              Endereço Residencial:
+              <span class="input-line">{{ checkIsNull(student.residentialAddress) }}</span>
+              ,
+            </p>
+            <p class="text-center">
+              Telefone: (+258)
+              <span class="input-line">{{ student.firstPhoneNumber }}</span>/<span class="input-line">{{ checkIsNull(student.secondPhoneNumber) }}</span>
+              ,&nbsp;&nbsp;
+              E-mail:
+              <span class="input-line">{{ checkIsNull(student.emailAddress) }}</span>
+              ,
+            </p>
+            <p class="text-center">
+              Observações:
+              <span class="input-line">{{ checkIsNull(student.additionalNotes) }}</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="retang">
+          <h2 class="my-2">CONTACTO DE EMERGÊNCIA / RESPONSÁVEL</h2>
+          <div class="p-2">
+            <p class="text-center">
+              Nome Completo:
+              <span class="input-line">{{ checkIsNull(student.guardFullName) }}</span>
+              ,&nbsp;&nbsp;
+              Parentesco:
+              <span class="input-line">{{ checkIsNull(OnConvertData(student.guardRelationship)) }}</span>
+              ,
+            </p>
+            <p class="text-center">
+              Endereço Residencial:
+              <span class="input-line">{{ checkIsNull(student.guardResidentialAddress) }}</span>
+              ,&nbsp;&nbsp;
+              Telefone: (+258)
+              <span class="input-line">{{ checkIsNull(student.guardFirstPhoneNumber) }}</span>/<span class="input-line">{{ checkIsNull(student.secondPhoneNumber) }}</span>,
+            </p>
+            <p class="text-center">
+              E-mail:
+              <span class="input-line">{{ checkIsNull(student.guardEmailAddress) }}</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="flex flex-col retang">
+          <h2 class="my-2">INFORMAÇÃO ÚTIL E CONDIÇÕES DE ADESÃO</h2>
+          <div class="p-2">
+            <h3>1.&nbsp;Taxas e Pagamentos</h3>
+            <ul class="ml-6">
+              <li>
+                <div class="flex items-center">
+                  <span class="pont"></span>
+                  <span>O valor do curso de Inglês é <strong>{{ formatAmount(student.courseFee) }} MT</strong>, dividido em três prestações mensais de <strong>{{ formatAmount(student.installments) }} MT</strong>.</span>
+                </div>
+              </li>
+              <li>
+                <div class="flex items-center">
+                  <span class="pont"></span>
+                  <span>A primeira prestação deve ser paga antes do início das aulas.</span>
+                </div>
+              </li>
+              <li>
+                <div class="flex items-center">
+                  <span class="pont"></span>
+                  <span>No ato da inscrição, é obrigatória a apresentação de um documento de identificação válido.</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <div class="p-2">
+            <h3>2.&nbsp;Comprimissos e Responsabilidades</h3>
+            <ul class="ml-6">
+              <li>
+                <div class="flex items-center">
+                  <span class="pont"></span>
+                  <span>A inscrição no curso implica a aceitação plena das normas institucionais.</span>
+                </div>
+              </li>
+              <li>
+                <div class="flex items-center">
+                  <span class="pont"></span>
+                  <span>O(a) participante permanece responsável pelo cumprimento das regras, independentemente da sua</span>
+                </div>
+                <div class="flex items-center">
+                  <span class="pontNoVisible"></span>
+                  <span>frequência às aulas.</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <div class="p-2">
+            <h3>3.&nbsp;Mensalidades e Penalidades</h3>
+            <ul class="ml-6">
+              <li>
+                <div class="flex items-center">
+                  <span class="pont"></span>
+                  <span>As mensalidades devem ser pagas entre os dias <strong>01 e 10 de cada mês</strong>.</span>
+                </div>
+              </li>
+              <li>
+                <div class="flex items-center">
+                  <span class="pont"></span>
+                  <span>O não cumprimento do prazo resultará na <strong>suspensão imediata</strong> do(a) participante até a regularização</span>
+                </div>
+                <div class="flex items-center">
+                  <span class="pontNoVisible"></span>
+                  <span>do pagamento.</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <div class="p-2">
+            <h3>4.&nbsp;Pontualidade e Conduta</h3>
+            <ul class="ml-6">
+              <li>
+                <div class="flex items-center">
+                  <span class="pont"></span>
+                  <span>A pontualidade é <strong>obrigatória</strong>. O acesso à sala verá vedado em caso de atrasos.</span>
+                </div>
+              </li>
+              <li>
+                <div class="flex items-center">
+                  <span class="pont"></span>
+                  <span>O(a) participante deve apresentar-se com vestimenta adequada ao ambiente acadêmico.</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <div class="p-2">
+            <h3>5.&nbsp;Regras Gerais</h3>
+            <ul class="ml-6">
+              <li>
+                <div class="flex items-center">
+                  <span class="pont"></span>
+                  <span><strong>Não serão realizados reembolsos de valores pagos</strong>, sob qualquer circustância.</span>
+                </div>
+              </li>
+              <li>
+                <div class="flex items-center">
+                  <span class="pont"></span>
+                  <span>É obrigatória a apresentação dos comprovativos de pagamento sempre que solicitado.</span>
+                </div>
+              </li>
+              <li>
+                <div class="flex items-center">
+                  <span class="pont"></span>
+                  <span>O(a) participante deverá frequentar as aulas exclusivamente nos horários e dias estabelecidos no ato</span>
+                </div>
+                <div class="flex items-center">
+                  <span class="pontNoVisible"></span>
+                  <span>da inscrição.</span>
+                </div>
+              </li>
+              <li>
+                <div class="flex items-center">
+                  <span class="pont"></span>
+                  <span>Ao prosseguir com a inscrição, o(a) participante declara estar ciente e de acordo com todas as</span>
+                </div>
+                <div class="flex items-center">
+                  <span class="pontNoVisible"></span>
+                  <span>condições estabelecidas neste documento.</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <div class="mt-25">
+        <p class="text-center">
+            Maputo,
+            <span class="input-line">{{ student.days }}</span>
+            &nbsp;de&nbsp;
+            <span class="input-line">{{ student.months }}</span>
+            &nbsp;de&nbsp;
+            <span class="input-line">{{ student.years }}</span>
+        </p>
+        <small class="flex justify-center mt-1">Hora: {{ getTimeFromDate(student.times) }}</small>
+
+        <div class="mt-5 w-full flex flex-col items-start justify-center gap-4">
+          <div>
+            <span>Assinatura do(a) Participante:</span>
+            &nbsp;<span class="assinatura-participante-line"></span>
+          </div>
+          <div>
+            <span>Assinatura do(a) Responsável (se aplicável):</span>
+            &nbsp;<span class="assinatura-responsavel-line"></span>
+          </div>
+        </div>
+
+        <div class="my-25 w-full flex flex-col items-center">
+          <span class="font-bold mb-7">Recebido por</span>
+          <span class="assinatura-recebido-line"></span>
+          <span>(Assinatura e Carimbo)</span>
+        </div>
+      </div>
+      <small class="w-full flex justify-center mt-50">© 2025 | Ramadan I.A. Ismael · Licença: English Training Center · Todos os direitos reservados</small>
+    </div>
+  </div>
+</div>

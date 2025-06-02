@@ -83,7 +83,14 @@ export class RamLeftComponent implements OnInit, OnDestroy {
           (currentUrl === ('/(ramRouter:student-progress-management)')) ||
           (currentUrl === ('/(ramRouter:student-edit-personal-data)')) ||
           (currentUrl === ('/(ramRouter:student-view-enrollment-form)')) ||
-          (currentUrl === ('/(ramRouter:student-quizzes-exams-details)'))
+          (currentUrl === ('/(ramRouter:student-quizzes-exams-details)')) ||
+          (currentUrl === ('/(ramRouter:student-manage-status)')) ||
+          (currentUrl === ('/(ramRouter:student-finished-manage-evaluations)')) ||
+          (currentUrl === ('/(ramRouter:student-finished-manage-status)')) ||
+          (currentUrl === ('/(ramRouter:student-finished-manage-evaluations-details)'))  ||
+          (currentUrl === ('/(ramRouter:student-finished-profile)')) ||
+          (currentUrl === ('/(ramRouter:student-finished-edit-personal-data)')) ||
+          (currentUrl === ('/(ramRouter:student-finished-enrollment-form)'))
         )
         {
           this.student = true;
@@ -94,12 +101,13 @@ export class RamLeftComponent implements OnInit, OnDestroy {
         }
 
         if ((currentUrl === ('/(ramRouter:student-active)')) ||
-        (currentUrl === ('/(ramRouter:student-active-quizzes-exams)')) ||
-        (currentUrl === ('/(ramRouter:student-active-profile)')) ||
-        (currentUrl === ('/(ramRouter:student-progress-management)')) ||
-        (currentUrl === ('/(ramRouter:student-edit-personal-data)')) ||
-        (currentUrl === ('/(ramRouter:student-view-enrollment-form)')) ||
-        (currentUrl === ('/(ramRouter:student-quizzes-exams-details)'))
+          (currentUrl === ('/(ramRouter:student-active-quizzes-exams)')) ||
+          (currentUrl === ('/(ramRouter:student-active-profile)')) ||
+          (currentUrl === ('/(ramRouter:student-progress-management)')) ||
+          (currentUrl === ('/(ramRouter:student-edit-personal-data)')) ||
+          (currentUrl === ('/(ramRouter:student-view-enrollment-form)')) ||
+          (currentUrl === ('/(ramRouter:student-quizzes-exams-details)')) ||
+          (currentUrl === ('/(ramRouter:student-manage-status)'))
         )
         {
           this.studentActive = true;
@@ -118,7 +126,14 @@ export class RamLeftComponent implements OnInit, OnDestroy {
           this.studentScheduledExams = false;
         }
 
-        if (currentUrl === ('/(ramRouter:student-finished)'))
+        if (currentUrl === ('/(ramRouter:student-finished)') ||
+          (currentUrl === ('/(ramRouter:student-finished-manage-evaluations)')) ||
+          (currentUrl === ('/(ramRouter:student-finished-manage-status)')) ||
+          (currentUrl === ('/(ramRouter:student-finished-manage-evaluations-details)')) ||
+          (currentUrl === ('/(ramRouter:student-finished-profile)')) ||
+          (currentUrl === ('/(ramRouter:student-finished-edit-personal-data)')) ||
+          (currentUrl === ('/(ramRouter:student-finished-enrollment-form)'))
+        )
         {
           this.studentFinished = true;
         }
@@ -236,7 +251,14 @@ export class RamLeftComponent implements OnInit, OnDestroy {
       (currentUrl === ('/(ramRouter:student-progress-management)')) ||
       (currentUrl === ('/(ramRouter:student-edit-personal-data)')) ||
       (currentUrl === ('/(ramRouter:student-view-enrollment-form)')) ||
-      (currentUrl === ('/(ramRouter:student-quizzes-exams-details)'))
+      (currentUrl === ('/(ramRouter:student-quizzes-exams-details)')) ||
+          (currentUrl === ('/(ramRouter:student-manage-status)')) ||
+      (currentUrl === ('/(ramRouter:student-finished-manage-evaluations)')) ||
+      (currentUrl === ('/(ramRouter:student-finished-manage-status)')) ||
+      (currentUrl === ('/(ramRouter:student-finished-manage-evaluations-details)')) ||
+      (currentUrl === ('/(ramRouter:student-finished-profile)')) ||
+      (currentUrl === ('/(ramRouter:student-finished-edit-personal-data)')) ||
+      (currentUrl === ('/(ramRouter:student-finished-enrollment-form)'))
     )
     {
       this.student = true;
@@ -252,7 +274,8 @@ export class RamLeftComponent implements OnInit, OnDestroy {
       (currentUrl === ('/(ramRouter:student-progress-management)')) ||
       (currentUrl === ('/(ramRouter:student-edit-personal-data)')) ||
       (currentUrl === ('/(ramRouter:student-view-enrollment-form)')) ||
-      (currentUrl === ('/(ramRouter:student-quizzes-exams-details)'))
+      (currentUrl === ('/(ramRouter:student-quizzes-exams-details)')) ||
+      (currentUrl === ('/(ramRouter:student-manage-status)'))
     )
     {
       this.studentActive = true;
@@ -271,7 +294,14 @@ export class RamLeftComponent implements OnInit, OnDestroy {
       this.studentScheduledExams = false;
     }
 
-    if (currentUrl === ('/(ramRouter:student-finished)'))
+    if (currentUrl === ('/(ramRouter:student-finished)') ||
+      (currentUrl === ('/(ramRouter:student-finished-manage-evaluations)')) ||
+      (currentUrl === ('/(ramRouter:student-finished-manage-status)')) ||
+      (currentUrl === ('/(ramRouter:student-finished-manage-evaluations-details)')) ||
+      (currentUrl === ('/(ramRouter:student-finished-profile)')) ||
+      (currentUrl === ('/(ramRouter:student-finished-edit-personal-data)')) ||
+      (currentUrl === ('/(ramRouter:student-finished-enrollment-form)'))
+    )
     {
       this.studentFinished = true;
     }

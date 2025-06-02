@@ -15,10 +15,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 
 import { MatSelectModule } from '@angular/material/select';
-import { TrainersService } from '../../../../_services/trainers.service';
-import { NotificationHubService } from '../../../../_services/notification-hub.service';
-import { SnackBarService } from '../../../../_services/snack-bar.service';
-import { TitleNavbarService } from '../../../../_services/title-navbar.service';
+import { TrainersService } from '../../../_services/trainers.service';
+import { NotificationHubService } from '../../../_services/notification-hub.service';
+import { SnackBarService } from '../../../_services/snack-bar.service';
+import { TitleNavbarService } from '../../../_services/title-navbar.service';
 
 ModuleRegistry.registerModules([ AllCommunityModule]);
 

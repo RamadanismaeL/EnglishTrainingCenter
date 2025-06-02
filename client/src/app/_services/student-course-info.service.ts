@@ -20,6 +20,12 @@ export class StudentCourseInfoService {
   getListStudentCourseInfoActive = () : Observable<StudentCourseInfoListActive> => this.http
       .get<StudentCourseInfoListActive>(`${this.myUrl}/StudentCourseInfo/get-list-student-course-info-active`, {headers : { 'Allow-Offline' : 'true' }});
 
+  getListStudentCourseInfoCompleted = () : Observable<StudentCourseInfoListActive> => this.http
+      .get<StudentCourseInfoListActive>(`${this.myUrl}/StudentCourseInfo/get-list-student-course-info-completed`, {headers : { 'Allow-Offline' : 'true' }});
+
+  getListStudentCourseInfoInactive = () : Observable<StudentCourseInfoListActive> => this.http
+      .get<StudentCourseInfoListActive>(`${this.myUrl}/StudentCourseInfo/get-list-student-course-info-inactive`, {headers : { 'Allow-Offline' : 'true' }});
+
   updateQuiz = (data : StudentCourseInfoUpdateQuizDto) : Observable<ResponseDto> => this.http
         .patch<ResponseDto>(`${this.myUrl}/StudentCourseInfo/update-quiz`, data, {headers : { 'Allow-Offline' : 'true' }});
 

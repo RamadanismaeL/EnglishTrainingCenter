@@ -1,0 +1,65 @@
+.button {
+  color: royalblue;
+  cursor: pointer;
+  font-size: 12pt;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+span label {
+  font-size: 12pt;
+}
+
+::ng-deep .ag-header-cell-label {
+  justify-content: center !important; // horizontal
+  align-items: center !important;     // vertical
+  text-align: center !important;
+  font-size: 12pt;
+  color: #2c2c2c;
+  font-weight: 500;
+}
+
+::ng-deep .custom-cell-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-size: 11pt;
+  color: #2c2c2c;
+  height: 100%;
+  cursor: pointer;
+}
+
+select {
+  height: 2.5rem;
+  width: 4rem;
+  border-color: rgb(23, 0, 155);
+}
+
+table {
+  width: 100%;
+  background: transparent;
+}
+
+.mat-mdc-row .mat-mdc-cell {
+  color: #2f2f2f;
+  font-size: 12pt;
+  border-bottom: 1px solid transparent;
+  border-top: 1px solid transparent;
+  cursor: pointer;
+}
+
+.mat-mdc-row:hover .mat-mdc-cell {
+  background-color: rgba(156, 138, 255, 0.288);
+}
+
+.demo-row-is-clicked {
+  font-weight: bold;
+}
+
+tr {
+  color: #2f2f2f;
+  font-size: 12pt;
+}

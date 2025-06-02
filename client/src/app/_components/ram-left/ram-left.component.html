@@ -92,7 +92,9 @@ matTooltipHideDelay="50">
         <span [ngClass]="{ 'active-verticalLineBtn': studentFinished }"
         [routerLink]="['/', {outlets: {ramRouter: ['student-finished']}}]"
         (click)="navigateTo([
-          { label: 'STUDENTS : COMPLETED' }
+          { label: 'STUDENTS : COMPLETED',
+            url : ['/', {outlets: {ramRouter: ['student-finished']}}]
+          }
         ])"
         class="verticalLineBtn flex items-center p-2 rounded">
           <a class="flex items-center gap-4">

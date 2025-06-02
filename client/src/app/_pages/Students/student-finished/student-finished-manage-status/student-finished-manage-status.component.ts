@@ -13,15 +13,14 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 
 import { MatSelectModule } from '@angular/material/select';
-import { NotificationHubService } from '../../../_services/notification-hub.service';
-import { TitleNavbarService } from '../../../_services/title-navbar.service';
-import { StudentsService } from '../../../_services/students.service';
+import { NotificationHubService } from '../../../../_services/notification-hub.service';
+import { TitleNavbarService } from '../../../../_services/title-navbar.service';
+import { StudentsService } from '../../../../_services/students.service';
 
 ModuleRegistry.registerModules([ AllCommunityModule]);
 
 @Component({
-  standalone: true,
-  selector: 'app-student-manage-status',
+  selector: 'app-student-finished-manage-status',
   imports: [
     AgGridAngular,
     MatIconModule,
@@ -35,10 +34,10 @@ ModuleRegistry.registerModules([ AllCommunityModule]);
     MatButtonModule,
     MatMenuModule
   ],
-  templateUrl: './student-manage-status.component.html',
-  styleUrl: './student-manage-status.component.scss'
+  templateUrl: './student-finished-manage-status.component.html',
+  styleUrl: './student-finished-manage-status.component.scss'
 })
-export class StudentManageStatusComponent implements OnInit, OnDestroy {
+export class StudentFinishedManageStatusComponent implements OnInit, OnDestroy {
   positionOptions: TooltipPosition[] = ['below', 'above', 'left', 'right'];
   position = new FormControl(this.positionOptions[1]);
   positionT = new FormControl(this.positionOptions[0]);
@@ -159,7 +158,7 @@ export class StudentManageStatusComponent implements OnInit, OnDestroy {
   private loadData(): void
   {
     this.subs.add(
-      this.studentService.getListStudentActive().subscribe((data: any) => {
+      this.studentService.getListStudentCompleted().subscribe((data: any) => {
         this.rowData = data;
         this.applyPagination();
       })
@@ -253,16 +252,42 @@ export class StudentManageStatusComponent implements OnInit, OnDestroy {
     this.gridColumnApi = params.columnApi;
   }
 
-  getSelectedStudentIds(): string[] {
+  getSelectedStudentIds(): number[] {
     const selectedNodes = this.gridApi.getSelectedNodes();
     return selectedNodes.map((node: { data: { order: any; }; }) => node.data.order);
   }
 
   markCompleted(): void {
-    console.log("Selected students completed: ", this.getSelectedStudentIds());
+    //console.log("Selected students completed: ", this.getSelectedStudentIds());
+    if (this.getSelectedStudentIds().length > 0) {
+      this.subs.add(
+        this.studentService.updateStatus(this.getSelectedStudentIds(), 'Completed').subscribe({
+          next: (response) => {
+            this.notificationHub.sendMessage(response.message);
+            this.loadData();
+          },
+          error: (error) => {
+            this.notificationHub.sendMessage(error.error.message);
+          }
+        })
+      );
+    }
   }
 
   markInactive(): void {
-    console.log("Selected students inactived: ", this.getSelectedStudentIds());
+    //console.log("Selected students inactived: ", this.getSelectedStudentIds());
+    if (this.getSelectedStudentIds().length > 0) {
+      this.subs.add(
+        this.studentService.updateStatus(this.getSelectedStudentIds(), 'Inactive').subscribe({
+          next: (response) => {
+            this.notificationHub.sendMessage(response.message);
+            this.loadData();
+          },
+          error: (error) => {
+            this.notificationHub.sendMessage(error.error.message);
+          }
+        })
+      );
+    }
   }
 }

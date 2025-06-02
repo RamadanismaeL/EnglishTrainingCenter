@@ -1,0 +1,192 @@
+<div class="w-full flex justify-center">
+  <div class="bg-white shadow-md rounded-[15px] p-5 overflow-hidden w-full">
+    <div class="mb-4">
+      <div class="flex justify-between">
+        <h1 class="text-lg text-[#2f2f2f] font-bold mb-1 text-start">
+          {{ fullName?.toUpperCase() }}
+        </h1>
+        @if (editStudentDetailsQuizzes)
+        {
+          <button mat-icon-button
+              type="button"
+              style="color: #19d232; font-size: 12pt; cursor: pointer;"
+              matTooltip="Edit"
+              [matTooltipPosition]="'left'"
+              matTooltipHideDelay="50"
+              (click)="onEditQuizzesExam()">
+              <mat-icon>edit</mat-icon>
+          </button>
+        }
+        @else
+        {
+          <div class="flex items-center gap-5">
+            <button class="button" type="reset" (click)="onCancelQuizzesExam()">Cancel</button>
+            <button class="button" type="button" (click)="onSave()">Save</button>
+            <span matTooltip="You can only edit the fields: Quiz 1, Quiz 2, and Exam. All other fields are read-only."
+            [matTooltipPosition]="position.value!"
+            matTooltipHideDelay="50"
+            style="color: #0099ff; font-size: 12pt; cursor: default;"
+            >
+              <mat-icon>info</mat-icon>
+            </span>
+          </div>
+        }
+      </div>
+      <hr class="border-slate-400">
+    </div>
+
+    @if (editStudentDetailsQuizzes)
+    {
+      <div class="w-full">
+        <table mat-table [dataSource]="rowDataTableSimple" class="mat-elevation-z8 demo-table">
+
+          <ng-container matColumnDef="level">
+            <th mat-header-cell *matHeaderCellDef><p class="text-center">Level</p></th>
+            <td mat-cell *matCellDef="let element" class="font-medium"><p class="text-center">
+              {{element.level}}
+            </p></td>
+          </ng-container>
+
+
+          <ng-container matColumnDef="quizOne">
+            <th mat-header-cell *matHeaderCellDef>
+              <p class="text-center">Quiz 1</p>
+            </th>
+            <td mat-cell *matCellDef="let element"><p class="text-center">
+              @if (element.quizOne == 0)
+              { <span style="color: #1c1c1c;">{{ formatToPercentage(element.quizOne) }}</span>
+              }
+              @else if (element.quizOne > 0 && element.quizOne < 50)
+              { <span style="color: red;">{{ formatToPercentage(element.quizOne) }}</span>
+              }
+              @else if (element.quizOne >= 50 && element.quizOne <= 100)
+              { <span style="color: #3A86FF;">{{ formatToPercentage(element.quizOne) }}</span>
+              }
+              @else
+              { <span style="color: red; font-weight: bold;">Error</span>
+              }
+            </p></td>
+          </ng-container>
+
+          <ng-container matColumnDef="quizTwo">
+            <th mat-header-cell *matHeaderCellDef>
+              <p class="text-center">Quiz 2</p>
+            </th>
+            <td mat-cell *matCellDef="let element"><p class="text-center">
+              @if (element.quizTwo == 0)
+              { <span style="color: #1c1c1c;">{{ formatToPercentage(element.quizTwo) }}</span>
+              }
+              @else if (element.quizTwo > 0 && element.quizTwo < 50)
+              { <span style="color: red;">{{ formatToPercentage(element.quizTwo) }}</span>
+              }
+              @else if (element.quizTwo >= 50 && element.quizTwo <= 100)
+              { <span style="color: #3A86FF;">{{ formatToPercentage(element.quizTwo) }}</span>
+              }
+              @else
+              { <span style="color: red; font-weight: bold;">Error</span>
+              }
+            </p></td>
+          </ng-container>
+
+          <ng-container matColumnDef="exam">
+            <th mat-header-cell *matHeaderCellDef>
+              <p class="text-center">Exam</p>
+            </th>
+            <td mat-cell *matCellDef="let element"><p class="text-center">
+              @if (element.exam == 0)
+              { <span style="color: #1c1c1c;">{{ formatToPercentage(element.exam) }}</span>
+              }
+              @else if (element.exam > 0 && element.exam < 50)
+              { <span style="color: red;">{{ formatToPercentage(element.exam) }}</span>
+              }
+              @else if (element.exam >= 50 && element.exam <= 100)
+              { <span style="color: #3A86FF;">{{ formatToPercentage(element.exam) }}</span>
+              }
+              @else
+              { <span style="color: red; font-weight: bold;">Error</span>
+              }
+            </p></td>
+          </ng-container>
+
+          <ng-container matColumnDef="finalAverage">
+            <th mat-header-cell *matHeaderCellDef>
+              <p class="text-center">Final Average</p>
+            </th>
+            <td mat-cell *matCellDef="let element"><p class="text-center">
+              @if (element.finalAverage == 0)
+              { <span style="color: #1c1c1c;">{{ formatToPercentage(element.finalAverage) }}</span>
+              }
+              @else if (element.finalAverage > 0 && element.finalAverage < 50)
+              { <span style="color: red;">{{ formatToPercentage(element.finalAverage) }}</span>
+              }
+              @else if (element.finalAverage >= 50 && element.finalAverage <= 100)
+              { <span style="color: #3A86FF;">{{ formatToPercentage(element.finalAverage) }}</span>
+              }
+              @else
+              { <span style="color: red; font-weight: bold;">Error</span>
+              }
+            </p></td>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>
+              <p class="text-center">Status</p>
+            </th>
+            <td mat-cell *matCellDef="let element"><p class="text-center">
+              @if (element.status === 'In Progress')
+              {
+                <span style="color: #1c1c1c;">{{ element.status }}</span>
+              }
+              @else if (element.status == 'Failed')
+              {
+                <span style="color: red;">{{ element.status }}</span>
+              }
+              @else if (element.status == 'Pass')
+              {
+                <span style="color: #0062ff;">{{ element.status }}</span>
+              }
+              @else
+              {
+                <span style="color: red; font-weight: bold;">Error</span>
+              }
+            </p></td>
+          </ng-container>
+
+          <ng-container matColumnDef="dateUpdate">
+            <th mat-header-cell *matHeaderCellDef>
+              <p class="text-center">Last Update</p>
+            </th>
+            <td mat-cell *matCellDef="let element"><p class="text-center">
+              {{element.dateUpdate}}
+            </p></td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr
+              mat-row
+              *matRowDef="let row; columns: displayedColumns;"
+          ></tr>
+        </table>
+      </div>
+    }
+    @else
+    {
+      <div class="grid gap-7">
+        <div class="w-full">
+          <ag-grid-angular
+            class="ag-theme-alpine custom-scrollbar w-full h-full overflow-hidden"
+            [rowData]="rowDataTableSimple"
+            [columnDefs]="columnDefsQuizzesExamEdit"
+            [domLayout]="'autoHeight'"
+            [pagination]="false"
+            [headerHeight]="50"
+            [rowHeight]="50"
+            [rowSelection]="rowSelection"
+            [gridOptions]="gridOptions"
+            >
+          </ag-grid-angular>
+        </div>
+      </div>
+    }
+  </div>
+</div>
