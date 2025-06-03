@@ -13,6 +13,7 @@ namespace server.src.Interfaces
         Task<List<StudentCourseInfoModel>> Details();
         Task<ResponseDto> UpdateQuiz(StudentCourseInfoUpdateQuizDto courseInfoUpdateQuizDto);
         Task<ResponseDto> UpdateQuizOneTwo(StudentCourseInfoUpdateQuizOneTwoDto courseInfoUpdateQuizDto);
+        Task<ResponseDto> CancelStatus(long order);
         //Task<ResponseDto> UpdateQuizExam(StudentCourseInfoUpdateExamDto courseInfoUpdateQuizDto);
         Task<List<StudentCourseInfoListDto>> GetListStudentCourseInfoActive();
         Task<List<StudentCourseInfoListDto>> GetListStudentCourseInfoCompleted();

@@ -89,11 +89,17 @@ namespace server.src.Data.Maps
                 .HasColumnType("decimal(10,2)")
                 .HasComputedColumnSql("((QuizOne + QuizTwo) / 2 * 0.6) + (Exam * 0.4)", stored: true);
 
+            builder.Property(s => s.IsCancelled)
+                .HasColumnName("IsCancelled")
+                .HasColumnType("tinyint(1)")
+                .HasDefaultValue(false);
+
             builder.Property(s => s.Status)
                 .HasColumnName("Status")
                 .HasColumnType("varchar(20)")
                 .HasComputedColumnSql(@"
                     CASE 
+                        WHEN IsCancelled = 1 THEN 'Canceled'
                         WHEN Exam = 0.0 THEN 'In Progress'
                         WHEN FinalAverage >= 50.0 AND FinalAverage <= 100.0 THEN 'Pass'
                         WHEN FinalAverage >= 0.0 AND FinalAverage < 50.0 THEN 'Failed'

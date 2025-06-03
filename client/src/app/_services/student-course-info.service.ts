@@ -32,6 +32,9 @@ export class StudentCourseInfoService {
   updateQuizOneTwo = (data : StudentCourseInfoUpdateQuizOneTwoDto) : Observable<ResponseDto> => this.http
         .patch<ResponseDto>(`${this.myUrl}/StudentCourseInfo/update-quiz-one-two`, data, {headers : { 'Allow-Offline' : 'true' }});
 
+  cancelStatus = (order: number) : Observable<ResponseDto> => this.http
+        .patch<ResponseDto>(`${this.myUrl}/StudentCourseInfo/cancel-status/${order}`, {headers : { 'Allow-Offline' : 'true' }});
+
   getListStudentCourseInfoProgressHistoryByOrder = (studentId: string) : Observable<StudentCourseInfoProgressHistoryDto> => this.http
       .post<StudentCourseInfoProgressHistoryDto>(`${this.myUrl}/StudentCourseInfo/get-list-student-course-info-progress-history-by-studentId/${studentId}`, {headers : { 'Allow-Offline' : 'true' }});
 }

@@ -13,12 +13,12 @@ import { EnrollmentPaymentService } from '../../../../_services/enrollment-payme
 import { NotificationHubService } from '../../../../_services/notification-hub.service';
 import { SettingService } from '../../../../_services/setting.service';
 import { SnackBarService } from '../../../../_services/snack-bar.service';
-import { StepperEnrollmentService } from '../../../../_services/stepper-enrollment.service';
 import { StudentsService } from '../../../../_services/students.service';
 import { EnrollmentFormComponent } from "./enrollment-form/enrollment-form.component";
 import { PaymentSucessComponent } from "./payment-sucess/payment-sucess.component";
 import { StudentEditPersonalDataService } from '../../../../_services/student-edit-personal-data.service';
 import { CourseInfoReEnrollmentService } from '../../../../_services/course-info-re-enrollment.service';
+import { StepperReEnrollmentService } from '../../../../_services/stepper-re-enrollment.service';
 
 @Component({
   selector: 'app-student-finished-re-enrollment',
@@ -39,17 +39,18 @@ export class StudentFinishedReEnrollmentComponent implements OnInit, OnDestroy {
   private readonly fb = inject(FormBuilder);
   previousAmountValue: string = '';
   form! : FormGroup;
-  currentStep?: number;
-  @ViewChild('stepperEnrollment') stepper!: MatStepper;
+  currentStepRe?: number;
+  @ViewChild('stepperReEnrollment') stepper!: MatStepper;
   enrollmentFee: string | undefined = '--';
+  private studentID : string = '';
 
   private subs = new Subscription();
 
-  constructor(private stepperService: StepperEnrollmentService, private studentEditPersonal: StudentEditPersonalDataService, private settingService: SettingService, private alert: SnackBarService, private studentService: StudentsService, private notificationHub: NotificationHubService, private enrollmentPaymentService: EnrollmentPaymentService, private courseInfoReEnrollment: CourseInfoReEnrollmentService)
+  constructor(private stepperService: StepperReEnrollmentService, private studentEditPersonal: StudentEditPersonalDataService, private settingService: SettingService, private alert: SnackBarService, private studentService: StudentsService, private notificationHub: NotificationHubService, private enrollmentPaymentService: EnrollmentPaymentService, private courseInfoReEnrollment: CourseInfoReEnrollmentService)
   {
     this.subs.add(
       this.stepperService.activeStep$.subscribe(step => {
-        this.currentStep = step;
+        this.currentStepRe = step;
       })
     );
   }
@@ -135,13 +136,14 @@ export class StudentFinishedReEnrollmentComponent implements OnInit, OnDestroy {
 
     //console.log("Student Data = ",this.enrollmentStudentService.currentEnrollment)
 
-    const studentID = this.courseInfoReEnrollment.currentEnrollment.idStudent;
+    this.studentID = this.courseInfoReEnrollment.currentEnrollment.idStudent.toString();
 
     this.subs.add(
       this.studentService.update(this.studentEditPersonal.currentEnrollment).pipe(
         switchMap(() => {
-          const paymentDetails = this.createPaymentDetails(studentID);
-          const courseInfo = this.createCourseInfo(studentID);
+          console.log('Student ID = ', this.studentID);
+          const paymentDetails = this.createPaymentDetails(this.studentID);
+          const courseInfo = this.createCourseInfo(this.studentID);
 
           this.enrollmentPaymentService.setEnrollmentStudent(paymentDetails);
 
@@ -149,9 +151,12 @@ export class StudentFinishedReEnrollmentComponent implements OnInit, OnDestroy {
           return this.studentService.createStudentCourseInfo(courseInfo).pipe(
             switchMap(() => {
               // Só após salvar o Course Info, ele cria o pagamento
-              return this.studentService.createStudentPayment(this.createPaymentDetails(studentID));
+              return this.studentService.createStudentPayment(this.createPaymentDetails(this.studentID));
             })
           );
+        }),
+        switchMap(() => {
+          return this.studentService.updateStatus([this.studentEditPersonal.currentEnrollment.order ?? 0], 'Active');
         })
       ).subscribe({
         next: () => {
@@ -163,8 +168,8 @@ export class StudentFinishedReEnrollmentComponent implements OnInit, OnDestroy {
           this.notificationHub.sendMessage("Initialize enrollment form.");
           this.stepperService.setActiveStep(2);
         },
-        error: (error) => {
-          console.error("Erro no processo:", error);
+        error: (error: HttpErrorResponse) => {
+          console.error("Erro no processo:", error.error);
           this.handleError(error);
         }
       })

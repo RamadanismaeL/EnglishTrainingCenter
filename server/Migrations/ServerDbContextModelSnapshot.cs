@@ -458,6 +458,12 @@ namespace server.Migrations
                         .HasColumnType("varchar(50)")
                         .HasColumnName("Id");
 
+                    b.Property<bool>("IsCancelled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(false)
+                        .HasColumnName("IsCancelled");
+
                     b.Property<string>("Level")
                         .IsRequired()
                         .HasColumnType("varchar(50)")
@@ -495,7 +501,7 @@ namespace server.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("varchar(20)")
                         .HasColumnName("Status")
-                        .HasComputedColumnSql("\n                    CASE \n                        WHEN Exam = 0.0 THEN 'In Progress'\n                        WHEN FinalAverage >= 50.0 AND FinalAverage <= 100.0 THEN 'Pass'\n                        WHEN FinalAverage >= 0.0 AND FinalAverage < 50.0 THEN 'Failed'\n                        ELSE 'Error'\n                    END", true);
+                        .HasComputedColumnSql("\n                    CASE \n                        WHEN IsCancelled = 1 THEN 'Canceled'\n                        WHEN Exam = 0.0 THEN 'In Progress'\n                        WHEN FinalAverage >= 50.0 AND FinalAverage <= 100.0 THEN 'Pass'\n                        WHEN FinalAverage >= 0.0 AND FinalAverage < 50.0 THEN 'Failed'\n                        ELSE 'Error'\n                    END", true);
 
                     b.Property<string>("StudentId")
                         .IsRequired()

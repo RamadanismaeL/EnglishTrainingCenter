@@ -28,6 +28,7 @@ namespace server.src.Models
         public decimal FinalAverage { get; set; }
 
 
+        public bool IsCancelled { get; set; }
         public string Status { get; set; } = string.Empty; // Failed, Pass, In Progress
         public string TrainerName { get; set; } = string.Empty;
         public DateTime? DateUpdate { get; set; }

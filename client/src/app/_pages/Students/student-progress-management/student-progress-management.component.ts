@@ -9,7 +9,6 @@ import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { Subscription } from 'rxjs';
 import { MatDialogModule } from '@angular/material/dialog';
-import { Clipboard } from '@angular/cdk/clipboard';
 import 'jspdf-autotable';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
@@ -17,7 +16,6 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { TrainersService } from '../../../_services/trainers.service';
 import { NotificationHubService } from '../../../_services/notification-hub.service';
-import { SnackBarService } from '../../../_services/snack-bar.service';
 import { TitleNavbarService } from '../../../_services/title-navbar.service';
 
 ModuleRegistry.registerModules([ AllCommunityModule]);
@@ -112,7 +110,7 @@ export class StudentProgressManagementComponent implements OnInit, OnDestroy {
           headerName: 'Scheduled Date',
           field: 'scheduledDate', minWidth: 110, flex: 1,
           cellClass: 'custom-cell-center'
-        }
+        }        
       ];
 
   rowData: any[] = [];

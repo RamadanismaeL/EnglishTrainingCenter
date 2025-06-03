@@ -13,6 +13,7 @@ import { StudentCourseInfoProgressHistoryDto } from '../../../../_interfaces/stu
 import { StudentCourseInfoService } from '../../../../_services/student-course-info.service';
 import { StudentShareIdService } from '../../../../_services/student-share-id.service';
 import { SnackBarService } from '../../../../_services/snack-bar.service';
+import { BtnStudentFinishedMEProgressHistoryComponent } from '../../../../_components/Students/btn-student-finished-meprogress-history/btn-student-finished-meprogress-history.component';
 
 export interface IQuizzesExams {
   level: string | undefined;
@@ -123,7 +124,9 @@ export class StudentFinishedManageEvaluationsDetailComponent implements OnInit, 
           field: 'status', flex: 1,
           cellClass: 'custom-cell-center',
           cellRenderer: (params: any) => {
-            if (params.value === 'In Progress')
+            if (params.value === 'Canceled')
+            { return `<span style="color: #1c1c1c; font-weight: bold">${ params.value }</span>` }
+            else if (params.value === 'In Progress')
             { return `<span style="color: #1c1c1c;">${ params.value }</span>` }
             else if (params.value == 'Failed')
             { return `<span style="color: red;">${ params.value }</span>` }
@@ -137,6 +140,12 @@ export class StudentFinishedManageEvaluationsDetailComponent implements OnInit, 
           editable: false,
           headerName: 'Date',
           field: 'dateUpdate', flex: 1,
+          cellClass: 'custom-cell-center'
+        },
+        {
+          headerName: 'Actions',
+          minWidth: 110, flex: 1,
+          cellRenderer: BtnStudentFinishedMEProgressHistoryComponent,
           cellClass: 'custom-cell-center'
         }
       ];

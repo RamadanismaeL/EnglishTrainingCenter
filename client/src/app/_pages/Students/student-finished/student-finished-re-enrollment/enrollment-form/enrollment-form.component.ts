@@ -10,13 +10,13 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import { AsyncPipe } from '@angular/common';
 import { debounceTime, distinctUntilChanged, map, Observable, startWith, Subscription } from 'rxjs';
 import { NotificationHubService } from '../../../../../_services/notification-hub.service';
-import { StepperEnrollmentService } from '../../../../../_services/stepper-enrollment.service';
 import { Router } from '@angular/router';
 import { StudentsService } from '../../../../../_services/students.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { SnackBarService } from '../../../../../_services/snack-bar.service';
 import { StudentEditPersonalDataService } from '../../../../../_services/student-edit-personal-data.service';
 import { CourseInfoReEnrollmentService } from '../../../../../_services/course-info-re-enrollment.service';
+import { StepperReEnrollmentService } from '../../../../../_services/stepper-re-enrollment.service';
 
 export interface StateGroup {
   letter: string;
@@ -49,7 +49,7 @@ export const _filter = (opt: string[], value: string): string[] => {
 export class EnrollmentFormComponent implements OnInit, OnDestroy {
   expirationDate: DateAdapter<Date, any>;
   private readonly fb = inject(FormBuilder);
-  private readonly stepperService = inject(StepperEnrollmentService);
+  private readonly stepperService = inject(StepperReEnrollmentService);
   private readonly alert = inject(SnackBarService);
   stateGroupOptions!: Observable<StateGroup[]>;
   statePlaceOfIssue!: Observable<StateGroup[]>;
@@ -611,10 +611,6 @@ export class EnrollmentFormComponent implements OnInit, OnDestroy {
   update()
   {
     if (this.form.valid) {
-      this.subs.add(
-        this.studentService.updateStatus([this.orderStudent], 'Active').subscribe()
-      );
-
       this.courseInfoReEnrollment.setEnrollmentStudent
       ({
         idStudent: this.idStudentFinished,

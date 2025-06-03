@@ -287,6 +287,78 @@ namespace server.src.Repositories
             }
         }
 
+        public async Task<ResponseDto> CancelStatus(long order)
+        {
+            try
+            {
+                var userPrincipal = _httpContextAccessor.HttpContext?.User;
+                if (userPrincipal is null)
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "User not authenticated."
+                    };
+                }
+
+                var userId = userPrincipal.FindFirst(ClaimTypes.NameIdentifier);
+                if (userId is null)
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "User not found."
+                    };
+                }
+
+                var userIdValue = userId.Value;
+                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userIdValue);
+                if (user is null)
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "User not found."
+                    };
+                }
+
+                var usernameClaim = _httpContextAccessor.HttpContext?.User.FindFirst(JwtRegisteredClaimNames.Name);
+
+                var trainerName = usernameClaim?.Value;
+
+                var courseId = await _dbContext.StudentCourseInfo.FindAsync(order);
+                if (courseId is null)
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "Course ID not found."
+                    };
+                }
+
+                courseId.IsCancelled = true;
+                courseId.TrainerName = trainerName!;
+                courseId.DateUpdate = DateTime.Now;
+                
+                await _dbContext.SaveChangesAsync();
+
+                return new ResponseDto
+                {
+                    IsSuccess = true,
+                    Message = "Course updated successfuly."
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to update course.");
+                return new ResponseDto
+                {
+                    IsSuccess = false,
+                    Message = "Failed to update course."
+                };
+            }
+        }
+
         public async Task<List<StudentCourseInfoListDto>> GetListStudentCourseInfoActive()
         {
             try

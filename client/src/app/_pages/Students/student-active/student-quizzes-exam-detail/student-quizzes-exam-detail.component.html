@@ -160,7 +160,11 @@
               <p class="text-center">Status</p>
             </th>
             <td mat-cell *matCellDef="let element"><p class="text-center">
-              @if (element.status === 'In Progress')
+              @if (element.status === 'Canceled')
+              {
+                <span style="color: #1c1c1c; font-weight: bold;">{{ element.status }}</span>
+              }
+              @else if (element.status === 'In Progress')
               {
                 <span style="color: #1c1c1c;">{{ element.status }}</span>
               }

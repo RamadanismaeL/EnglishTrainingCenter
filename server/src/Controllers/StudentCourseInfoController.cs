@@ -90,6 +90,26 @@ namespace server.src.Controllers
             return response.IsSuccess ? Ok(response) : BadRequest(response);
         }
 
+        [HttpPatch("cancel-status/{order}")]
+        public async Task<IActionResult> CancelStatus([FromRoute] long order)
+        {
+            if (order <= 0)
+            {
+                return BadRequest(new ResponseDto
+                {
+                    IsSuccess = false,
+                    Message = "Invalid order number."
+                });
+            }
+
+            var response = await _courseInfoRepository.CancelStatus(order);
+
+            // Notifica todos os clientes conectados
+            await _hubContext.Clients.All.SendAsync("ReceiveMessage", "Status cancelled successfully.");
+
+            return response.IsSuccess ? Ok(response) : BadRequest(response);
+        }
+
         [HttpGet("get-list-student-course-info-active")]
         public async Task<ActionResult<List<StudentCourseInfoListDto>>> GetListStudentCourseInfoActive()
         {
