@@ -226,7 +226,7 @@ namespace server.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     TrainerName = table.Column<string>(type: "varchar(50)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    DateUpdate = table.Column<DateTime>(type: "datetime", nullable: false)
+                    DateUpdate = table.Column<DateTime>(type: "datetime", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -423,7 +423,8 @@ namespace server.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     TrainerName = table.Column<string>(type: "varchar(50)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    DateUpdate = table.Column<DateTime>(type: "datetime", nullable: false),
+                    DateUpdate = table.Column<DateTime>(type: "datetime", nullable: true),
+                    DateRegister = table.Column<DateTime>(type: "datetime", nullable: false, defaultValueSql: "current_timestamp"),
                     StudentId = table.Column<string>(type: "varchar(50)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
@@ -444,7 +445,7 @@ namespace server.Migrations
                 name: "tbStudentEnrollmentForm",
                 columns: table => new
                 {
-                    StudentId = table.Column<string>(type: "varchar(50)", nullable: false)
+                    StudentId = table.Column<string>(type: "varchar(20)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     CourseName = table.Column<string>(type: "varchar(50)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
@@ -546,6 +547,28 @@ namespace server.Migrations
                         name: "FK_tbStudentPayment_tbStudentData_StudentId",
                         column: x => x.StudentId,
                         principalTable: "tbStudentData",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "tbStudentCourseInfoScheduleExam",
+                columns: table => new
+                {
+                    CourseInfoId = table.Column<string>(type: "varchar(50)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Status = table.Column<string>(type: "varchar(50)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ScheduledDate = table.Column<DateTime>(type: "datetime", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tbStudentCourseInfoScheduleExam", x => x.CourseInfoId);
+                    table.ForeignKey(
+                        name: "FK_tbStudentCourseInfoScheduleExam_tbStudentCourseInfo_CourseIn~",
+                        column: x => x.CourseInfoId,
+                        principalTable: "tbStudentCourseInfo",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -759,6 +782,9 @@ namespace server.Migrations
 
             migrationBuilder.DropTable(
                 name: "tbSettingsWeeklySchedule");
+
+            migrationBuilder.DropTable(
+                name: "tbStudentCourseInfoScheduleExam");
 
             migrationBuilder.DropTable(
                 name: "tbStudentEnrollmentForm");

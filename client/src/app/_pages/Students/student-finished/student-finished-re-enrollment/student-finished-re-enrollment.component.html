@@ -1,0 +1,121 @@
+<div>
+  <mat-card appearance="outlined" class="h-full rounded-xl">
+    <mat-card-content>
+      <mat-stepper #stepperEnrollment linear [selectedIndex]="currentStep">
+        <mat-step label="Student" [editable]="false">
+          <div class="w-full mt-5">
+            <app-enrollment-form></app-enrollment-form>
+          </div>
+        </mat-step>
+
+        <mat-step label="Payment" [editable]="false">
+          <div class="w-full mt-5">
+            <div class="w-full h-115">
+              <div class="mb-1 flex text-center justify-center">
+                <h6 class="text-slate-600 w-150 text-lg">
+                  <p>To ensure a secure and seamless payment process, it is mandatory to accurately complete all required fields. Please verify the provided information thoroughly before proceeding with confirmation.</p>
+                  <p>
+                    <strong>Note:</strong> The registration fee is <strong>{{ enrollmentFee }}</strong>.
+                  </p>
+                </h6>
+              </div>
+              <div class="flex justify-center items-center px-4 sm:px-6 lg:px-8 py-5">
+                <form
+                  [formGroup]="form"
+                  (ngSubmit)="confirm()"
+                  #studentPaymentReEnrollmentFormRef>
+                  <div class="shadow-xl rounded-3xl p-8 bg-white w-120"
+                  >
+                  <mat-form-field appearance="outline" class="w-full">
+                    <mat-label>Received from the Honorable Mr./Ms.</mat-label>
+                      <input matInput
+                        type="text" maxlength="50"
+                        formControlName="receivedFrom"/>
+                      @if (getErrorForms('receivedFrom')?.hasError('required')) {
+                        <mat-error>This field is required</mat-error>
+                      }
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="w-full">
+                      <mat-label>Payment Method</mat-label>
+                      <mat-select panelClass="scrollbar-custom"
+                      formControlName="paymentMethod">
+                        <mat-option value="Bank">Bank</mat-option>
+                        <mat-option value="Cash">Cash</mat-option>
+                        <mat-option value="E-Mola">E-Mola</mat-option>
+                        <mat-option value="M-Pesa">M-Pesa</mat-option>
+                      </mat-select>
+                      @if (getErrorForms('paymentMethod')?.hasError('required')) {
+                        <mat-error>Payment Method is required</mat-error>
+                      }
+                    </mat-form-field>
+                    <div class="mt-5">
+                      <hr class="border-slate-400">
+                      <div class="flex justify-between items-center mt-4">
+                        <button class="back-btn" type="button" (click)="resetStepper()">
+                          <span>Back</span>
+                        </button>
+
+                        <button class="pay-btn" type="submit">
+                          <span>Pay Now</span>
+                          <div class="icon-container">
+                            <svg viewBox="0 0 24 24" class="icon card-icon">
+                              <path
+                                d="M20,8H4V6H20M20,18H4V12H20M20,4H4C2.89,4 2,4.89 2,6V18C2,19.11 2.89,20 4,20H20C21.11,20 22,19.11 22,18V6C22,4.89 21.11,4 20,4Z"
+                                fill="currentColor"
+                              ></path>
+                            </svg>
+                            <svg viewBox="0 0 24 24" class="icon payment-icon">
+                              <path
+                                d="M2,17H22V21H2V17M6.25,7H9V6H6V3H18V6H15V7H17.75L19,17H5L6.25,7M9,10H15V8H9V10M9,13H15V11H9V13Z"
+                                fill="currentColor"
+                              ></path>
+                            </svg>
+                            <svg viewBox="0 0 24 24" class="icon dollar-icon">
+                              <path
+                                d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"
+                                fill="currentColor"
+                              ></path>
+                            </svg>
+
+                            <svg viewBox="0 0 24 24" class="icon wallet-icon default-icon">
+                              <path
+                                d="M21,18V19A2,2 0 0,1 19,21H5C3.89,21 3,20.1 3,19V5A2,2 0 0,1 5,3H19A2,2 0 0,1 21,5V6H12C10.89,6 10,6.9 10,8V16A2,2 0 0,0 12,18M12,16H22V8H12M16,13.5A1.5,1.5 0 0,1 14.5,12A1.5,1.5 0 0,1 16,10.5A1.5,1.5 0 0,1 17.5,12A1.5,1.5 0 0,1 16,13.5Z"
+                                fill="currentColor"
+                              ></path>
+                            </svg>
+
+                            <svg viewBox="0 0 24 24" class="icon check-icon">
+                              <path
+                                d="M9,16.17L4.83,12L3.41,13.41L9,19L21,7L19.59,5.59L9,16.17Z"
+                                fill="currentColor"
+                              ></path>
+                            </svg>
+                          </div>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </mat-step>
+
+        <mat-step label="Success" [editable]="false">
+          <div class="w-full flex justify-center items-center mt-5">
+            <div class="px-8 w-200">
+              <a (click)="resetStepper()"
+            class="cursor-pointer"
+            >Reset</a>
+            </div>
+          </div>
+          <app-payment-sucess></app-payment-sucess>
+        </mat-step>
+
+        <ng-template matStepperIcon="done">
+          <mat-icon>task_alt</mat-icon>
+        </ng-template>
+      </mat-stepper>
+    </mat-card-content>
+  </mat-card>
+</div>

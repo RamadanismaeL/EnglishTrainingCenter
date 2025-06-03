@@ -21,24 +21,14 @@
 
     <div class="flex gap-2 h-11">
       <button type="button" class="w-50 mark"
-      (click)="markCompleted()">
+      (click)="navigateTo({ label: 'RE-ENROLLMENT', url: ['/', {outlets: {ramRouter: ['student-finished-re-enrollment']}}]})"
+      >
         <span class="shadow"></span>
         <span class="edge"></span>
         <span class="front truncate">
           <span class="flex justify-center items-center gap-2">
-            <span class="material-icons">task_alt</span>
-            Mark as Completed
-          </span>
-        </span>
-      </button>
-      <button type="button" class="w-45 unmark"
-      (click)="markInactive()">
-        <span class="shadow"></span>
-        <span class="edge"></span>
-        <span class="front truncate">
-          <span class="flex justify-center items-center gap-2">
-            <span class="material-icons">close</span>
-            Mark as Inactive
+            <span class="material-icons">assignment_ind</span>
+            Re-enrollment
           </span>
         </span>
       </button>

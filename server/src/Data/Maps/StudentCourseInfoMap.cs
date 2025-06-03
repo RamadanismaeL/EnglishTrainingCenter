@@ -134,7 +134,8 @@ namespace server.src.Data.Maps
             builder.HasOne(s => s.CourseInfoScheduleExamData)
                 .WithOne(s => s.CourseInfoData)
                 .HasPrincipalKey<StudentCourseInfoModel>(s => s.Id)
-                .HasForeignKey<StudentCourseInfoScheduleExamModel>(s => s.CourseInfoId);
+                .HasForeignKey<StudentCourseInfoScheduleExamModel>(s => s.CourseInfoId)
+                .OnDelete(DeleteBehavior.Cascade); // If the StudentCourseInfoModel is deleted, the associated StudentCourseInfoScheduleExamModel will also be deleted (Cascade delete).
         }
     }
 }

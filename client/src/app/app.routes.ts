@@ -189,6 +189,12 @@ export const routes: Routes = [
         outlet : 'ramRouter'
       },
       {
+        path : 'student-finished-re-enrollment',
+        loadComponent: () =>
+          import('./_pages/Students/student-finished/student-finished-re-enrollment/student-finished-re-enrollment.component').then(m => m.StudentFinishedReEnrollmentComponent),
+        outlet : 'ramRouter'
+      },
+      {
         path : 'student-dropouts',
         loadComponent: () =>
           import('./_pages/Students/student-dropouts/student-dropouts.component').then(m => m.StudentDropoutsComponent),

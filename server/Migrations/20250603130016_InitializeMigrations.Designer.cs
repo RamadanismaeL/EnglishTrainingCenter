@@ -12,7 +12,7 @@ using server.src.Data;
 namespace server.Migrations
 {
     [DbContext(typeof(ServerDbContext))]
-    [Migration("20250526180441_InitializeMigrations")]
+    [Migration("20250603130016_InitializeMigrations")]
     partial class InitializeMigrations
     {
         /// <inheritdoc />
@@ -431,7 +431,13 @@ namespace server.Migrations
                         .HasColumnType("varchar(50)")
                         .HasColumnName("CourseName");
 
-                    b.Property<DateTime>("DateUpdate")
+                    b.Property<DateTime>("DateRegister")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime")
+                        .HasColumnName("DateRegister")
+                        .HasDefaultValueSql("current_timestamp");
+
+                    b.Property<DateTime?>("DateUpdate")
                         .HasColumnType("datetime")
                         .HasColumnName("DateUpdate");
 
@@ -514,6 +520,26 @@ namespace server.Migrations
                     b.ToTable("tbStudentCourseInfo", (string)null);
                 });
 
+            modelBuilder.Entity("server.src.Models.StudentCourseInfoScheduleExamModel", b =>
+                {
+                    b.Property<string>("CourseInfoId")
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("CourseInfoId");
+
+                    b.Property<DateTime?>("ScheduledDate")
+                        .HasColumnType("datetime")
+                        .HasColumnName("ScheduledDate");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("Status");
+
+                    b.HasKey("CourseInfoId");
+
+                    b.ToTable("tbStudentCourseInfoScheduleExam", (string)null);
+                });
+
             modelBuilder.Entity("server.src.Models.StudentDataModel", b =>
                 {
                     b.Property<ulong>("Order")
@@ -536,7 +562,7 @@ namespace server.Migrations
                         .HasColumnType("datetime")
                         .HasColumnName("DateOfBirthCalc");
 
-                    b.Property<DateTime>("DateUpdate")
+                    b.Property<DateTime?>("DateUpdate")
                         .HasColumnType("datetime")
                         .HasColumnName("DateUpdate");
 
@@ -655,7 +681,7 @@ namespace server.Migrations
             modelBuilder.Entity("server.src.Models.StudentEnrollmentFormModel", b =>
                 {
                     b.Property<string>("StudentId")
-                        .HasColumnType("varchar(50)")
+                        .HasColumnType("varchar(20)")
                         .HasColumnName("StudentId");
 
                     b.Property<string>("AcademicPeriod")
@@ -1042,6 +1068,18 @@ namespace server.Migrations
                     b.Navigation("StudentData");
                 });
 
+            modelBuilder.Entity("server.src.Models.StudentCourseInfoScheduleExamModel", b =>
+                {
+                    b.HasOne("server.src.Models.StudentCourseInfoModel", "CourseInfoData")
+                        .WithOne("CourseInfoScheduleExamData")
+                        .HasForeignKey("server.src.Models.StudentCourseInfoScheduleExamModel", "CourseInfoId")
+                        .HasPrincipalKey("server.src.Models.StudentCourseInfoModel", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CourseInfoData");
+                });
+
             modelBuilder.Entity("server.src.Models.StudentEnrollmentFormModel", b =>
                 {
                     b.HasOne("server.src.Models.StudentDataModel", "StudentData")
@@ -1118,6 +1156,8 @@ namespace server.Migrations
 
             modelBuilder.Entity("server.src.Models.StudentCourseInfoModel", b =>
                 {
+                    b.Navigation("CourseInfoScheduleExamData");
+
                     b.Navigation("MonthlyTuition");
                 });
 

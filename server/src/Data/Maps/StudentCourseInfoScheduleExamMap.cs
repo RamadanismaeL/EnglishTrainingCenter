@@ -18,23 +18,21 @@ namespace server.src.Data.Maps
                 .HasColumnName("CourseInfoId")
                 .HasColumnType("varchar(50)")
                 .IsRequired();
-            builder.HasIndex(s => s.CourseInfoId)
-                .IsUnique();
-
-            builder.Property(s => s.ScheduledDate)
-                .HasColumnName("ScheduledDate")
-                .HasColumnType("datetime");
-
-            builder.Property(s => s.CourseInfoId)
-                .HasColumnName("CourseInfoId")
-                .HasColumnType("varchar(50)")
-                .IsRequired();
+            builder.HasKey(s => s.CourseInfoId);
 
             builder.HasOne(s => s.CourseInfoData)
                 .WithOne(s => s.CourseInfoScheduleExamData)
                 .HasPrincipalKey<StudentCourseInfoModel>(s => s.Id)
-                .HasForeignKey<StudentCourseInfoScheduleExamModel>(s => s.CourseInfoId)
-                .OnDelete(DeleteBehavior.Cascade);  // Se o StudentDataModel for deletado, o CourseInfo associado também será automaticamente removida. (Delete em cascata - Remove os dependentes);
+                .HasForeignKey<StudentCourseInfoScheduleExamModel>(s => s.CourseInfoId);
+
+            builder.Property(s => s.Status)
+                .HasColumnName("Status")
+                .HasColumnType("varchar(50)")
+                .IsRequired();
+
+            builder.Property(s => s.ScheduledDate)
+                .HasColumnName("ScheduledDate")
+                .HasColumnType("datetime");   
         }
     }
 }

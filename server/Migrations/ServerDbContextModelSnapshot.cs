@@ -529,12 +529,10 @@ namespace server.Migrations
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("Status");
 
                     b.HasKey("CourseInfoId");
-
-                    b.HasIndex("CourseInfoId")
-                        .IsUnique();
 
                     b.ToTable("tbStudentCourseInfoScheduleExam", (string)null);
                 });
@@ -680,7 +678,7 @@ namespace server.Migrations
             modelBuilder.Entity("server.src.Models.StudentEnrollmentFormModel", b =>
                 {
                     b.Property<string>("StudentId")
-                        .HasColumnType("varchar(50)")
+                        .HasColumnType("varchar(20)")
                         .HasColumnName("StudentId");
 
                     b.Property<string>("AcademicPeriod")

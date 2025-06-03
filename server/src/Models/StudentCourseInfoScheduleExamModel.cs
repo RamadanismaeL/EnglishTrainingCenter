@@ -9,12 +9,11 @@ namespace server.src.Models
 {
     public class StudentCourseInfoScheduleExamModel
     {
-        [Key, ForeignKey("CourseInfoIdScheduledExam")]
+        [Key, ForeignKey("CourseInfo")]
         public string CourseInfoId { get; set; } = string.Empty;
-
-        public string Status { get; set; } = string.Empty; // Schedule, Unschedule, Completed
-        public DateTime? ScheduledDate { get; set; }
-        
         public StudentCourseInfoModel? CourseInfoData { get; set; }
+
+        public string Status { get; set; } = string.Empty; // Scheduled, Unscheduled, Completed
+        public DateTime? ScheduledDate { get; set; }       
     }
 }

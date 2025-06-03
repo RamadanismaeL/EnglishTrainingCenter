@@ -15,6 +15,8 @@ namespace server.src.Interfaces
         Task<ResponseDto> UpdateQuizOneTwo(StudentCourseInfoUpdateQuizOneTwoDto courseInfoUpdateQuizDto);
         //Task<ResponseDto> UpdateQuizExam(StudentCourseInfoUpdateExamDto courseInfoUpdateQuizDto);
         Task<List<StudentCourseInfoListDto>> GetListStudentCourseInfoActive();
+        Task<List<StudentCourseInfoListDto>> GetListStudentCourseInfoCompleted();
+        Task<List<StudentCourseInfoListDto>> GetListStudentCourseInfoInactive();
         Task<List<StudentCourseInfoProgressHistoryDto>> GetListStudentCourseInfoProgressHistory(string studentId);
     }
 }

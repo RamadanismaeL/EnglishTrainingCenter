@@ -16,6 +16,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { NotificationHubService } from '../../../../_services/notification-hub.service';
 import { TitleNavbarService } from '../../../../_services/title-navbar.service';
 import { StudentsService } from '../../../../_services/students.service';
+import { Router, RouterLink } from '@angular/router';
+import { StudentShareIdService } from '../../../../_services/student-share-id.service';
 
 ModuleRegistry.registerModules([ AllCommunityModule]);
 
@@ -117,18 +119,29 @@ export class StudentFinishedManageStatusComponent implements OnInit, OnDestroy {
   endIndex: number = 0;
 
   rowSelection: RowSelectionOptions | "single" | "multiple" = {
-    mode: "multiRow",
+    mode: "singleRow",
     checkboxes: true,
     enableClickSelection: true
   };
 
   private subs = new Subscription();
 
-  constructor(private studentService: StudentsService, private notificationHub: NotificationHubService, private titleNavbarService: TitleNavbarService)
+  constructor(private studentService: StudentsService, private notificationHub: NotificationHubService, private titleNavbarService: TitleNavbarService, private router: Router)
   {}
 
   navigateTo (breadcrumbs: { label: string, url?: any[] }) {
-    this.titleNavbarService.addBreadcrumb(breadcrumbs);
+    if (this.getSelectedStudentId().length > 0)
+    {
+      this.router.navigate(
+        ['/',
+          { outlets :
+            { ramRouter: ['student-finished-re-enrollment'] }
+          }
+        ],
+        { state : { idStudentFinished : this.getSelectedStudentId() } } // Passa o idStudentFinished via estado
+      );
+      this.titleNavbarService.addBreadcrumb(breadcrumbs);
+    }
   }
 
   formatDate(date: Date | string | null): string {
@@ -252,42 +265,8 @@ export class StudentFinishedManageStatusComponent implements OnInit, OnDestroy {
     this.gridColumnApi = params.columnApi;
   }
 
-  getSelectedStudentIds(): number[] {
+  getSelectedStudentId(): string {
     const selectedNodes = this.gridApi.getSelectedNodes();
-    return selectedNodes.map((node: { data: { order: any; }; }) => node.data.order);
-  }
-
-  markCompleted(): void {
-    //console.log("Selected students completed: ", this.getSelectedStudentIds());
-    if (this.getSelectedStudentIds().length > 0) {
-      this.subs.add(
-        this.studentService.updateStatus(this.getSelectedStudentIds(), 'Completed').subscribe({
-          next: (response) => {
-            this.notificationHub.sendMessage(response.message);
-            this.loadData();
-          },
-          error: (error) => {
-            this.notificationHub.sendMessage(error.error.message);
-          }
-        })
-      );
-    }
-  }
-
-  markInactive(): void {
-    //console.log("Selected students inactived: ", this.getSelectedStudentIds());
-    if (this.getSelectedStudentIds().length > 0) {
-      this.subs.add(
-        this.studentService.updateStatus(this.getSelectedStudentIds(), 'Inactive').subscribe({
-          next: (response) => {
-            this.notificationHub.sendMessage(response.message);
-            this.loadData();
-          },
-          error: (error) => {
-            this.notificationHub.sendMessage(error.error.message);
-          }
-        })
-      );
-    }
+    return selectedNodes.map((node: { data: { id: any; }; }) => node.data.id);
   }
 }

@@ -90,7 +90,8 @@ export class RamLeftComponent implements OnInit, OnDestroy {
           (currentUrl === ('/(ramRouter:student-finished-manage-evaluations-details)'))  ||
           (currentUrl === ('/(ramRouter:student-finished-profile)')) ||
           (currentUrl === ('/(ramRouter:student-finished-edit-personal-data)')) ||
-          (currentUrl === ('/(ramRouter:student-finished-enrollment-form)'))
+          (currentUrl === ('/(ramRouter:student-finished-enrollment-form)')) ||
+          (currentUrl === ('/(ramRouter:student-finished-re-enrollment)'))
         )
         {
           this.student = true;
@@ -132,7 +133,8 @@ export class RamLeftComponent implements OnInit, OnDestroy {
           (currentUrl === ('/(ramRouter:student-finished-manage-evaluations-details)')) ||
           (currentUrl === ('/(ramRouter:student-finished-profile)')) ||
           (currentUrl === ('/(ramRouter:student-finished-edit-personal-data)')) ||
-          (currentUrl === ('/(ramRouter:student-finished-enrollment-form)'))
+          (currentUrl === ('/(ramRouter:student-finished-enrollment-form)')) ||
+          (currentUrl === ('/(ramRouter:student-finished-re-enrollment)'))
         )
         {
           this.studentFinished = true;
@@ -258,7 +260,8 @@ export class RamLeftComponent implements OnInit, OnDestroy {
       (currentUrl === ('/(ramRouter:student-finished-manage-evaluations-details)')) ||
       (currentUrl === ('/(ramRouter:student-finished-profile)')) ||
       (currentUrl === ('/(ramRouter:student-finished-edit-personal-data)')) ||
-      (currentUrl === ('/(ramRouter:student-finished-enrollment-form)'))
+      (currentUrl === ('/(ramRouter:student-finished-enrollment-form)')) ||
+      (currentUrl === ('/(ramRouter:student-finished-re-enrollment)'))
     )
     {
       this.student = true;
@@ -300,7 +303,8 @@ export class RamLeftComponent implements OnInit, OnDestroy {
       (currentUrl === ('/(ramRouter:student-finished-manage-evaluations-details)')) ||
       (currentUrl === ('/(ramRouter:student-finished-profile)')) ||
       (currentUrl === ('/(ramRouter:student-finished-edit-personal-data)')) ||
-      (currentUrl === ('/(ramRouter:student-finished-enrollment-form)'))
+      (currentUrl === ('/(ramRouter:student-finished-enrollment-form)')) ||
+      (currentUrl === ('/(ramRouter:student-finished-re-enrollment)'))
     )
     {
       this.studentFinished = true;

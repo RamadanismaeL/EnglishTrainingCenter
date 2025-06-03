@@ -16,7 +16,7 @@ namespace server.src.Data.Maps
 
             builder.Property(s => s.StudentId)
                 .HasColumnName("StudentId")
-                .HasColumnType("varchar(50)") 
+                .HasColumnType("varchar(20)") 
                 .IsRequired();
             builder.HasKey(s => s.StudentId);  
 

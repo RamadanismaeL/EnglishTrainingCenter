@@ -94,8 +94,27 @@ namespace server.src.Repositories
                     TrainerName = trainerName!
                 };
 
-                await _dbContext.StudentCourseInfo.AddAsync(courseInfoData);
-                await _dbContext.SaveChangesAsync();
+                var courseInfoScheduleExamData = new StudentCourseInfoScheduleExamModel
+                {
+                    CourseInfoId = newID,
+                    Status = "Unscheduled"
+                };
+
+                using var transaction = await _dbContext.Database.BeginTransactionAsync();
+                try
+                {
+                    if (courseInfoData != null) await _dbContext.StudentCourseInfo.AddAsync(courseInfoData);
+                    if (courseInfoScheduleExamData != null) await _dbContext.StudentCourseInfoScheduleExam.AddAsync(courseInfoScheduleExamData);
+
+                    await _dbContext.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    Console.WriteLine($"[Error] Transaction failed: {ex.Message}");
+                    throw;
+                }
 
                 return new ResponseDto
                 {
@@ -275,6 +294,86 @@ namespace server.src.Repositories
                 var query = _dbContext.StudentData
                     .AsNoTracking()
                     .Where(s => s.Status == "Active")
+                    .Select(s => new
+                    {
+                        Student = s,
+                        ActiveCourse = s.CourseInfo!.FirstOrDefault(c => c.Status == "In Progress")
+                    })
+                    .Where(x => x.ActiveCourse != null)
+                    .Select(x => new StudentCourseInfoListDto
+                    {
+                        Order = x.ActiveCourse!.Order,
+                        Id = x.Student.Id,
+                        FullName = x.Student.FullName,
+                        Level = x.ActiveCourse.Level,
+                        Schedule = x.ActiveCourse.Schedule,
+                        QuizOne = x.ActiveCourse.QuizOne,
+                        QuizTwo = x.ActiveCourse.QuizTwo,
+                        Exam = x.ActiveCourse.Exam,
+                        FinalAverage = x.ActiveCourse.FinalAverage,
+                        Status = x.ActiveCourse.Status
+                    })
+                    .OrderBy(s => s.Level)
+                    .ThenBy(s => s.FullName);
+
+                var result = await query.ToListAsync();
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving active student list");
+                throw;
+            }
+        }
+
+        public async Task<List<StudentCourseInfoListDto>> GetListStudentCourseInfoCompleted()
+        {
+            try
+            {
+                var query = _dbContext.StudentData
+                    .AsNoTracking()
+                    .Where(s => s.Status == "Completed")
+                    .Select(s => new
+                    {
+                        Student = s,
+                        ActiveCourse = s.CourseInfo!.FirstOrDefault(c => c.Status == "In Progress")
+                    })
+                    .Where(x => x.ActiveCourse != null)
+                    .Select(x => new StudentCourseInfoListDto
+                    {
+                        Order = x.ActiveCourse!.Order,
+                        Id = x.Student.Id,
+                        FullName = x.Student.FullName,
+                        Level = x.ActiveCourse.Level,
+                        Schedule = x.ActiveCourse.Schedule,
+                        QuizOne = x.ActiveCourse.QuizOne,
+                        QuizTwo = x.ActiveCourse.QuizTwo,
+                        Exam = x.ActiveCourse.Exam,
+                        FinalAverage = x.ActiveCourse.FinalAverage,
+                        Status = x.ActiveCourse.Status
+                    })
+                    .OrderBy(s => s.Level)
+                    .ThenBy(s => s.FullName);
+
+                var result = await query.ToListAsync();
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving active student list");
+                throw;
+            }
+        }
+
+        public async Task<List<StudentCourseInfoListDto>> GetListStudentCourseInfoInactive()
+        {
+            try
+            {
+                var query = _dbContext.StudentData
+                    .AsNoTracking()
+                    .Where(s => s.Status == "Inactive")
                     .Select(s => new
                     {
                         Student = s,

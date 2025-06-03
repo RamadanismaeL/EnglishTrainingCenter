@@ -1,20 +1,20 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { Subscription } from 'rxjs';
-import { SnackBarService } from '../../../_services/snack-bar.service';
-import { StudentPaymentModel } from '../../../_interfaces/student-payment-model';
-import { StudentsService } from '../../../_services/students.service';
-import { DocumentsService } from '../../../_services/documents.service';
 import printJS from 'print-js';
-import { NotificationHubService } from '../../../_services/notification-hub.service';
+import { StudentPaymentModel } from '../../../../../_interfaces/student-payment-model';
+import { DocumentsService } from '../../../../../_services/documents.service';
+import { NotificationHubService } from '../../../../../_services/notification-hub.service';
+import { SnackBarService } from '../../../../../_services/snack-bar.service';
+import { StudentsService } from '../../../../../_services/students.service';
 
 @Component({
-  selector: 'app-payment-success',
+  selector: 'app-payment-sucess',
   imports: [],
-  templateUrl: './payment-success.component.html',
-  styleUrl: './payment-success.component.scss'
+  templateUrl: './payment-sucess.component.html',
+  styleUrl: './payment-sucess.component.scss'
 })
-export class PaymentSuccessComponent implements OnInit, OnDestroy, ICellRendererAngularComp {
+export class PaymentSucessComponent implements OnInit, OnDestroy, ICellRendererAngularComp {
   private subs = new Subscription();
   amountMT : string | undefined = '--';
   method : string | undefined = '--';

@@ -40,11 +40,23 @@ namespace server.src.Controllers
         [HttpPatch("update")]
         public async Task<IActionResult> Update([FromBody] StudentUpdateDto studentUpdateDto)
         {
-            if(!ModelState.IsValid) return BadRequest(ModelState);
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
             var response = await _studentRepository.Update(studentUpdateDto);
 
             await _hubContext.Clients.All.SendAsync("ReceiveMessage", "Updated successfully.");
+
+            return response.IsSuccess ? Ok(response) : BadRequest(response);
+        }
+
+        [HttpPatch("update-status/{status}")]
+        public async Task<IActionResult> UpdateStatus([FromRoute] string status, [FromBody] List<long> order)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var response = await _studentRepository.UpdateStatus(order, status);
+
+            await _hubContext.Clients.All.SendAsync("ReceiveMessage", "Status updated successfully.");
 
             return response.IsSuccess ? Ok(response) : BadRequest(response);
         }
@@ -128,11 +140,27 @@ namespace server.src.Controllers
 
             return Ok(student);
         }
-        
+
         [HttpGet("get-list-student-active")]
-        public async  Task<ActionResult<IEnumerable<ListStudentActiveDto>>> GetListStudentActive()
+        public async Task<ActionResult<IEnumerable<ListStudentActiveDto>>> GetListStudentActive()
         {
             var student = await _studentRepository.GetListStudentActive();
+
+            return Ok(student);
+        }
+
+        [HttpGet("get-list-student-completed")]
+        public async Task<ActionResult<IEnumerable<ListStudentActiveDto>>> GetListStudentCompleted()
+        {
+            var student = await _studentRepository.GetListStudentCompleted();
+
+            return Ok(student);
+        }
+
+        [HttpGet("get-list-student-inactive")]
+        public async  Task<ActionResult<IEnumerable<ListStudentActiveDto>>> GetListStudentInactive()
+        {
+            var student = await _studentRepository.GetListStudentInactive();
 
             return Ok(student);
         }

@@ -1,0 +1,221 @@
+.pay-pdf {
+  padding: 0.8rem 4rem;
+  width: 11em;
+  height: 4rem;
+  border: none;
+  outline: none;
+  font-size: 1.3rem;
+  border-radius: 0.3rem;
+  font-weight: 400;
+  background-color: #e5332d;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
+  box-shadow: 0 5px 15px rgba(58, 58, 58, 0.4);
+
+  &:hover {
+    transform: translateY(-4px);
+    background-color: #ad2622;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+
+    &:active {
+      transition: 0.2s ease-in-out;
+      transform: translateY(0);
+    }
+  }
+
+  &:hover .text {
+    opacity: 0;
+  }
+
+  &:hover .svg {
+    display: inline-block;
+    transform: translateY(0px) rotate(0deg);
+    opacity: 1;
+    fill: rgb(255, 255, 255);
+    animation: slide-in-top 1s linear infinite;
+  }
+
+  &:hover .icon2 {
+    transform: translateY(0px) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+.pay-pdf .text {
+  position: absolute;
+  left: 1.6rem;
+  transition: 0.3s ease-in-out;
+  color: #fff;
+}
+
+.pay-image {
+  padding: 0.8rem 4rem;
+  width: 11em;
+  height: 4rem;
+  border: none;
+  outline: none;
+  font-size: 1.3rem;
+  border-radius: 0.3rem;
+  font-weight: 400;
+  background-color: #2d92e5;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
+  box-shadow: 0 5px 15px rgba(58, 58, 58, 0.4);
+
+  &:hover {
+    transform: translateY(-4px);
+    background-color: #2275ad;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+
+    &:active {
+      transition: 0.2s ease-in-out;
+      transform: translateY(0);
+    }
+  }
+
+  &:hover .text {
+    opacity: 0;
+  }
+
+  &:hover .svg {
+    display: inline-block;
+    transform: translateY(0px) rotate(0deg);
+    opacity: 1;
+    fill: rgb(255, 255, 255);
+    animation: slide-in-top 1s linear infinite;
+  }
+
+  &:hover .icon2 {
+    transform: translateY(0px) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+.pay-image .text {
+  position: absolute;
+  left: 0.8rem;
+  transition: 0.3s ease-in-out;
+  color: #fff;
+}
+
+.pay-print {
+  padding: 0.8rem 4rem;
+  width: 11em;
+  height: 4rem;
+  border: none;
+  outline: none;
+  font-size: 1.3rem;
+  border-radius: 0.3rem;
+  font-weight: 400;
+  background-color: #757575;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
+  box-shadow: 0 5px 15px rgba(58, 58, 58, 0.4);
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+
+    &:active {
+      transition: 0.2s ease-in-out;
+      transform: translateY(0);
+    }
+  }
+}
+
+.pay-print .text {
+  color: #fff;
+}
+
+.svg {
+  transform: translateY(-20px) rotate(30deg);
+  opacity: 0;
+  width: 2rem;
+  transition: 0.3s ease-in-out;
+}
+
+.icon2 {
+  transform: translateY(-20px) rotate(30deg);
+  opacity: 0;
+  transition: 0.4s ease-in-out;
+  width: 2rem;
+  height: 8px;
+  border-radius: 0px 0px 4px 4px;
+  border-bottom: 2px solid rgb(255, 255, 255);
+  border-left: 2px solid rgb(255, 255, 255);
+  border-right: 2px solid rgb(255, 255, 255);
+}
+
+
+@keyframes slide-in-top {
+  0% {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0px);
+    opacity: 1;
+  }
+}
+
+/* From Uiverse.io by vinodjangid07 */
+.share-button {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 120px;
+  height: 40px;
+  position: relative;
+  border: 1px solid #81aca0;
+  background-color: #209978;
+  overflow: hidden;
+  cursor: pointer;
+  color: white;
+  transition: all 0.3s ease-in-out;
+  border-radius: 0.3rem;
+  box-shadow: 0 5px 15px rgba(58, 58, 58, 0.4);
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+  }
+
+  &:active {
+    transition: 0.2s ease-in-out;
+    transform: translateY(0);
+  }
+}
+
+.button__text {
+  width: 80px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button__icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #17795e;
+  fill: #fff;
+  position: absolute;
+  right: 0;
+  transition: all 0.3s;
+}
+.button__icon svg {
+  width: 18px;
+}
+.share-button:hover .button__icon {
+  width: 100%;
+}

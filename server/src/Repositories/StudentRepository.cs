@@ -322,6 +322,83 @@ namespace server.src.Repositories
             }
         }
 
+        public async Task<ResponseDto> UpdateStatus(List<long> order, string status)
+        {
+            try
+            {
+                var trainerAuth = _httpContextAccessor.HttpContext?.User;
+                if (trainerAuth == null)
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "User not authenticated."
+                    };
+                }
+
+                var trainerId = trainerAuth.FindFirst(ClaimTypes.NameIdentifier);
+                if (trainerId == null)
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "User not found."
+                    };
+                }
+
+                var trainerIdValue = trainerId.Value;
+                var trainer = await _dbContext.Users
+                    .FirstOrDefaultAsync(u => u.Id == trainerIdValue);
+                if (trainer == null)
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "User not found."
+                    };
+                }
+
+                var userNameClaim = _httpContextAccessor.HttpContext?.User.FindFirst(JwtRegisteredClaimNames.Name);
+
+                var trainerName = userNameClaim?.Value;
+
+                foreach (var studentId in order)
+                {
+                    var student = await _dbContext.StudentData.FindAsync(studentId);
+                    if (student == null)
+                    {
+                        return new ResponseDto
+                        {
+                            IsSuccess = false,
+                            Message = $"Student with ID {studentId} not found."
+                        };
+                    }
+
+                    student.Status = status;
+                    student.DateUpdate = DateTime.Now;
+
+                    //student.DateUpdate = DateTime.Now;
+                    student.TrainerName = trainerName!;
+                    await _dbContext.SaveChangesAsync();
+                }
+
+                return new ResponseDto
+                {
+                    IsSuccess = true,
+                    Message = "Student updated successfully."
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating student.");
+                return new ResponseDto
+                {
+                    IsSuccess = false,
+                    Message = "An unexpected error occurred while updating."
+                };
+            }
+        }
+
         public async Task<List<StudentDataModel>> DetailStudentData()
         {
             return await _dbContext.StudentData
@@ -562,7 +639,8 @@ namespace server.src.Repositories
             // Inclua StudentData e relacionamentos necessários
             var student = await _dbContext.StudentData
                 .Where(s => s.FullName == fullName)
-                .Select(s => new {
+                .Select(s => new
+                {
                     s.Order,
                     s.Id,
                     s.DocumentType,
@@ -588,7 +666,7 @@ namespace server.src.Repositories
                     s.GuardFirstPhoneNumber,
                     s.GuardSecondPhoneNumber,
                     s.GuardEmailAddress,
-                    
+
                     s.Status,
                     s.TrainerName,
                     s.DateUpdate,
@@ -874,6 +952,92 @@ namespace server.src.Repositories
             }
         }
 
+        public async Task<IEnumerable<ListStudentActiveDto>> GetListStudentCompleted()
+        {
+            try
+            {
+                var currentDate = DateTime.Now;
+
+                var query = _dbContext.StudentData
+                    .AsNoTracking()
+                    .Where(s => s.Status == "Completed")
+                    .Select(s => new
+                    {
+                        Student = s,
+                        ActiveCourse = s.CourseInfo!.FirstOrDefault(c => c.Status == "In Progress")
+                    })
+                    .Where(x => x.ActiveCourse != null)
+                    .Select(x => new ListStudentActiveDto
+                    {
+                        Order = x.Student.Order,
+                        Id = x.Student.Id,
+                        FullName = x.Student.FullName,
+                        Gender = x.Student.Gender,
+                        Age = currentDate.Year - x.Student.DateOfBirthCalc.Year,
+                        Package = x.ActiveCourse!.Package,
+                        Level = x.ActiveCourse.Level,
+                        Modality = x.ActiveCourse.Modality,
+                        AcademicPeriod = x.ActiveCourse.AcademicPeriod,
+                        Schedule = x.ActiveCourse.Schedule,
+                        Status = x.Student.Status,
+                        DateUpdate = x.Student.DateUpdate != null ? x.Student.DateUpdate.Value.ToString("dd/MM/yyyy") : ""
+                    })
+                    .OrderBy(s => s.FullName);
+
+                var result = await query.ToListAsync();
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving active student list");
+                throw;
+            }
+        }
+
+        public async Task<IEnumerable<ListStudentActiveDto>> GetListStudentInactive()
+        {
+            try
+            {
+                var currentDate = DateTime.Now;
+
+                var query = _dbContext.StudentData
+                    .AsNoTracking()
+                    .Where(s => s.Status == "Inactive")
+                    .Select(s => new
+                    {
+                        Student = s,
+                        ActiveCourse = s.CourseInfo!.FirstOrDefault(c => c.Status == "In Progress")
+                    })
+                    .Where(x => x.ActiveCourse != null)
+                    .Select(x => new ListStudentActiveDto
+                    {
+                        Order = x.Student.Order,
+                        Id = x.Student.Id,
+                        FullName = x.Student.FullName,
+                        Gender = x.Student.Gender,
+                        Age = currentDate.Year - x.Student.DateOfBirthCalc.Year,
+                        Package = x.ActiveCourse!.Package,
+                        Level = x.ActiveCourse.Level,
+                        Modality = x.ActiveCourse.Modality,
+                        AcademicPeriod = x.ActiveCourse.AcademicPeriod,
+                        Schedule = x.ActiveCourse.Schedule,
+                        Status = x.Student.Status,
+                        DateUpdate = x.Student.DateUpdate != null ? x.Student.DateUpdate.Value.ToString("dd/MM/yyyy") : ""
+                    })
+                    .OrderBy(s => s.FullName);
+
+                var result = await query.ToListAsync();
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving active student list");
+                throw;
+            }
+        }
+
         private string GenerateStudentID()
         {
             try
@@ -916,7 +1080,7 @@ namespace server.src.Repositories
                         .OrderByDescending(s => s.Order)
                         .Select(s => s.Order)
                         .FirstOrDefault();
-                        
+
                 long nextOrder = lastOrder + 1;
 
                 // Formatar data atual como AAAAMM
@@ -1013,5 +1177,29 @@ namespace server.src.Repositories
             return modality;
         }
 
+        private string GenerateCourseId(string level)
+        {
+            try
+            {
+                long lastOrder = _dbContext.StudentCourseInfo
+                    .OrderByDescending(c => c.Order)
+                    .Select(c => c.Order)
+                    .FirstOrDefault();
+
+                long nextOrder = lastOrder + 1;
+
+                string year = $"{DateTime.Now.Year}";
+                string month = $"{DateTime.Now.Month}";
+
+                string newId = $"{level}{year}{month}{nextOrder:D2}";
+
+                return newId;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to generate Course ID.");
+                throw new InvalidOperationException("Failed to generate Course ID.");
+            }
+        }
     }
 }

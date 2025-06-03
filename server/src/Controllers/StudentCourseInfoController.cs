@@ -97,6 +97,20 @@ namespace server.src.Controllers
             return Ok(courseData);
         }
 
+        [HttpGet("get-list-student-course-info-completed")]
+        public async Task<ActionResult<List<StudentCourseInfoListDto>>> GetListStudentCourseInfoCompleted()
+        {
+            var courseData = await _courseInfoRepository.GetListStudentCourseInfoCompleted();
+            return Ok(courseData);
+        }
+
+        [HttpGet("get-list-student-course-info-inactive")]
+        public async Task<ActionResult<List<StudentCourseInfoListDto>>> GetListStudentCourseInfoInactive()
+        {
+            var courseData = await _courseInfoRepository.GetListStudentCourseInfoInactive();
+            return Ok(courseData);
+        }
+
         [HttpPost("get-list-student-course-info-progress-history-by-studentId/{studentId}")]
         public async Task<ActionResult<List<StudentCourseInfoProgressHistoryDto>>> GetListStudentCourseInfoProgressHistory(string studentId)
         {

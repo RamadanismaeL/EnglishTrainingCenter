@@ -25,7 +25,7 @@ export class BtnStudentFinishedManageEvaluationsActionTableComponent implements 
 
   params: any;
 
-  constructor (private titleNavbarService: TitleNavbarService, private dialog: MatDialog, private studentShareId: StudentShareIdService)
+  constructor (private titleNavbarService: TitleNavbarService, private studentShareId: StudentShareIdService)
   {}
 
   agInit(params: any): void {

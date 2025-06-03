@@ -15,6 +15,8 @@ namespace server.src.Interfaces
         Task<IActionResult> UpdateQuiz([FromBody] StudentCourseInfoUpdateQuizDto courseInfoUpdateQuizDto);
         Task<IActionResult> UpdateQuizOneTwo([FromBody] StudentCourseInfoUpdateQuizOneTwoDto courseInfoUpdateQuizDto);
         Task<ActionResult<List<StudentCourseInfoListDto>>> GetListStudentCourseInfoActive();
+        Task<ActionResult<List<StudentCourseInfoListDto>>> GetListStudentCourseInfoCompleted();
+        Task<ActionResult<List<StudentCourseInfoListDto>>> GetListStudentCourseInfoInactive();
         Task<ActionResult<List<StudentCourseInfoProgressHistoryDto>>> GetListStudentCourseInfoProgressHistory(string studentId);
     }
 }
