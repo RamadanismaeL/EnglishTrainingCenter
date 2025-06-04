@@ -13,6 +13,13 @@
       </button>
 
       <mat-menu #menu="matMenu">
+        <button (click)="onUpdateCourseInfo()"
+        mat-menu-item
+        >
+          <mat-icon>edit</mat-icon>
+          <span>Edit Course Information</span>
+        </button>
+
         <button [routerLink]="['/', { outlets : { ramRouter: ['student-edit-personal-data'] } }]"
         (click)="navigateTo({ label: 'EDIT PERSONAL DATA', url: ['/', {outlets: {ramRouter: ['student-edit-personal-data']}}]})"
         mat-menu-item
@@ -20,6 +27,7 @@
           <mat-icon>edit</mat-icon>
           <span>Edit Personal Data</span>
         </button>
+
         <button [routerLink]="['/', { outlets : { ramRouter: ['student-view-enrollment-form'] } }]"
         (click)="navigateTo({ label: 'ENROLLMENT FORM', url: ['/', {outlets: {ramRouter: ['student-view-enrollment-form']}}]})"
         mat-menu-item

@@ -20,7 +20,7 @@ namespace server.src.Repositories
     {
         private readonly IConverter _converter = converter;
         private static string previousAmountValue = string.Empty;
-        private static string myFooter = "&copy; 2025 | Ramadan I.A. Ismael · Licença: English Training Center · Todos os direitos reservados";
+        private static readonly string myFooter = "&copy; 2025 | Ramadan I.A. Ismael · Licença: English Training Center · Todos os direitos reservados";
 
         public byte[] PdfGenerateEnrollmentForm(StudentEnrollmentFormModel ficha)
         {

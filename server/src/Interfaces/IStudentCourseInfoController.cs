@@ -11,6 +11,8 @@ namespace server.src.Interfaces
     public interface IStudentCourseInfoController
     {
         Task<IActionResult> Create([FromBody] StudentCourseInfoCreateDto studentCourseCreateDto);
+        Task<IActionResult> Update([FromBody] StudentCourseInfoUpdateDto studentCourseUpdateDto);
+        Task<ActionResult<StudentCourseInfoUpdateListDto>> GetStudentCourseInfoUpdateListById(string id);
         Task<ActionResult<List<StudentCourseInfoModel>>> Details();
         Task<IActionResult> UpdateQuiz([FromBody] StudentCourseInfoUpdateQuizDto courseInfoUpdateQuizDto);
         Task<IActionResult> UpdateQuizOneTwo([FromBody] StudentCourseInfoUpdateQuizOneTwoDto courseInfoUpdateQuizDto);

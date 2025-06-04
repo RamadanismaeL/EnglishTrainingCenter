@@ -10,6 +10,8 @@ namespace server.src.Interfaces
     public interface IStudentCourseInfoRepository
     {
         Task<ResponseDto> Create(StudentCourseInfoCreateDto studentCourseCreateDto);
+        Task<ResponseDto> Update(StudentCourseInfoUpdateDto studentCourseUpdateDto);
+        Task<StudentCourseInfoUpdateListDto> GetStudentCourseInfoUpdateListById(string id);
         Task<List<StudentCourseInfoModel>> Details();
         Task<ResponseDto> UpdateQuiz(StudentCourseInfoUpdateQuizDto courseInfoUpdateQuizDto);
         Task<ResponseDto> UpdateQuizOneTwo(StudentCourseInfoUpdateQuizOneTwoDto courseInfoUpdateQuizDto);

@@ -39,6 +39,36 @@ namespace server.src.Controllers
             return response.IsSuccess ? Ok(response) : BadRequest(response);
         }
 
+        [HttpPatch("update")]
+        public async Task<IActionResult> Update([FromBody] StudentCourseInfoUpdateDto studentCourseUpdateDto)
+        {
+            if (studentCourseUpdateDto is null)
+            {
+                return BadRequest(new ResponseDto
+                {
+                    IsSuccess = false,
+                    Message = "Student course data is required."
+                });
+            }
+
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var response = await _courseInfoRepository.Update(studentCourseUpdateDto);
+
+            // Notifica todos os clientes conectados
+            await _hubContext.Clients.All.SendAsync("ReceiveMessage", "Student Course updated successfully.");
+
+            return response.IsSuccess ? Ok(response) : BadRequest(response);
+        }
+
+        [HttpPost("get-student-course-info-update-list-by-id/{studentId}")]
+        public async Task<ActionResult<StudentCourseInfoUpdateListDto>> GetStudentCourseInfoUpdateListById(string studentId)
+        {
+            var student = await _courseInfoRepository.GetStudentCourseInfoUpdateListById(studentId);
+
+            return Ok(student);
+        }
+
         [HttpGet("details")]
         public async Task<ActionResult<List<StudentCourseInfoModel>>> Details()
         {

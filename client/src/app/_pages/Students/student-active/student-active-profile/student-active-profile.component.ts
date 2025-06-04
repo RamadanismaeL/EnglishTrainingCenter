@@ -9,6 +9,8 @@ import { Observable, Subscription } from 'rxjs';
 import { StudentListProfileDto } from '../../../../_interfaces/student-list-profile-dto';
 import { CommonModule } from '@angular/common';
 import { NotificationHubService } from '../../../../_services/notification-hub.service';
+import { DialogUpdateStudentCourseInfoComponent } from '../../dialog-update-student-course-info/dialog-update-student-course-info.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   standalone: true,
@@ -28,7 +30,7 @@ export class StudentActiveProfileComponent implements OnInit, OnDestroy {
 
   private subs = new Subscription();
 
-  constructor(private titleNavbarService: TitleNavbarService, private studentShareId: StudentShareIdService, private studentService: StudentsService, private notificationHub: NotificationHubService)
+  constructor(private dialog: MatDialog, private titleNavbarService: TitleNavbarService, private studentShareId: StudentShareIdService, private studentService: StudentsService, private notificationHub: NotificationHubService)
   {}
 
   ngOnInit(): void {
@@ -68,5 +70,10 @@ export class StudentActiveProfileComponent implements OnInit, OnDestroy {
     return numberValue.toFixed(2)
       .replace('.', ',') // Substitui ponto decimal por vírgula
       .replace(/\B(?=(\d{3})+(?!\d))/g, '.'); // Adiciona pontos nos milhares
+  }
+
+  onUpdateCourseInfo()
+  {
+    this.dialog.open(DialogUpdateStudentCourseInfoComponent);
   }
 }

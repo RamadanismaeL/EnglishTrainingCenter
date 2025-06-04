@@ -1176,30 +1176,5 @@ namespace server.src.Repositories
 
             return modality;
         }
-
-        private string GenerateCourseId(string level)
-        {
-            try
-            {
-                long lastOrder = _dbContext.StudentCourseInfo
-                    .OrderByDescending(c => c.Order)
-                    .Select(c => c.Order)
-                    .FirstOrDefault();
-
-                long nextOrder = lastOrder + 1;
-
-                string year = $"{DateTime.Now.Year}";
-                string month = $"{DateTime.Now.Month}";
-
-                string newId = $"{level}{year}{month}{nextOrder:D2}";
-
-                return newId;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to generate Course ID.");
-                throw new InvalidOperationException("Failed to generate Course ID.");
-            }
-        }
     }
 }

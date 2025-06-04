@@ -133,6 +133,135 @@ namespace server.src.Repositories
             }
         }
 
+        public async Task<ResponseDto> Update(StudentCourseInfoUpdateDto studentCourseUpdateDto)
+        {
+            try
+            {
+                var userPrincipal = _httpContextAccessor.HttpContext?.User;
+                if (userPrincipal is null)
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "User not authenticated."
+                    };
+                }
+
+                var userId = userPrincipal.FindFirst(ClaimTypes.NameIdentifier);
+                if (userId is null)
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "User not found."
+                    };
+                }
+
+                var userIdValue = userId.Value;
+                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userIdValue);
+                if (user is null)
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "User not found."
+                    };
+                }
+
+                var usernameClaim = _httpContextAccessor.HttpContext?.User.FindFirst(JwtRegisteredClaimNames.Name);
+
+                var trainerName = usernameClaim?.Value;
+
+                if (studentCourseUpdateDto.StudentId is null)
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "Student not found."
+                    };
+                }
+
+                var studentData = await _dbContext.StudentData
+                .Include(s => s.CourseInfo) // Ensure CourseInfo is loaded
+                .FirstOrDefaultAsync(s => s.Id == studentCourseUpdateDto.StudentId);
+
+                if (studentData == null || studentData.Status != "Active")
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "Student not found or not active."
+                    };
+                }
+
+                var inProgressCourse = studentData.CourseInfo?
+                    .FirstOrDefault(c => c.Status == "In Progress");
+
+                if (inProgressCourse == null)
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "No course in progress found for student."
+                    };
+                }
+
+                // Assuming Order is the primary key you want to look up
+                var checkCourse = await _dbContext.StudentCourseInfo.FindAsync(inProgressCourse.Order);
+                if (checkCourse is null)
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "Course ID not found."
+                    };
+                }
+
+                //Console.WriteLine($"Course Order = {checkCourse.Order}");
+
+                checkCourse.Package = studentCourseUpdateDto.Package;
+                checkCourse.Modality = studentCourseUpdateDto.Modality;
+                checkCourse.AcademicPeriod = studentCourseUpdateDto.AcademicPeriod;
+                checkCourse.Schedule = studentCourseUpdateDto.Schedule;
+                checkCourse.TrainerName = trainerName!;
+                checkCourse.DateUpdate = DateTime.Now;
+                    
+                await _dbContext.SaveChangesAsync();
+
+                return new ResponseDto
+                {
+                    IsSuccess = true,
+                    Message = "Course updated successfuly."
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to update course.");
+                return new ResponseDto
+                {
+                    IsSuccess = false,
+                    Message = "Failed to update course."
+                };
+            }
+        }
+
+        public async Task<StudentCourseInfoUpdateListDto> GetStudentCourseInfoUpdateListById(string studentId)
+        {
+            var student = await _dbContext.StudentCourseInfo
+                .AsNoTracking()
+                .Where(s => s.StudentId == studentId)
+                .Select(x => new StudentCourseInfoUpdateListDto
+                {
+                    Package = x.Package,
+                    Modality = x.Modality,
+                    AcademicPeriod = x.AcademicPeriod,
+                    Schedule = x.Schedule,                    
+                })
+                .FirstOrDefaultAsync();
+
+            return student!;
+        }
+
         public async Task<List<StudentCourseInfoModel>> Details()
         {
             var courseData = await _dbContext.StudentCourseInfo.AsNoTracking().ToListAsync();
