@@ -11,6 +11,9 @@ import { CommonModule } from '@angular/common';
 import { NotificationHubService } from '../../../../_services/notification-hub.service';
 import { DialogUpdateStudentCourseInfoComponent } from '../../dialog-update-student-course-info/dialog-update-student-course-info.component';
 import { MatDialog } from '@angular/material/dialog';
+import { StudentCourseInfoService } from '../../../../_services/student-course-info.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { StudentCourseInfoUpdateListDto } from '../../../../_interfaces/student-course-info-update-list-dto';
 
 @Component({
   standalone: true,
@@ -28,24 +31,48 @@ export class StudentActiveProfileComponent implements OnInit, OnDestroy {
   profileDetail$!: Observable<StudentListProfileDto>;
   sutdentId : string | undefined = ""
 
+  private courseInfoUpdateList: StudentCourseInfoUpdateListDto =
+  {
+    package: '',
+    modality: '',
+    academicPeriod: '',
+    schedule: ''
+  };
+
   private subs = new Subscription();
 
-  constructor(private dialog: MatDialog, private titleNavbarService: TitleNavbarService, private studentShareId: StudentShareIdService, private studentService: StudentsService, private notificationHub: NotificationHubService)
+  constructor(private dialog: MatDialog, private titleNavbarService: TitleNavbarService, private studentShareId: StudentShareIdService, private studentService: StudentsService, private notificationHub: NotificationHubService, private courseInfoService: StudentCourseInfoService)
   {}
 
   ngOnInit(): void {
     this.subs.add(
       this.notificationHub.receiveMessage().subscribe(() => {
         this.profileDetail$ = this.studentService.getStudentListProfileById(this.studentShareId.currentEnrollment);
+        this.onloadeddata();
       })
     );
     //console.log("Student id = ",this.studentShareId.currentEnrollment)
     this.sutdentId = this.studentShareId.currentEnrollment;
     this.profileDetail$ = this.studentService.getStudentListProfileById(this.studentShareId.currentEnrollment);
+    this.onloadeddata();
   }
 
   ngOnDestroy(): void {
     this.subs.unsubscribe();
+  }
+
+  onloadeddata()
+  {
+    this.subs.add(
+      this.courseInfoService.getStudentCourseInfoUpdateListByStudentId(this.studentShareId.currentEnrollment).subscribe({
+        next: (list: StudentCourseInfoUpdateListDto) => {
+          this.courseInfoUpdateList = { ...list };
+        },
+        error: (err: HttpErrorResponse) => {
+          console.error('Error loading student course information:', err);
+        }
+      })
+    );
   }
 
   navigateTo (breadcrumbs: { label: string, url?: any[] }) {
@@ -74,6 +101,13 @@ export class StudentActiveProfileComponent implements OnInit, OnDestroy {
 
   onUpdateCourseInfo()
   {
-    this.dialog.open(DialogUpdateStudentCourseInfoComponent);
+    this.dialog.open(DialogUpdateStudentCourseInfoComponent, {
+      data: {
+        package: this.courseInfoUpdateList.package,
+        modality: this.courseInfoUpdateList.modality,
+        academicPeriod: this.courseInfoUpdateList.academicPeriod,
+        schedule: this.courseInfoUpdateList.schedule
+      }
+    });
   }
 }

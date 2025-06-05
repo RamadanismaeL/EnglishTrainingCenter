@@ -7,6 +7,8 @@ import { StudentCourseInfoUpdateQuizOneTwoDto } from '../_interfaces/student-cou
 import { ResponseDto } from '../_interfaces/response-dto';
 import { StudentCourseInfoProgressHistoryDto } from '../_interfaces/student-course-info-progress-history-dto';
 import { StudentCourseInfoUpdateQuizDto } from '../_interfaces/student-course-info-update-quiz-dto';
+import { StudentCourseInfoUpdateDto } from '../_interfaces/student-course-info-update-dto';
+import { StudentCourseInfoUpdateListDto } from '../_interfaces/student-course-info-update-list-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -37,4 +39,10 @@ export class StudentCourseInfoService {
 
   getListStudentCourseInfoProgressHistoryByOrder = (studentId: string) : Observable<StudentCourseInfoProgressHistoryDto> => this.http
       .post<StudentCourseInfoProgressHistoryDto>(`${this.myUrl}/StudentCourseInfo/get-list-student-course-info-progress-history-by-studentId/${studentId}`, {headers : { 'Allow-Offline' : 'true' }});
+
+  update = (data : StudentCourseInfoUpdateDto) : Observable<ResponseDto> => this.http
+        .patch<ResponseDto>(`${this.myUrl}/StudentCourseInfo/update`, data, {headers : { 'Allow-Offline' : 'true' }});
+
+  getStudentCourseInfoUpdateListByStudentId = (studentId: string) : Observable<StudentCourseInfoUpdateListDto> => this.http
+      .post<StudentCourseInfoUpdateListDto>(`${this.myUrl}/StudentCourseInfo/get-student-course-info-update-list-by-id/${studentId}`, {headers : { 'Allow-Offline' : 'true' }});
 }

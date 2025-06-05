@@ -8,6 +8,10 @@ import { MatTooltipModule, TooltipPosition } from '@angular/material/tooltip';
 import { Subscription } from 'rxjs';
 import { DialogTrainerUpdateComponent } from '../../../_components/dialog-trainer-update/dialog-trainer-update.component';
 import { SnackBarService } from '../../../_services/snack-bar.service';
+import { StudentShareIdService } from '../../../_services/student-share-id.service';
+import { StudentCourseInfoUpdateDto } from '../../../_interfaces/student-course-info-update-dto';
+import { StudentCourseInfoService } from '../../../_services/student-course-info.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-dialog-update-student-course-info',
@@ -32,9 +36,18 @@ export class DialogUpdateStudentCourseInfoComponent implements OnInit, OnDestroy
   private readonly fb = inject(FormBuilder);
   private subs: Subscription = new Subscription();
 
-  constructor(public dialogRef : MatDialogRef<DialogTrainerUpdateComponent>, @Inject(MAT_DIALOG_DATA) public data: {package: string, modality: string, academicPeriod: string, schedule: string})
+  private courseInfoUpdate: StudentCourseInfoUpdateDto =
   {
-    //console.log('Dados recebidos: ',data)
+    studentId: '',
+    package: '',
+    modality: '',
+    academicPeriod: '',
+    schedule: ''
+  };
+
+  constructor(public dialogRef : MatDialogRef<DialogTrainerUpdateComponent>, @Inject(MAT_DIALOG_DATA) public data: {package: string, modality: string, academicPeriod: string, schedule: string}, private studentShareId: StudentShareIdService, private courseInfoService: StudentCourseInfoService)
+  {
+    //console.log('Dados recebidos: ',data,' Student ID: ', this.studentShareId.currentEnrollment);
   }
 
   ngOnInit(): void {
@@ -78,36 +91,35 @@ export class DialogUpdateStudentCourseInfoComponent implements OnInit, OnDestroy
   update() {
     if (this.form.valid)
     {
-      const formDataToSend = new FormData(); // novo objecto
-      // Monta o FormData
-      formDataToSend.append('fullName', this.form.value.fullName);
-      formDataToSend.append('email', this.form.value.email);
-      formDataToSend.append('phoneNumber', this.form.value.phoneNumber);
-      formDataToSend.append('position', this.form.value.position);
+      this.courseInfoUpdate.studentId = this.studentShareId.currentEnrollment;
+      this.courseInfoUpdate.package = this.form.value.package;
+      this.courseInfoUpdate.modality = this.form.value.modality;
+      this.courseInfoUpdate.academicPeriod = this.form.value.academicPeriod;
+      this.courseInfoUpdate.schedule = this.form.value.pickTime;
+      //console.log('Dados a enviar: ', this.courseInfoUpdate);
 
-      /*
-      this.trainerService.update(formDataToSend).subscribe({
-        next: () => {
-          this.resetForm();
-          this.alert.show('Trainer updated successfully!', 'success');
-          this.dialogRef.close(true);
-        },
-        error: (error: HttpErrorResponse) => {
-          if (error.status === 400) {
-              this.alert.show('An error occurred while updating.', 'error');
-          } else if (error.status === 401) {
-              this.alert.show('Oops! Unauthorized!', 'error');
-          } else if (error.status === 404) {
-              this.alert.show('Oops! Not found!', 'error');
-          } else if (error.status >= 500) {
-              this.alert.show('Oops! The server is busy!', 'error');
-          } else {
-              this.alert.show('Oops! An unexpected error occurred.', 'error');
+      this.subs.add(
+        this.courseInfoService.update(this.courseInfoUpdate).subscribe({
+          next: () => {
+            this.alert.show('Course updated successfully!', 'success');
+            this.dialogRef.close(true);
+          },
+          error: (error: HttpErrorResponse) => {
+            if (error.status === 400) {
+                this.alert.show('An error occurred while updating.', 'error');
+            } else if (error.status === 401) {
+                this.alert.show('Oops! Unauthorized!', 'error');
+            } else if (error.status === 404) {
+                this.alert.show('Oops! Not found!', 'error');
+            } else if (error.status >= 500) {
+                this.alert.show('Oops! The server is busy!', 'error');
+            } else {
+                this.alert.show('Oops! An unexpected error occurred.', 'error');
+            }
+            this.dialogRef.close(false);
           }
-          this.dialogRef.close(false);
-        }
-      });
-      */
+        })
+      );
     }
   }
 }

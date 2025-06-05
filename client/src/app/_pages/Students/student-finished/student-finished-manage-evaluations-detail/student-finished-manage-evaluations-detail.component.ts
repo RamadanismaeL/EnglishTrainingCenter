@@ -13,7 +13,6 @@ import { StudentCourseInfoProgressHistoryDto } from '../../../../_interfaces/stu
 import { StudentCourseInfoService } from '../../../../_services/student-course-info.service';
 import { StudentShareIdService } from '../../../../_services/student-share-id.service';
 import { SnackBarService } from '../../../../_services/snack-bar.service';
-import { BtnStudentFinishedMEProgressHistoryComponent } from '../../../../_components/Students/btn-student-finished-meprogress-history/btn-student-finished-meprogress-history.component';
 
 export interface IQuizzesExams {
   level: string | undefined;
@@ -140,12 +139,6 @@ export class StudentFinishedManageEvaluationsDetailComponent implements OnInit, 
           editable: false,
           headerName: 'Date',
           field: 'dateUpdate', flex: 1,
-          cellClass: 'custom-cell-center'
-        },
-        {
-          headerName: 'Actions',
-          minWidth: 110, flex: 1,
-          cellRenderer: BtnStudentFinishedMEProgressHistoryComponent,
           cellClass: 'custom-cell-center'
         }
       ];

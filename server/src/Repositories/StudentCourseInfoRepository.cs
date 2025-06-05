@@ -249,7 +249,7 @@ namespace server.src.Repositories
         {
             var student = await _dbContext.StudentCourseInfo
                 .AsNoTracking()
-                .Where(s => s.StudentId == studentId)
+                .Where(s => s.StudentId == studentId && s.Status == "In Progress")
                 .Select(x => new StudentCourseInfoUpdateListDto
                 {
                     Package = x.Package,

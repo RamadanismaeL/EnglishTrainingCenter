@@ -466,20 +466,6 @@ export class EnrollmentFormComponent implements OnInit, OnDestroy {
   }
 
   private setupAddressSync() {
-    this.subs.add(
-      this.form.get('residentialAddress')?.valueChanges
-      .pipe(
-        debounceTime(100), // Espera 300ms após a digitação
-        distinctUntilChanged() // Só emite se o valor mudou
-      )
-      .subscribe(value => {
-        //console.log("Hello Data = ",value)
-        if (value != null && value.length > 0) { this.form.get('guardianResidentialAddress')?.patchValue(value); }
-        else
-        { this.form.get('guardianResidentialAddress')?.patchValue(""); }
-      })
-    );
-
     this.stateGroupOptions = this.form.get('residentialAddress')!.valueChanges.pipe(
       startWith(''),
       map(value => this._filterGroup(value || '')),
@@ -599,13 +585,6 @@ export class EnrollmentFormComponent implements OnInit, OnDestroy {
 
     // Lembre-se: mês em JavaScript começa em 0 (Janeiro = 0)
     return new Date(year, month - 1, day);
-  }
-
-  @ViewChild('studentFormRef') formElement!: ElementRef<HTMLFormElement>;
-  resetForm()
-  {
-    this.form.reset();
-    this.formElement.nativeElement.reset();
   }
 
   update()

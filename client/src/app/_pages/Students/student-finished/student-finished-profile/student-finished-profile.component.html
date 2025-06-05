@@ -14,12 +14,13 @@
 
       <mat-menu #menu="matMenu">
         <button [routerLink]="['/', { outlets : { ramRouter: ['student-finished-edit-personal-data'] } }]"
-        (click)="navigateTo({ label: 'EDIT PERSONAL DATA', url: ['/', {outlets: {ramRouter: ['student-finished-edit-personal-data']}}]})"
+        (click)="navigateTo({ label: 'EDIT STUDENT DATA', url: ['/', {outlets: {ramRouter: ['student-finished-edit-personal-data']}}]})"
         mat-menu-item
         >
           <mat-icon>edit</mat-icon>
-          <span>Edit Personal Data</span>
+          <span>Edit Student Data</span>
         </button>
+
         <button [routerLink]="['/', { outlets : { ramRouter: ['student-finished-enrollment-form'] } }]"
         (click)="navigateTo({ label: 'ENROLLMENT FORM', url: ['/', {outlets: {ramRouter: ['student-finished-enrollment-form']}}]})"
         mat-menu-item
