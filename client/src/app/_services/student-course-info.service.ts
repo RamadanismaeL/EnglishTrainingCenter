@@ -9,6 +9,7 @@ import { StudentCourseInfoProgressHistoryDto } from '../_interfaces/student-cour
 import { StudentCourseInfoUpdateQuizDto } from '../_interfaces/student-course-info-update-quiz-dto';
 import { StudentCourseInfoUpdateDto } from '../_interfaces/student-course-info-update-dto';
 import { StudentCourseInfoUpdateListDto } from '../_interfaces/student-course-info-update-list-dto';
+import { StudentExamsUnscheduledDto } from '../_interfaces/student-exams-unscheduled-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -45,4 +46,7 @@ export class StudentCourseInfoService {
 
   getStudentCourseInfoUpdateListByStudentId = (studentId: string) : Observable<StudentCourseInfoUpdateListDto> => this.http
       .post<StudentCourseInfoUpdateListDto>(`${this.myUrl}/StudentCourseInfo/get-student-course-info-update-list-by-id/${studentId}`, {headers : { 'Allow-Offline' : 'true' }});
+
+  getListStudentUnscheduledExams = () : Observable<StudentExamsUnscheduledDto> => this.http
+      .get<StudentExamsUnscheduledDto>(`${this.myUrl}/StudentCourseInfo/get-list-student-unscheduled-exams`, {headers : { 'Allow-Offline' : 'true' }});
 }

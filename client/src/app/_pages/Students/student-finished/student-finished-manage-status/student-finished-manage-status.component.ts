@@ -3,7 +3,7 @@ import { FormControl, FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule, TooltipPosition } from '@angular/material/tooltip';
 import { AgGridAngular } from 'ag-grid-angular';
-import { AllCommunityModule, ModuleRegistry, ColDef, GridApi, RowSelectionOptions } from 'ag-grid-community';
+import { AllCommunityModule, ModuleRegistry, ColDef, RowSelectionOptions } from 'ag-grid-community';
 import { MatInputModule } from '@angular/material/input';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
@@ -16,8 +16,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { NotificationHubService } from '../../../../_services/notification-hub.service';
 import { TitleNavbarService } from '../../../../_services/title-navbar.service';
 import { StudentsService } from '../../../../_services/students.service';
-import { Router, RouterLink } from '@angular/router';
-import { StudentShareIdService } from '../../../../_services/student-share-id.service';
+import { Router } from '@angular/router';
 
 ModuleRegistry.registerModules([ AllCommunityModule]);
 

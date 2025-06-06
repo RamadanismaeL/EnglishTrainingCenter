@@ -5,8 +5,6 @@ import { MatTooltipModule, TooltipPosition } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { TitleNavbarService } from '../../../_services/title-navbar.service';
-import { DialogManageEvalutionsEditGradeTableComponent } from '../dialog-manage-evalutions-edit-grade-table/dialog-manage-evalutions-edit-grade-table.component';
-import { MatDialog } from '@angular/material/dialog';
 import { StudentShareIdService } from '../../../_services/student-share-id.service';
 
 @Component({

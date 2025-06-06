@@ -18,10 +18,8 @@ import 'jspdf-autotable';
 import autoTable from 'jspdf-autotable';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
-
 import printJS from 'print-js';
 import { MatSelectModule } from '@angular/material/select';
-import { RouterLink } from '@angular/router';
 import { NotificationHubService } from '../../../../_services/notification-hub.service';
 import { SnackBarService } from '../../../../_services/snack-bar.service';
 import { TitleNavbarService } from '../../../../_services/title-navbar.service';

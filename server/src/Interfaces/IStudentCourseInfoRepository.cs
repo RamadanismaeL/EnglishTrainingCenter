@@ -21,5 +21,6 @@ namespace server.src.Interfaces
         Task<List<StudentCourseInfoListDto>> GetListStudentCourseInfoCompleted();
         Task<List<StudentCourseInfoListDto>> GetListStudentCourseInfoInactive();
         Task<List<StudentCourseInfoProgressHistoryDto>> GetListStudentCourseInfoProgressHistory(string studentId);
+        Task<List<StudentUnscheduledExamsDto>> GetListStudentUnscheduledExams();
     }
 }

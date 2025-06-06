@@ -160,10 +160,6 @@ export class StudentFinishedReEnrollmentComponent implements OnInit, OnDestroy {
         })
       ).subscribe({
         next: () => {
-          this.form.reset();
-          this.studentPaymentFormRef.nativeElement.reset();
-          this.studentEditPersonal.clear();
-          this.courseInfoReEnrollment.clear();
           this.alert.show('Re-enrollment updated successfully!', 'success');
           this.notificationHub.sendMessage("Initialize enrollment form.");
           this.stepperService.setActiveStep(2);

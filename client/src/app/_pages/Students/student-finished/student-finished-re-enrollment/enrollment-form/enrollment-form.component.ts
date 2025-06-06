@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -8,7 +8,7 @@ import { NgxMaskDirective } from 'ngx-mask';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import { AsyncPipe } from '@angular/common';
-import { debounceTime, distinctUntilChanged, map, Observable, startWith, Subscription } from 'rxjs';
+import { map, Observable, startWith, Subscription } from 'rxjs';
 import { NotificationHubService } from '../../../../../_services/notification-hub.service';
 import { Router } from '@angular/router';
 import { StudentsService } from '../../../../../_services/students.service';

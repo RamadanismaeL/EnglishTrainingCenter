@@ -1,0 +1,12 @@
+<div class="flex justify-center gap-4">
+  <button mat-icon-button
+  [routerLink]="['/', { outlets : { ramRouter: ['student-dropouts-manage-evaluations-details'] } }]"
+    (click)="navigateTo({ label: 'PROGRESS HISTORY', url: ['/', {outlets: {ramRouter: ['student-dropouts-manage-evaluations-details']}}]})"
+  type="button"
+  style="color: #5e35b1; font-size: 26px; cursor: pointer;"
+  matTooltip="Progress History"
+  [matTooltipPosition]="positionL.value!"
+  matTooltipHideDelay="50">
+    <mat-icon>description</mat-icon>
+  </button>
+</div>

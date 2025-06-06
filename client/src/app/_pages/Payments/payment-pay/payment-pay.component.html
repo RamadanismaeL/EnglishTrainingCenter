@@ -53,6 +53,7 @@
               formControlName="transactionType">
                 <mat-option value="Certificate">Certificate</mat-option>
                 <mat-option value="CourseFee">Course Fee</mat-option>
+                <mat-option value="Examination">Examination Fee</mat-option>
               </mat-select>
               @if (getErrorForms('transactionType')?.hasError('required')) {
                 <mat-error>Transaction type is required</mat-error>

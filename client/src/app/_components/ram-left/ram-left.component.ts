@@ -91,7 +91,14 @@ export class RamLeftComponent implements OnInit, OnDestroy {
           (currentUrl === ('/(ramRouter:student-finished-profile)')) ||
           (currentUrl === ('/(ramRouter:student-finished-edit-personal-data)')) ||
           (currentUrl === ('/(ramRouter:student-finished-enrollment-form)')) ||
-          (currentUrl === ('/(ramRouter:student-finished-re-enrollment)'))
+          (currentUrl === ('/(ramRouter:student-finished-re-enrollment)')) ||
+          (currentUrl === ('/(ramRouter:student-dropouts-profile)')) ||
+          (currentUrl === ('/(ramRouter:student-dropouts-edit-personal-data)')) ||
+          (currentUrl === ('/(ramRouter:student-dropouts-enrollment-form)')) ||
+          (currentUrl === ('/(ramRouter:student-dropouts-manage-evaluations)')) ||
+          (currentUrl === ('/(ramRouter:student-dropouts-manage-evaluations-details)')) ||
+          (currentUrl === ('/(ramRouter:student-dropouts-manage-status)')) ||
+          (currentUrl === ('/(ramRouter:student-dropouts-re-enrollment)'))
         )
         {
           this.student = true;
@@ -144,7 +151,15 @@ export class RamLeftComponent implements OnInit, OnDestroy {
           this.studentFinished = false;
         }
 
-        if (currentUrl === ('/(ramRouter:student-dropouts)'))
+        if (currentUrl === ('/(ramRouter:student-dropouts)') ||
+          (currentUrl === ('/(ramRouter:student-dropouts-profile)')) ||
+          (currentUrl === ('/(ramRouter:student-dropouts-edit-personal-data)')) ||
+          (currentUrl === ('/(ramRouter:student-dropouts-enrollment-form)')) ||
+          (currentUrl === ('/(ramRouter:student-dropouts-manage-evaluations)')) ||
+          (currentUrl === ('/(ramRouter:student-dropouts-manage-evaluations-details)')) ||
+          (currentUrl === ('/(ramRouter:student-dropouts-manage-status)')) ||
+          (currentUrl === ('/(ramRouter:student-dropouts-re-enrollment)'))
+        )
         {
           this.studentDropout = true;
         }
@@ -261,7 +276,14 @@ export class RamLeftComponent implements OnInit, OnDestroy {
       (currentUrl === ('/(ramRouter:student-finished-profile)')) ||
       (currentUrl === ('/(ramRouter:student-finished-edit-personal-data)')) ||
       (currentUrl === ('/(ramRouter:student-finished-enrollment-form)')) ||
-      (currentUrl === ('/(ramRouter:student-finished-re-enrollment)'))
+      (currentUrl === ('/(ramRouter:student-finished-re-enrollment)')) ||
+      (currentUrl === ('/(ramRouter:student-dropouts-profile)')) ||
+      (currentUrl === ('/(ramRouter:student-dropouts-edit-personal-data)')) ||
+      (currentUrl === ('/(ramRouter:student-dropouts-enrollment-form)')) ||
+      (currentUrl === ('/(ramRouter:student-dropouts-manage-evaluations)')) ||
+      (currentUrl === ('/(ramRouter:student-dropouts-manage-evaluations-details)')) ||
+      (currentUrl === ('/(ramRouter:student-dropouts-manage-status)')) ||
+      (currentUrl === ('/(ramRouter:student-dropouts-re-enrollment)'))
     )
     {
       this.student = true;
@@ -314,7 +336,15 @@ export class RamLeftComponent implements OnInit, OnDestroy {
       this.studentFinished = false;
     }
 
-    if (currentUrl === ('/(ramRouter:student-dropouts)'))
+    if (currentUrl === ('/(ramRouter:student-dropouts)') ||
+      (currentUrl === ('/(ramRouter:student-dropouts-profile)')) ||
+      (currentUrl === ('/(ramRouter:student-dropouts-edit-personal-data)')) ||
+      (currentUrl === ('/(ramRouter:student-dropouts-enrollment-form)')) ||
+      (currentUrl === ('/(ramRouter:student-dropouts-manage-evaluations)')) ||
+      (currentUrl === ('/(ramRouter:student-dropouts-manage-evaluations-details)')) ||
+      (currentUrl === ('/(ramRouter:student-dropouts-manage-status)')) ||
+      (currentUrl === ('/(ramRouter:student-dropouts-re-enrollment)'))
+    )
     {
       this.studentDropout = true;
     }

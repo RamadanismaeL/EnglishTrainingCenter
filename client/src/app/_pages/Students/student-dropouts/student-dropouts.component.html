@@ -88,8 +88,8 @@
     </div>
 
     <div class="flex gap-2 h-10">
-      <button [routerLink]="['/', { outlets : { ramRouter:  ['student-active-quizzes-exams'] } }]"
-      (click)="navigateTo({ label: 'MANAGE EVALUATIONS', url: ['/', {outlets: {ramRouter: ['student-active-quizzes-exams']}}]})"
+      <button [routerLink]="['/', { outlets : { ramRouter:  ['student-dropouts-manage-evaluations'] } }]"
+      (click)="navigateTo({ label: 'MANAGE EVALUATIONS', url: ['/', {outlets: {ramRouter: ['student-dropouts-manage-evaluations']}}]})"
       type="button" class="w-35 quizzes-exams"
       >
         <span class="shadow"></span>
@@ -98,8 +98,8 @@
         </span>
       </button>
 
-      <button [routerLink]="['/', { outlets : { ramRouter: ['student-manage-status'] } }]"
-      (click)="navigateTo({ label: 'MANAGE STATUS', url: ['/', {outlets: {ramRouter: ['student-manage-status']}}]})"
+      <button [routerLink]="['/', { outlets : { ramRouter: ['student-dropouts-manage-status'] } }]"
+      (click)="navigateTo({ label: 'MANAGE STATUS', url: ['/', {outlets: {ramRouter: ['student-dropouts-manage-status']}}]})"
       type="button" class="w-35 quizzes-exams"
       >
         <span class="shadow"></span>

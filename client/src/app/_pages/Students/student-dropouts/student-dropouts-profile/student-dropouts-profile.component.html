@@ -1,0 +1,347 @@
+<div class="flex justify-center mb-5">
+  <div *ngIf="profileDetail$ | async as student"
+  class="w-full shadow-xl rounded-3xl p-7 bg-white max-w-2xl"
+  >
+    <div class="w-full flex justify-between"
+    >
+      <h1 class="text-lg text-gray-600 font-bold mb-1 text-start truncate">
+        {{ student.fullName.toUpperCase() }}
+      </h1>
+
+      <button mat-icon-button [matMenuTriggerFor]="menu" class="text-gray-600 cursor-pointer">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+
+      <mat-menu #menu="matMenu">
+        <button [routerLink]="['/', { outlets : { ramRouter: ['student-dropouts-edit-personal-data'] } }]"
+        (click)="navigateTo({ label: 'EDIT STUDENT DATA', url: ['/', {outlets: {ramRouter: ['student-dropouts-edit-personal-data']}}]})"
+        mat-menu-item
+        >
+          <mat-icon>edit</mat-icon>
+          <span>Edit Student Data</span>
+        </button>
+
+        <button [routerLink]="['/', { outlets : { ramRouter: ['student-dropouts-enrollment-form'] } }]"
+        (click)="navigateTo({ label: 'ENROLLMENT FORM', url: ['/', {outlets: {ramRouter: ['student-dropouts-enrollment-form']}}]})"
+        mat-menu-item
+        >
+          <mat-icon>article</mat-icon>
+          <span>View Enrollment Form</span>
+        </button>
+      </mat-menu>
+
+    </div>
+    <hr class="border-slate-400">
+    <h1 class="text-lg text-[#555] font-bold mb-1 text-start mt-5">
+      COURSE INFORMATION
+    </h1>
+    <div class="flex gap-20 justify-start mt-5">
+      <div class="grid gap-5 w-48">
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">badge</span>
+          <span class="truncate">Student Number</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">local_offer</span>
+          <span class="truncate">Package</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">star</span>
+          <span class="truncate">Level</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">toggle_on</span>
+          <span class="truncate">Modality</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">calendar_month</span>
+          <span class="truncate">Academic Period</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">schedule</span>
+          <span class="truncate">Schedule</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">account_balance_wallet</span>
+          <span class="truncate">Monthly Fee</span>
+        </div>
+      </div>
+
+      <div class="grid gap-5 min-w-[1px]">
+        <div class="text-gray-600 font-medium truncate">{{ sutdentId }}</div>
+
+        <div class="text-gray-600 font-medium truncate">{{ student.package }}</div>
+
+        <div class="text-gray-600 font-medium truncate">{{ student.level }}</div>
+
+        <div class="text-gray-600 font-medium truncate">{{ student.modality }}</div>
+
+        <div class="text-gray-600 font-medium truncate">{{ student.academicPeriod }}</div>
+
+        <div class="text-gray-600 font-medium truncate">{{ student.schedule }}</div>
+
+        <div class="text-gray-600 font-medium truncate">{{ formatAmount(student.monthlyFee) }}&nbsp;MT</div>
+      </div>
+    </div>
+    <h1 class="text-lg text-[#555] font-bold mb-1 text-start mt-10">
+      IDENTIFICATION DOCUMENT
+    </h1>
+    <div class="flex gap-20 justify-start mt-5">
+      <div class="grid gap-5 w-48">
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">inventory_2</span>
+          <span class="truncate">Document Type</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">badge</span>
+          <span class="truncate">Id Number</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">location_on</span>
+          <span class="truncate">Place of Issue</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">event_busy</span>
+          <span class="truncate">Expiration Date</span>
+        </div>
+      </div>
+
+      <div class="grid gap-5 min-w-[1px]">
+        <div class="text-gray-600 font-medium truncate">{{ student.documentType }}</div>
+
+        <div class="text-gray-600 font-medium truncate">{{ student.idNumber }}</div>
+
+        <div class="text-gray-600 font-medium truncate">
+          @if(student.placeOfIssue == 'Cidade De Maputo')
+          { Maputo City }
+          @else if(student.placeOfIssue == 'Cidade Da Matola')
+          { Matola City }
+          @else if(student.placeOfIssue == 'Maputo Província')
+          { Maputo Province }
+          @else
+          { {{ student.placeOfIssue }} }
+        </div>
+
+        <div class="text-gray-600 font-medium truncate">
+          @if(student.expirationDate == null || student.expirationDate == '')
+          {--}
+          @else
+          { {{ student.expirationDate }} }
+        </div>
+      </div>
+    </div>
+    <h1 class="text-lg text-[#555] font-bold mb-1 text-start mt-10">
+      PERSONAL DATA
+    </h1>
+    <div class="flex gap-20 justify-start mt-5">
+      <div class="grid gap-5 w-48">
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">person</span>
+          <span class="truncate">Full Name</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">cake</span>
+          <span class="truncate">Date of Birth</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">wc</span>
+          <span class="truncate">Gender</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">favorite</span>
+          <span class="truncate">Marital Status</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">public</span>
+          <span class="truncate">Nationality</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">location_city</span>
+          <span class="truncate">Place of Birth</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">home</span>
+          <span class="truncate">Residential Address</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">phone_in_talk</span>
+          <span class="truncate">Primary Phone</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">call</span>
+          <span class="truncate">Alternative Phone</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">email</span>
+          <span class="truncate">Email Address</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">notes</span>
+          <span class="truncate">Additional Notes</span>
+        </div>
+      </div>
+
+      <div class="grid gap-5 min-w-[1px]">
+        <div class="text-gray-600 font-medium truncate">{{ student.fullName }}</div>
+
+        <div class="text-gray-600 font-medium truncate">{{ student.dateOfBirth }}</div>
+
+        <div class="text-gray-600 font-medium truncate">
+          @if(student.gender == 'M')
+          { Male }
+          @else
+          { Female }
+        </div>
+
+        <div class="text-gray-600 font-medium truncate">{{ student.maritalStatus }}</div>
+
+        <div class="text-gray-600 font-medium truncate">
+          @if(student.nationality == 'Moçambicana')
+          { Mozambican }
+          @else
+          { {{ student.nationality }} }
+        </div>
+
+        <div class="text-gray-600 font-medium truncate">
+          @if(student.placeOfBirth == 'Cidade De Maputo')
+          { Maputo City }
+          @else if(student.placeOfBirth == 'Cidade Da Matola')
+          { Matola City }
+          @else if(student.placeOfBirth == 'Maputo Província')
+          { Maputo Province }
+          @else
+          { {{ student.placeOfBirth }} }
+        </div>
+
+        <div class="text-gray-600 font-medium truncate">{{ student.residentialAddress }}</div>
+
+        <div class="text-gray-600 font-medium truncate">
+          @if(student.firstPhoneNumber == null || student.firstPhoneNumber == '')
+          {--}
+          @else
+          { {{ student.firstPhoneNumber }} }
+        </div>
+
+        <div class="text-gray-600 font-medium truncate">
+          @if(student.secondPhoneNumber == null || student.secondPhoneNumber == '')
+          {--}
+          @else
+          { {{ student.secondPhoneNumber }} }
+        </div>
+
+        <div class="text-gray-600 font-medium truncate">
+          @if(student.emailAddress == null || student.emailAddress == '')
+          {--}
+          @else
+          { {{ student.emailAddress }} }
+        </div>
+
+        <div class="text-gray-600 font-medium truncate">
+          @if(student.additionalNotes == null || student.additionalNotes == '')
+          {--}
+          @else
+          { {{ student.additionalNotes }} }
+        </div>
+      </div>
+    </div>
+    <h1 class="text-lg text-[#555] font-bold mb-1 text-start mt-10">
+      EMERGENCY CONTACT / GUARDIAN
+    </h1>
+    <div class="flex gap-20 justify-start mt-5">
+      <div class="grid gap-5 w-48">
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">person</span>
+          <span class="truncate">Full Name</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">supervisor_account</span>
+          <span class="truncate">Relationship</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">home</span>
+          <span class="truncate">Residential Address</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">phone_in_talk</span>
+          <span class="truncate">Primary Phone</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">call</span>
+          <span class="truncate">Alternative Phone</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+          <span class="material-icons">email</span>
+          <span class="truncate">Email Address</span>
+        </div>
+      </div>
+
+      <div class="grid gap-5 min-w-[1px]">
+        <div class="text-gray-600 font-medium truncate">
+          @if(student.guardFullName == null || student.guardFullName == '')
+          {--}
+          @else
+          { {{ student.guardFullName }} }
+        </div>
+
+        <div class="text-gray-600 font-medium truncate">
+          @if(student.guardRelationship == null || student.guardRelationship == '')
+          {--}
+          @else
+          { {{ student.guardRelationship }} }
+        </div>
+
+        <div class="text-gray-600 font-medium truncate">
+          @if(student.guardResidentialAddress == null || student.guardResidentialAddress == '')
+          {--}
+          @else
+          { {{ student.guardResidentialAddress }} }
+        </div>
+
+        <div class="text-gray-600 font-medium truncate">
+          @if(student.guardFirstPhoneNumber == null || student.guardFirstPhoneNumber == '')
+          {--}
+          @else
+          { {{ student.guardFirstPhoneNumber }} }
+        </div>
+
+        <div class="text-gray-600 font-medium truncate">
+          @if(student.guardSecondPhoneNumber == null || student.guardSecondPhoneNumber == '')
+          {--}
+          @else
+          { {{ student.guardSecondPhoneNumber }} }
+        </div>
+
+        <div class="text-gray-600 font-medium truncate">
+          @if(student.guardEmailAddress == null || student.guardEmailAddress == '')
+          {--}
+          @else
+          { {{ student.guardEmailAddress }} }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

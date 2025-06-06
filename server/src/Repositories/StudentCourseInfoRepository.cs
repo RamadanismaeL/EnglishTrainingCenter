@@ -643,6 +643,43 @@ namespace server.src.Repositories
             }
         }
 
+        public async Task<List<StudentUnscheduledExamsDto>> GetListStudentUnscheduledExams()
+        {
+            try
+            {
+                var result = await _dbContext.StudentData
+                    .AsNoTracking()
+                    .Where(s => s.Status == "Active")
+                    .SelectMany(s => s.CourseInfo!
+                        .Where(c =>
+                            c.Status == "In Progress" &&
+                            c.CourseInfoScheduleExamData != null &&
+                            c.CourseInfoScheduleExamData.Status == "Unscheduled")
+                        .Select(c => new StudentUnscheduledExamsDto
+                        {
+                            IdScheduleExam = c.CourseInfoScheduleExamData!.CourseInfoId,
+                            FullName = s.FullName,
+                            Gender = s.Gender,
+                            Package = c.Package,
+                            Level = c.Level,
+                            Modality = c.Modality,
+                            AcademicPeriod = c.AcademicPeriod,
+                            Schedule = c.Schedule,
+                            Status = c.CourseInfoScheduleExamData!.Status
+                        }))
+                    .OrderBy(x => x.Level)
+                    .ThenBy(x => x.FullName)
+                    .ToListAsync();
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving student unscheduled exams list");
+                throw;
+            }
+        }
+
         private string GenerateCourseId(string level)
         {
             try

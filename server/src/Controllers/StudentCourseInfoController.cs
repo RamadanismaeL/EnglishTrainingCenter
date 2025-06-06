@@ -176,5 +176,12 @@ namespace server.src.Controllers
             var courseData = await _courseInfoRepository.GetListStudentCourseInfoProgressHistory(studentId);
             return Ok(courseData);
         }
+
+        [HttpGet("get-list-student-unscheduled-exams")]
+        public async Task<ActionResult<List<StudentUnscheduledExamsDto>>> GetListStudentUnscheduledExams()
+        {
+            var unscheduledExams = await _courseInfoRepository.GetListStudentUnscheduledExams();
+            return Ok(unscheduledExams);
+        }
     }
 }

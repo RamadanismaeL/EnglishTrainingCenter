@@ -201,6 +201,48 @@ export const routes: Routes = [
         outlet : 'ramRouter'
       },
       {
+        path : 'student-dropouts-profile',
+        loadComponent: () =>
+          import('./_pages/Students/student-dropouts/student-dropouts-profile/student-dropouts-profile.component').then(m => m.StudentDropoutsProfileComponent),
+        outlet : 'ramRouter'
+      },
+      {
+        path : 'student-dropouts-edit-personal-data',
+        loadComponent: () =>
+          import('./_pages/Students/student-dropouts/student-dropouts-edit-personal-data/student-dropouts-edit-personal-data.component').then(m => m.StudentDropoutsEditPersonalDataComponent),
+        outlet : 'ramRouter'
+      },
+      {
+        path : 'student-dropouts-enrollment-form',
+        loadComponent: () =>
+          import('./_pages/Students/student-dropouts/student-dropouts-enrollment-form/student-dropouts-enrollment-form.component').then(m => m.StudentDropoutsEnrollmentFormComponent),
+        outlet : 'ramRouter'
+      },
+      {
+        path : 'student-dropouts-manage-evaluations',
+        loadComponent: () =>
+          import('./_pages/Students/student-dropouts/student-dropouts-manage-evaluations/student-dropouts-manage-evaluations.component').then(m => m.StudentDropoutsManageEvaluationsComponent),
+        outlet : 'ramRouter'
+      },
+      {
+        path : 'student-dropouts-manage-evaluations-details',
+        loadComponent: () =>
+          import('./_pages/Students/student-dropouts/student-dropouts-manage-evaluations-detail/student-dropouts-manage-evaluations-detail.component').then(m => m.StudentDropoutsManageEvaluationsDetailComponent),
+        outlet : 'ramRouter'
+      },
+      {
+        path : 'student-dropouts-manage-status',
+        loadComponent: () =>
+          import('./_pages/Students/student-dropouts/student-dropouts-manage-status/student-dropouts-manage-status.component').then(m => m.StudentDropoutsManageStatusComponent),
+        outlet : 'ramRouter'
+      },
+      {
+        path : 'student-dropouts-re-enrollment',
+        loadComponent: () =>
+          import('./_pages/Students/student-dropouts/student-dropouts-re-enrollment/student-dropouts-re-enrollment.component').then(m => m.StudentDropoutsReEnrollmentComponent),
+        outlet : 'ramRouter'
+      },
+      {
         path : 'financial-expense',
         component : FinancialExpenseComponent,
         outlet : 'ramRouter'

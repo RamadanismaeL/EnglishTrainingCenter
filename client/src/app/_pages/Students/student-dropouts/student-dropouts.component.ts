@@ -25,8 +25,8 @@ import printJS from 'print-js';
 import { MatSelectModule } from '@angular/material/select';
 import { RouterLink } from '@angular/router';
 import { TitleNavbarService } from '../../../_services/title-navbar.service';
-import { BtnStudentActiveActionTableComponent } from '../../../_components/Students/btn-student-active-action-table/btn-student-active-action-table.component';
 import { StudentsService } from '../../../_services/students.service';
+import { BtnStudentDropoutsProfileActionTableComponent } from '../../../_components/Students/btn-student-dropouts-profile-action-table/btn-student-dropouts-profile-action-table.component';
 
 ModuleRegistry.registerModules([ AllCommunityModule]);
 
@@ -121,7 +121,7 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
       {
         headerName: 'Profile',
         minWidth: 100, flex: 1,
-        cellRenderer: BtnStudentActiveActionTableComponent,
+        cellRenderer: BtnStudentDropoutsProfileActionTableComponent,
         cellClass: 'custom-cell-center'
       }
     ];
@@ -583,7 +583,7 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
 
       worksheet.mergeCells('A2:G2');
       const titleCell2 = worksheet.getCell('A2');
-      titleCell2.value = 'Students : Active – Full List';
+      titleCell2.value = 'Students : Inactive – Full List';
       titleCell2.font = { size: 20, bold: true, color: { argb: '2C2C2C' } };
       titleCell2.alignment = { vertical: 'middle', horizontal: 'center' };
 
@@ -599,7 +599,7 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
       });
 
-      FileSaver.saveAs(blob, 'ETC_students_active_full_list_data.xlsx');
+      FileSaver.saveAs(blob, 'ETC_students_inactive_full_list_data.xlsx');
       this.alert.show('All data exported to Excel.', 'success');
     } catch (error) {
       console.error('Error exporting Excel:', error);
@@ -775,7 +775,7 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
 
       worksheet.mergeCells('A2:G2');
       const titleCell2 = worksheet.getCell('A2');
-      titleCell2.value = 'Students : Active – Filtered List';
+      titleCell2.value = 'Students : Inactive – Filtered List';
       titleCell2.font = { size: 20, bold: true, color: { argb: '2C2C2C' } };
       titleCell2.alignment = { vertical: 'middle', horizontal: 'center' };
 
@@ -791,7 +791,7 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
       });
 
-      FileSaver.saveAs(blob, 'ETC_filtered_students_active_data.xlsx');
+      FileSaver.saveAs(blob, 'ETC_filtered_students_inactive_data.xlsx');
       this.alert.show('Filtered data exported to Excel.', 'success');
     } catch (error) {
       console.error('Error exporting Excel:', error);
@@ -862,7 +862,7 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
       doc.setFontSize(20);
       doc.setTextColor(44, 44, 44);
       doc.setFont('helvetica', 'normal');
-      doc.text('Students : Active – Full List', 100, 23);
+      doc.text('Students : Inactive – Full List', 98, 23);
 
       // 5. Adicionar data de emissão
       doc.setFontSize(10);
@@ -997,7 +997,7 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
       doc.setFontSize(20);
       doc.setTextColor(44, 44, 44);
       doc.setFont('helvetica', 'normal');
-      doc.text('Students : Active – Filtered List', 100, 23);
+      doc.text('Students : Inactive – Filtered List', 93, 23);
 
       // 5. Adicionar data de emissão
       doc.setFontSize(10);
@@ -1123,7 +1123,7 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
       doc.setFontSize(20);
       doc.setTextColor(44, 44, 44);
       doc.setFont('helvetica', 'normal');
-      doc.text('Students : Active – Full List', 100, 23);
+      doc.text('Students : Inactive – Full List', 98, 23);
 
       // 5. Adicionar data de emissão
       doc.setFontSize(10);
@@ -1194,7 +1194,7 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
          // console.error('PrintJS error:', error);
           this.alert.show('Oops! Direct printing failed.', 'error');
           // Fallback para download
-          doc.save('ETC_students_active_full_list_data.pdf');
+          doc.save('ETC_students_inactive_full_list_data.pdf');
         }
       });
     } catch (error) {
@@ -1279,7 +1279,7 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
       doc.setFontSize(20);
       doc.setTextColor(44, 44, 44);
       doc.setFont('helvetica', 'normal');
-      doc.text('Students : Active – Filtered List', 100, 23);
+      doc.text('Students : Inactive – Filtered List', 93, 23);
 
       // 5. Adicionar data de emissão
       doc.setFontSize(10);
@@ -1350,7 +1350,7 @@ export class StudentDropoutsComponent implements OnInit, OnDestroy {
          // console.error('PrintJS error:', error);
           this.alert.show('Oops! Direct printing failed.', 'error');
           // Fallback para download
-          doc.save('ETC_list_of_student_active_filtered_data.pdf');
+          doc.save('ETC_list_of_student_inactive_filtered_data.pdf');
         }
       });
     } catch (error) {

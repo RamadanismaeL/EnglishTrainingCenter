@@ -72,19 +72,19 @@ matTooltipHideDelay="50">
         [ngClass]="{ 'active-verticalLineBtn': studentScheduledExams }"
         [routerLink]="['/', {outlets: {ramRouter: ['student-scheduled-exams']}}]"
         (click)="navigateTo([
-          { label: 'STUDENTS : SCHEDULED EXAMS', url: ['/', {outlets: {ramRouter: ['student-scheduled-exams']}}] }
+          { label: 'STUDENTS : MANAGE EXAM SCHEDULING', url: ['/', {outlets: {ramRouter: ['student-scheduled-exams']}}] }
         ])"
         class="verticalLineBtn flex items-center p-2 rounded">
           <a class="flex items-center gap-4">
             @if (!collapsed)
             {
               <span class="verticalLine ml-2"></span>
-              <span>SE</span>
+              <span>ME</span>
             }
             @else
             {
               <span class="verticalLine ml-5 pr-1"></span>
-              <span *ngIf="collapsed" class="truncate">Scheduled Exams</span>
+              <span *ngIf="collapsed" class="truncate">M. Exam Scheduling</span>
             }
           </a>
         </span>
@@ -114,7 +114,9 @@ matTooltipHideDelay="50">
         <span [ngClass]="{ 'active-verticalLineBtn': studentDropout }"
         [routerLink]="['/', {outlets: {ramRouter: ['student-dropouts']}}]"
         (click)="navigateTo([
-          { label: 'STUDENTS : INACTIVE' }
+          { label: 'STUDENTS : INACTIVE',
+            url : ['/', {outlets: {ramRouter: ['student-dropouts']}}]
+          }
         ])"
         class="verticalLineBtn flex items-center p-2 rounded">
           <a class="flex items-center gap-4">
@@ -139,7 +141,7 @@ matTooltipHideDelay="50">
       { label: 'ENROLLMENTS' }
     ])"
     class="btnLeft flex items-center p-2 rounded">
-      <a class="flex items-center gap-4 p-1">
+      <a class="flex items-center gap-4">
         <mat-icon>assignment_ind</mat-icon>
         <span *ngIf="collapsed">Enrollments</span>
       </a>

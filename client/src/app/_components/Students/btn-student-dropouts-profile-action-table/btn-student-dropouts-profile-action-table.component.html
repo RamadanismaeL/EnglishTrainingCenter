@@ -1,0 +1,12 @@
+<div class="flex justify-center gap-4">
+  <button mat-icon-button
+  [routerLink]="['/', { outlets : { ramRouter: ['student-dropouts-profile'] } }]"
+    (click)="navigateTo({ label: 'PROFILE', url: ['/', {outlets: {ramRouter: ['student-dropouts-profile']}}]})"
+  type="button"
+  style="color: #4b4b4b; font-size: 26pt; cursor: pointer;"
+  matTooltip="View"
+  [matTooltipPosition]="positionL.value!"
+  matTooltipHideDelay="50">
+    <mat-icon>account_circle</mat-icon>
+  </button>
+</div>

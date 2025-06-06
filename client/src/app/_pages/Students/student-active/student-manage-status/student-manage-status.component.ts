@@ -3,7 +3,7 @@ import { FormControl, FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule, TooltipPosition } from '@angular/material/tooltip';
 import { AgGridAngular } from 'ag-grid-angular';
-import { AllCommunityModule, ModuleRegistry, ColDef, GridApi, RowSelectionOptions } from 'ag-grid-community';
+import { AllCommunityModule, ModuleRegistry, ColDef, RowSelectionOptions } from 'ag-grid-community';
 import { MatInputModule } from '@angular/material/input';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
