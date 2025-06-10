@@ -428,6 +428,10 @@ namespace server.Migrations
                         .HasColumnType("varchar(50)")
                         .HasColumnName("CourseName");
 
+                    b.Property<ulong>("CurrentLevel")
+                        .HasColumnType("bit")
+                        .HasColumnName("CurrentLevel");
+
                     b.Property<DateTime>("DateRegister")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime")

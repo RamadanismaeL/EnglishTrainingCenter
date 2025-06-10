@@ -7,7 +7,6 @@ import { LoginComponent } from './_components/login/login.component';
 import { EnrollmentComponent } from './_components/enrollment/enrollment.component';
 import { StudentActiveComponent } from './_pages/Students/student-active/student-active.component';
 import { StudentQuizzesExamesComponent } from './_pages/Students/student-active/student-quizzes-exames/student-quizzes-exames.component';
-import { StudentScheduledExamsComponent } from './_pages/Students/student-scheduled-exams/student-scheduled-exams.component';
 import { FinancialExpenseComponent } from './_pages/Financials/financial-expense/financial-expense.component';
 import { FinancialDailyReportComponent } from './_pages/Financials/financial-daily-report/financial-daily-report.component';
 import { LoginSigninComponent } from './_pages/login-signin/login-signin.component';
@@ -143,7 +142,8 @@ export const routes: Routes = [
       },
       {
         path : 'student-scheduled-exams',
-        component : StudentScheduledExamsComponent,
+        loadComponent: () =>
+          import('./_pages/Students/student-scheduled-exams/student-scheduled-exams.component').then(m => m.StudentScheduledExamsComponent),
         outlet : 'ramRouter'
       },
       {

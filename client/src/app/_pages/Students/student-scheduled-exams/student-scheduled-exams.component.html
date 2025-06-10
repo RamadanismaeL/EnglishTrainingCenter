@@ -1,8 +1,12 @@
 <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
   <mat-tab label="Unscheduled Exams">
-    <app-un-scheduled-exam></app-un-scheduled-exam>
+    <ng-template matTabContent>
+      <app-un-scheduled-exam></app-un-scheduled-exam>
+    </ng-template>
   </mat-tab>
   <mat-tab label="Scheduled Exams">
-    <app-scheduled-exam></app-scheduled-exam>
+    <ng-template matTabContent>
+      <app-scheduled-exam></app-scheduled-exam>
+    </ng-template>
   </mat-tab>
 </mat-tab-group>

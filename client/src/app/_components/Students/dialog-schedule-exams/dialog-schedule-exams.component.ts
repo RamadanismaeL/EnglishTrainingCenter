@@ -1,7 +1,10 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, Inject, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
+import { SnackBarService } from '../../../_services/snack-bar.service';
+import { StudentCourseInfoService } from '../../../_services/student-course-info.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-dialog-schedule-exams',
@@ -16,10 +19,18 @@ export class DialogScheduleExamsComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   form! : FormGroup;
   previousAmountValue: string = '';
+  private subs: Subscription = new Subscription();
 
-  constructor(public dialogRef : MatDialogRef<DialogScheduleExamsComponent>)
+  constructor(public dialogRef : MatDialogRef<DialogScheduleExamsComponent>, @Inject(MAT_DIALOG_DATA) public data:
+      {
+        studentName: string,
+        id: string,
+        exam: number,
+      },
+    private studentCourseInfo: StudentCourseInfoService,
+    private alert: SnackBarService)
   {
-    //console.log('Dados recebidos: ',data)
+    //console.log('Received datas: ',data)
   }
 
   ngOnInit(): void {
@@ -30,6 +41,13 @@ export class DialogScheduleExamsComponent implements OnInit {
     this.form = this.fb.group({
       exam : ['']
     });
+
+    if (this.data)
+    {
+      this.form.patchValue({
+        exam: this.data.exam
+      });
+    }
   }
 
   onAmount(event: any) {
@@ -52,7 +70,7 @@ export class DialogScheduleExamsComponent implements OnInit {
 
     // Converte para número e verifica o valor máximo
     const numberValue = this.parseNumber(numericValue);
-    if (numberValue > 101) {
+    if (numberValue > 100) {
       input.value = this.previousAmountValue || '';
     } else {
       input.value = this.formatNumber(numericValue);
@@ -85,5 +103,22 @@ export class DialogScheduleExamsComponent implements OnInit {
   }
 
   onSave()
-  {}
+  {
+    if (this.form.valid)
+    {
+      this.subs.add(
+        this.studentCourseInfo.updateSheduledExams(this.data.id, this.form.value.exam).subscribe({
+          next: (response) => {
+            this.alert.show(response.message, 'success');
+            this.dialogRef.close(true);
+          },
+          error: (error) => {
+            this.alert.show(error.error.message, 'error');
+          }
+        })
+      );
+    }
+
+    this.dialogRef.close(false);
+  }
 }

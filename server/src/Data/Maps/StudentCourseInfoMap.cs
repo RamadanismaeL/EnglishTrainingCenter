@@ -106,6 +106,11 @@ namespace server.src.Data.Maps
                         ELSE 'Error'
                     END", stored: true);
 
+            builder.Property(s => s.CurrentLevel)
+                .HasColumnName("CurrentLevel")
+                .HasColumnType("bit")
+                .IsRequired();
+
             builder.Property(s => s.TrainerName)
                 .HasColumnName("TrainerName")
                 .HasColumnType("varchar(50)")

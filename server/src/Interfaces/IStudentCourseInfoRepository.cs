@@ -24,5 +24,7 @@ namespace server.src.Interfaces
         Task<List<StudentUnscheduledExamsDto>> GetListStudentUnscheduledExams();
         Task<ResponseDto> UpdateStudentUnScheduledExams(List<string>? IdScheduleExam);
         Task<List<StudentScheduleExamsDto>> GetListStudentScheduledExams();
+        Task<ResponseDto> UpdateStudentScheduledExams(string Id, decimal exam);
+        Task<ResponseDto> CancelStudentScheduledExams(string Id);
     }
 }

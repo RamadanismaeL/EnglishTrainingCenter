@@ -24,5 +24,7 @@ namespace server.src.Interfaces
         Task<ActionResult<List<StudentUnscheduledExamsDto>>> GetListStudentUnscheduledExams();
         Task<IActionResult> UpdateStudentUnScheduledExams([FromBody] List<string>? IdScheduleExam);
         Task<ActionResult<List<StudentScheduleExamsDto>>> GetListStudentScheduledExams();
+        Task<IActionResult> UpdateStudentScheduledExams([FromRoute] string Id, decimal exam);
+        Task<IActionResult> CancelStudentScheduledExams([FromRoute] string Id);
     }
 }

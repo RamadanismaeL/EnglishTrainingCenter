@@ -212,5 +212,45 @@ namespace server.src.Controllers
             var scheduledExams = await _courseInfoRepository.GetListStudentScheduledExams();
             return Ok(scheduledExams);
         }
+
+        [HttpPatch("update-student-scheduled-exams/{Id}/{exam}")]
+        public async Task<IActionResult> UpdateStudentScheduledExams([FromRoute] string Id, decimal exam)
+        {
+            if (string.IsNullOrEmpty(Id) || exam < 0)
+            {
+                return BadRequest(new ResponseDto
+                {
+                    IsSuccess = false,
+                    Message = "Invalid exam data."
+                });
+            }
+
+            var response = await _courseInfoRepository.UpdateStudentScheduledExams(Id, exam);
+
+            // Notifica todos os clientes conectados
+            await _hubContext.Clients.All.SendAsync("ReceiveMessage", "Scheduled exam updated successfully.");
+
+            return response.IsSuccess ? Ok(response) : BadRequest(response);
+        }
+
+        [HttpPatch("cancel-student-scheduled-exams/{Id}")]
+        public async Task<IActionResult> CancelStudentScheduledExams([FromRoute] string Id)
+        {
+            if (string.IsNullOrEmpty(Id))
+            {
+                return BadRequest(new ResponseDto
+                {
+                    IsSuccess = false,
+                    Message = "Invalid ID."
+                });
+            }
+
+            var response = await _courseInfoRepository.CancelStudentScheduledExams(Id);
+
+            // Notifica todos os clientes conectados
+            await _hubContext.Clients.All.SendAsync("ReceiveMessage", "Scheduled exam cancelled successfully.");
+
+            return response.IsSuccess ? Ok(response) : BadRequest(response);
+        }
     }
 }

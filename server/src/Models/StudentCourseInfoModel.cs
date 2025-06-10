@@ -30,6 +30,7 @@ namespace server.src.Models
 
         public bool IsCancelled { get; set; }
         public string Status { get; set; } = string.Empty; // Failed, Pass, In Progress
+        public bool CurrentLevel { get; set; } = true;
         public string TrainerName { get; set; } = string.Empty;
         public DateTime? DateUpdate { get; set; }
         public DateTime DateRegister { get; set; }

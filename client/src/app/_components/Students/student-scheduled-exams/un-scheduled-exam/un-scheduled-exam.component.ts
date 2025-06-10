@@ -254,6 +254,7 @@ export class UnScheduledExamComponent implements OnInit, OnDestroy {
 
   markScheduled(): void {
     //console.log("Selected students completed: ", this.getSelectedStudentIds());
+
     if (this.getSelectedStudentIds().length > 0) {
       this.subs.add(
         this.studentcourseInfo.updateUnsheduledExams(this.getSelectedStudentIds()).subscribe({

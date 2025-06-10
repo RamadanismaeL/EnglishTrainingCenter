@@ -422,6 +422,7 @@ namespace server.Migrations
                     IsCancelled = table.Column<bool>(type: "tinyint(1)", nullable: false, defaultValue: false),
                     Status = table.Column<string>(type: "varchar(20)", nullable: false, computedColumnSql: "\n                    CASE \n                        WHEN IsCancelled = 1 THEN 'Canceled'\n                        WHEN Exam = 0.0 THEN 'In Progress'\n                        WHEN FinalAverage >= 50.0 AND FinalAverage <= 100.0 THEN 'Pass'\n                        WHEN FinalAverage >= 0.0 AND FinalAverage < 50.0 THEN 'Failed'\n                        ELSE 'Error'\n                    END", stored: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
+                    CurrentLevel = table.Column<ulong>(type: "bit", nullable: false),
                     TrainerName = table.Column<string>(type: "varchar(50)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     DateUpdate = table.Column<DateTime>(type: "datetime", nullable: true),
@@ -561,6 +562,7 @@ namespace server.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Status = table.Column<string>(type: "varchar(50)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
+                    IsScheduled = table.Column<ulong>(type: "bit", nullable: false),
                     ScheduledDate = table.Column<DateTime>(type: "datetime", nullable: true)
                 },
                 constraints: table =>

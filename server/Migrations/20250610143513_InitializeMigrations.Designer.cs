@@ -12,8 +12,8 @@ using server.src.Data;
 namespace server.Migrations
 {
     [DbContext(typeof(ServerDbContext))]
-    [Migration("20250608185127_InitializeMigrationsUpdated")]
-    partial class InitializeMigrationsUpdated
+    [Migration("20250610143513_InitializeMigrations")]
+    partial class InitializeMigrations
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -430,6 +430,10 @@ namespace server.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(50)")
                         .HasColumnName("CourseName");
+
+                    b.Property<ulong>("CurrentLevel")
+                        .HasColumnType("bit")
+                        .HasColumnName("CurrentLevel");
 
                     b.Property<DateTime>("DateRegister")
                         .ValueGeneratedOnAdd()

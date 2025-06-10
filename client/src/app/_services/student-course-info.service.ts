@@ -56,4 +56,10 @@ export class StudentCourseInfoService {
 
   getListStudentScheduledExams = () : Observable<StudentExamsScheduledDto> => this.http
       .get<StudentExamsScheduledDto>(`${this.myUrl}/StudentCourseInfo/get-list-student-scheduled-exams`, {headers : { 'Allow-Offline' : 'true' }});
+
+  updateSheduledExams = (id : string, exam : number) : Observable<ResponseDto> => this.http
+        .patch<ResponseDto>(`${this.myUrl}/StudentCourseInfo/update-student-scheduled-exams/${id}/${exam}`, {headers : { 'Allow-Offline' : 'true' }});
+
+  cancelSheduledExams = (id : string) : Observable<ResponseDto> => this.http
+        .patch<ResponseDto>(`${this.myUrl}/StudentCourseInfo/cancel-student-scheduled-exams/${id}`, {headers : { 'Allow-Offline' : 'true' }});
 }
