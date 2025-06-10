@@ -654,7 +654,9 @@ namespace server.src.Repositories
                         .Where(c =>
                             c.Status == "In Progress" &&
                             c.CourseInfoScheduleExamData != null &&
-                            c.CourseInfoScheduleExamData.Status == "Unscheduled")
+                            c.CourseInfoScheduleExamData.Status == "Unscheduled" &&
+                            c.CourseInfoScheduleExamData.IsScheduled == false
+                            )
                         .Select(c => new StudentUnscheduledExamsDto
                         {
                             IdScheduleExam = c.CourseInfoScheduleExamData!.CourseInfoId,
@@ -666,6 +668,83 @@ namespace server.src.Repositories
                             AcademicPeriod = c.AcademicPeriod,
                             Schedule = c.Schedule,
                             Status = c.CourseInfoScheduleExamData!.Status
+                        }))
+                    .OrderBy(x => x.Level)
+                    .ThenBy(x => x.FullName)
+                    .ToListAsync();
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving student unscheduled exams list");
+                throw;
+            }
+        }
+
+        public async Task<ResponseDto> UpdateStudentUnScheduledExams(List<string>? IdScheduleExam)
+        {
+            try
+            {
+                foreach (var examId in IdScheduleExam!)
+                {
+                    var examData = await _dbContext.StudentCourseInfoScheduleExam.FindAsync(examId);
+                    if (examData == null)
+                    {
+                        return new ResponseDto
+                        {
+                            IsSuccess = false,
+                            Message = "ExamId ID not found."
+                        };
+                    }
+
+                    examData.IsScheduled = true;
+                    examData.Status = "Scheduled";
+                    
+                    await _dbContext.SaveChangesAsync();
+                }
+
+                return new ResponseDto
+                {
+                    IsSuccess = true,
+                    Message = "Course updated successfuly."
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to update course.");
+                return new ResponseDto
+                {
+                    IsSuccess = false,
+                    Message = "Failed to update course."
+                };
+            }
+        }
+
+        public async Task<List<StudentScheduleExamsDto>> GetListStudentScheduledExams()
+        {
+            try
+            {
+                var result = await _dbContext.StudentData
+                    .AsNoTracking()
+                    .Where(s => s.Status == "Active")
+                    .SelectMany(s => s.CourseInfo!
+                        .Where(c =>
+                            c.CourseInfoScheduleExamData != null &&
+                            c.CourseInfoScheduleExamData.Status == "Scheduled" &&
+                            c.CourseInfoScheduleExamData.IsScheduled == true
+                            )
+                        .Select(c => new StudentScheduleExamsDto
+                        {
+                            Id = c.CourseInfoScheduleExamData!.CourseInfoId,
+                            FullName = s.FullName,
+                            Level = c.Level,
+                            Schedule = c.Schedule,
+                            QuizOne = c.QuizOne,
+                            QuizTwo = c.QuizTwo,
+                            Exam = c.Exam,
+                            FinalAverage = c.FinalAverage,
+                            Status = c.Status
                         }))
                     .OrderBy(x => x.Level)
                     .ThenBy(x => x.FullName)

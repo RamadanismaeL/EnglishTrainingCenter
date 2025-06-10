@@ -25,9 +25,15 @@ namespace server.src.Data.Maps
                 .HasPrincipalKey<StudentCourseInfoModel>(s => s.Id)
                 .HasForeignKey<StudentCourseInfoScheduleExamModel>(s => s.CourseInfoId);
 
+
             builder.Property(s => s.Status)
                 .HasColumnName("Status")
                 .HasColumnType("varchar(50)")
+                .IsRequired();
+
+            builder.Property(s => s.IsScheduled)
+                .HasColumnName("IsScheduled")
+                .HasColumnType("bit")
                 .IsRequired();
 
             builder.Property(s => s.ScheduledDate)

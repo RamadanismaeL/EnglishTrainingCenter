@@ -10,11 +10,10 @@
           (selectionChange)="onPageSizeChanged()"
           panelClass="scrollbar-custom"
         >
-          <mat-option [value]="5">5</mat-option>
-          <mat-option [value]="10">10</mat-option>
-          <mat-option [value]="15">15</mat-option>
-          <mat-option [value]="20">20</mat-option>
+          <mat-option [value]="8">8</mat-option>
+          <mat-option [value]="16">16</mat-option>
           <mat-option [value]="30">30</mat-option>
+          <mat-option [value]="40">40</mat-option>
           <mat-option [value]="50">50</mat-option>
         </mat-select>
       </mat-form-field>
@@ -112,11 +111,13 @@
     class="ag-theme-alpine custom-scrollbar w-full h-full"
     [rowData]="filteredData"
     [columnDefs]="columnDefs"
+    [animateRows]="true"
     [domLayout]="'autoHeight'"
     [pagination]="true"
     [paginationPageSize]="pageSize"
     [suppressPaginationPanel]="true"
-    [rowHeight]="60"
+    [headerHeight]="56"
+    [rowHeight]="56"
     [rowSelection]="rowSelection"
     (gridReady)="onGridReady($event)"
     #agGrid

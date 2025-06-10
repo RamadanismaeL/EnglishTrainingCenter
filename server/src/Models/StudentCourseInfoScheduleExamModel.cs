@@ -14,6 +14,7 @@ namespace server.src.Models
         public StudentCourseInfoModel? CourseInfoData { get; set; }
 
         public string Status { get; set; } = string.Empty; // Scheduled, Unscheduled, Completed
+        public bool IsScheduled { get; set; } = false;
         public DateTime? ScheduledDate { get; set; }       
     }
 }

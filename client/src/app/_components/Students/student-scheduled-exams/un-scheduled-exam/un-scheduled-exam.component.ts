@@ -15,7 +15,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { NotificationHubService } from '../../../../_services/notification-hub.service';
 import { TitleNavbarService } from '../../../../_services/title-navbar.service';
-import { StudentsService } from '../../../../_services/students.service';
+import { StudentCourseInfoService } from '../../../../_services/student-course-info.service';
 
 ModuleRegistry.registerModules([ AllCommunityModule]);
 
@@ -119,7 +119,7 @@ export class UnScheduledExamComponent implements OnInit, OnDestroy {
 
   private subs = new Subscription();
 
-  constructor(private studentService: StudentsService, private notificationHub: NotificationHubService, private titleNavbarService: TitleNavbarService)
+  constructor(private studentcourseInfo: StudentCourseInfoService, private notificationHub: NotificationHubService, private titleNavbarService: TitleNavbarService)
   {}
 
   navigateTo (breadcrumbs: { label: string, url?: any[] }) {
@@ -153,7 +153,7 @@ export class UnScheduledExamComponent implements OnInit, OnDestroy {
   private loadData(): void
   {
     this.subs.add(
-      this.studentService.getListStudentActive().subscribe((data: any) => {
+      this.studentcourseInfo.getListStudentUnscheduledExams().subscribe((data: any) => {
         this.rowData = data;
         this.applyPagination();
       })
@@ -247,17 +247,16 @@ export class UnScheduledExamComponent implements OnInit, OnDestroy {
     this.gridColumnApi = params.columnApi;
   }
 
-  getSelectedStudentIds(): number[] {
+  getSelectedStudentIds(): string[] {
     const selectedNodes = this.gridApi.getSelectedNodes();
-    return selectedNodes.map((node: { data: { order: any; }; }) => node.data.order);
+    return selectedNodes.map((node: { data: { idScheduleExam: any; }; }) => node.data.idScheduleExam);
   }
 
-  markCompleted(): void {
-    console.log("Selected students completed: ", this.getSelectedStudentIds());
-    /*
+  markScheduled(): void {
+    //console.log("Selected students completed: ", this.getSelectedStudentIds());
     if (this.getSelectedStudentIds().length > 0) {
       this.subs.add(
-        this.studentService.updateStatus(this.getSelectedStudentIds(), 'Completed').subscribe({
+        this.studentcourseInfo.updateUnsheduledExams(this.getSelectedStudentIds()).subscribe({
           next: (response) => {
             this.notificationHub.sendMessage(response.message);
             this.loadData();
@@ -268,6 +267,5 @@ export class UnScheduledExamComponent implements OnInit, OnDestroy {
         })
       );
     }
-    */
   }
 }

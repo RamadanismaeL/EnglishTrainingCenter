@@ -183,5 +183,34 @@ namespace server.src.Controllers
             var unscheduledExams = await _courseInfoRepository.GetListStudentUnscheduledExams();
             return Ok(unscheduledExams);
         }
+
+        [HttpPatch("update-student-unscheduled-exams")]
+        public async Task<IActionResult> UpdateStudentUnScheduledExams([FromBody] List<string>? IdScheduleExam)
+        {
+            if (IdScheduleExam is null)
+            {
+                return BadRequest(new ResponseDto
+                {
+                    IsSuccess = false,
+                    Message = "Student unscheduled exam data is required."
+                });
+            }
+
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var response = await _courseInfoRepository.UpdateStudentUnScheduledExams(IdScheduleExam);
+
+            // Notifica todos os clientes conectados
+            await _hubContext.Clients.All.SendAsync("ReceiveMessage", "Unscheduled exam updated successfully.");
+
+            return response.IsSuccess ? Ok(response) : BadRequest(response);
+        }
+
+        [HttpGet("get-list-student-scheduled-exams")]
+        public async Task<ActionResult<List<StudentScheduleExamsDto>>> GetListStudentScheduledExams()
+        {
+            var scheduledExams = await _courseInfoRepository.GetListStudentScheduledExams();
+            return Ok(scheduledExams);
+        }
     }
 }

@@ -22,5 +22,7 @@ namespace server.src.Interfaces
         Task<ActionResult<List<StudentCourseInfoListDto>>> GetListStudentCourseInfoInactive();
         Task<ActionResult<List<StudentCourseInfoProgressHistoryDto>>> GetListStudentCourseInfoProgressHistory(string studentId);
         Task<ActionResult<List<StudentUnscheduledExamsDto>>> GetListStudentUnscheduledExams();
+        Task<IActionResult> UpdateStudentUnScheduledExams([FromBody] List<string>? IdScheduleExam);
+        Task<ActionResult<List<StudentScheduleExamsDto>>> GetListStudentScheduledExams();
     }
 }
