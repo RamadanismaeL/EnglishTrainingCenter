@@ -62,4 +62,7 @@ export class StudentCourseInfoService {
 
   cancelSheduledExams = (id : string) : Observable<ResponseDto> => this.http
         .patch<ResponseDto>(`${this.myUrl}/StudentCourseInfo/cancel-student-scheduled-exams/${id}`, {headers : { 'Allow-Offline' : 'true' }});
+
+  setAsGraded = (id : string[]) : Observable<ResponseDto> => this.http
+        .patch<ResponseDto>(`${this.myUrl}/StudentCourseInfo/set-as-graded`, id, {headers : { 'Allow-Offline' : 'true' }});
 }

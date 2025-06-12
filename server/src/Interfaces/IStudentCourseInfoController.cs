@@ -26,5 +26,6 @@ namespace server.src.Interfaces
         Task<ActionResult<List<StudentScheduleExamsDto>>> GetListStudentScheduledExams();
         Task<IActionResult> UpdateStudentScheduledExams([FromRoute] string Id, decimal exam);
         Task<IActionResult> CancelStudentScheduledExams([FromRoute] string Id);
+        Task<IActionResult> SetAsGraded([FromBody] List<string>? IdCourseInfo);
     }
 }

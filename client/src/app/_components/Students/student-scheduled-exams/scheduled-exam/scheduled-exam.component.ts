@@ -154,7 +154,7 @@ export class ScheduledExamComponent implements OnInit, OnDestroy {
   rowData: any[] = [];
   filteredData: any[] = [];
   searchText: string = '';
-  pageSize: number = 8;
+  pageSize: number = 7;
   currentPage: number = 1;
   totalPages: number = 1;
   startIndex: number = 0;
@@ -379,6 +379,28 @@ export class ScheduledExamComponent implements OnInit, OnDestroy {
     this.gridApi = params.api;
     this.gridState.isReady = true;
     this.gridState.isLoading = false;
+  }
+
+  getSelectedStudentIds(): string[] {
+    const selectedNodes = this.gridApi.getSelectedNodes();
+    return selectedNodes.map((node: { data: { id: any; }; }) => node.data.id);
+  }
+
+  onSetGraded(): void {
+    //console.log("Selected students completed: ", this.getSelectedStudentIds());
+    if (this.getSelectedStudentIds().length > 0) {
+      this.subs.add(
+        this.studentCourseInfo.setAsGraded(this.getSelectedStudentIds()).subscribe({
+          next: (response) => {
+            this.notificationHub.sendMessage(response.message);
+            this.loadData();
+          },
+          error: (error) => {
+            this.notificationHub.sendMessage(error.error.message);
+          }
+        })
+      );
+    }
   }
 
   @ViewChild('agGrid') agGrid!: AgGridAngular;
@@ -636,8 +658,8 @@ export class ScheduledExamComponent implements OnInit, OnDestroy {
       titleCell1.alignment = { vertical: 'middle', horizontal: 'center' };
 
       worksheet.mergeCells('A2:F2');
-      const titleCell2 = worksheet.getCell('A2');
-      titleCell2.value = 'Students : Active / Manage Evaluations – Full List';
+      const titleCell2 = worksheet.getCell('A2'); // MANAGE EXAM SCHEDULING
+      titleCell2.value = 'Students : Manage Exam Scheduling – Full List';
       titleCell2.font = { size: 20, bold: true, color: { argb: '2C2C2C' } };
       titleCell2.alignment = { vertical: 'middle', horizontal: 'center' };
 
@@ -653,7 +675,7 @@ export class ScheduledExamComponent implements OnInit, OnDestroy {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
       });
 
-      FileSaver.saveAs(blob, 'ETC_students_active_full_list_manage_evaluations_data.xlsx');
+      FileSaver.saveAs(blob, 'ETC_students_manage_exam_scheduling_full_list_data.xlsx');
       this.alert.show('All data exported to Excel.', 'success');
     } catch (error) {
       console.error('Error exporting Excel:', error);
@@ -855,7 +877,7 @@ export class ScheduledExamComponent implements OnInit, OnDestroy {
 
       worksheet.mergeCells('A2:F2');
       const titleCell2 = worksheet.getCell('A2');
-      titleCell2.value = 'Students : Active / Manage Evaluations – Filtered List';
+      titleCell2.value = 'Students : Manage Exam Scheduling – Filtered List';
       titleCell2.font = { size: 20, bold: true, color: { argb: '2C2C2C' } };
       titleCell2.alignment = { vertical: 'middle', horizontal: 'center' };
 
@@ -871,7 +893,7 @@ export class ScheduledExamComponent implements OnInit, OnDestroy {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
       });
 
-      FileSaver.saveAs(blob, 'ETC_filtered_students_active_manage_evaluations_data.xlsx');
+      FileSaver.saveAs(blob, 'ETC_filtered_manage_exam_scheduling_data.xlsx');
       this.alert.show('Filtered data exported to Excel.', 'success');
     } catch (error) {
       console.error('Error exporting Excel:', error);
@@ -947,7 +969,7 @@ export class ScheduledExamComponent implements OnInit, OnDestroy {
       doc.setFontSize(20);
       doc.setTextColor(44, 44, 44);
       doc.setFont('helvetica', 'normal');
-      doc.text('Students : Active / Manage Evaluations – Full List', 70, 23);
+      doc.text('Students : Manage Exam Scheduling – Full List', 70, 23);
 
       // 5. Adicionar data de emissão
       doc.setFontSize(10);
@@ -1002,7 +1024,7 @@ export class ScheduledExamComponent implements OnInit, OnDestroy {
       doc.text(this.footer, pageWidth / 2, footerY + 10, { align: 'center' });
 
       // Salva o PDF
-      doc.save('ETC_students_active_manage_evaluations_full_list_data.pdf');
+      doc.save('ETC_students_manage_exam_scheduling_full_list_data.pdf');
       this.alert.show('All data exported to PDF.', 'success');
     } catch (error) {
       console.error('PDF export error:', error);
@@ -1079,7 +1101,7 @@ export class ScheduledExamComponent implements OnInit, OnDestroy {
       doc.setFontSize(20);
       doc.setTextColor(44, 44, 44);
       doc.setFont('helvetica', 'normal');
-      doc.text('Students : Active / Manage Evaluations – Filtered List', 60, 23);
+      doc.text('Students : Manage Exam Scheduling – Filtered List', 60, 23);
 
       // 5. Adicionar data de emissão
       doc.setFontSize(10);
@@ -1134,7 +1156,7 @@ export class ScheduledExamComponent implements OnInit, OnDestroy {
       doc.text(this.footer, pageWidth / 2, footerY + 10, { align: 'center' });
 
       // Salva o PDF
-      doc.save('ETC_students_active_manage_evaluations_filtered_list.pdf');
+      doc.save('ETC_students_manage_exam_scheduling_filtered_list.pdf');
       this.alert.show('Filtered data exported to PDF.', 'success');
     } catch (error) {
       console.error('PDF export error:', error);
@@ -1203,7 +1225,7 @@ export class ScheduledExamComponent implements OnInit, OnDestroy {
       doc.setFontSize(20);
       doc.setTextColor(44, 44, 44);
       doc.setFont('helvetica', 'normal');
-      doc.text('Students : Active / Manage Evaluations – Full List', 70, 23);
+      doc.text('Students : Manage Exam Scheduling – Full List', 70, 23);
 
       // 5. Adicionar data de emissão
       doc.setFontSize(10);
@@ -1274,7 +1296,7 @@ export class ScheduledExamComponent implements OnInit, OnDestroy {
          // console.error('PrintJS error:', error);
           this.alert.show('Oops! Direct printing failed.', 'error');
           // Fallback para download
-          doc.save('ETC_students_active_manage_evaluations_full_list_data.pdf');
+          doc.save('ETC_students_manage_exam_scheduling_full_list_data.pdf');
         }
       });
     } catch (error) {
@@ -1357,7 +1379,7 @@ export class ScheduledExamComponent implements OnInit, OnDestroy {
       doc.setFontSize(20);
       doc.setTextColor(44, 44, 44);
       doc.setFont('helvetica', 'normal');
-      doc.text('Students : Active / Manage Evaluations – Full List', 70, 23);
+      doc.text('Students : Manage Exam Scheduling – Full List', 70, 23);
 
       // 5. Adicionar data de emissão
       doc.setFontSize(10);
@@ -1428,7 +1450,7 @@ export class ScheduledExamComponent implements OnInit, OnDestroy {
          // console.error('PrintJS error:', error);
           this.alert.show('Oops! Direct printing failed.', 'error');
           // Fallback para download
-          doc.save('ETC_students_active_manage_evaluations_full_list_data.pdf');
+          doc.save('ETC_students_manage_exam_scheduling_filtered_list_data.pdf');
         }
       });
     } catch (error) {

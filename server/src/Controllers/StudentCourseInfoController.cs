@@ -252,5 +252,25 @@ namespace server.src.Controllers
 
             return response.IsSuccess ? Ok(response) : BadRequest(response);
         }
+
+        [HttpPatch("set-as-graded")]
+        public async Task<IActionResult> SetAsGraded([FromBody] List<string>? IdCourseInfo)
+        {
+            if (IdCourseInfo is null || IdCourseInfo.Count == 0)
+            {
+                return BadRequest(new ResponseDto
+                {
+                    IsSuccess = false,
+                    Message = "Course info IDs are required."
+                });
+            }
+
+            var response = await _courseInfoRepository.SetAsGraded(IdCourseInfo);
+
+            // Notifica todos os clientes conectados
+            await _hubContext.Clients.All.SendAsync("ReceiveMessage", "Courses set as graded successfully.");
+
+            return response.IsSuccess ? Ok(response) : BadRequest(response);
+        }
     }
 }

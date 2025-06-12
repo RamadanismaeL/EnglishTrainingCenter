@@ -1,4 +1,4 @@
-<div class="table-toolbar text-[#525252]">
+<div class="table-toolbar text-[#525252] mt-5">
   <div class="w-full flex items-center justify-between">
     <label class="formField">
       Show&nbsp;
@@ -10,8 +10,8 @@
           (selectionChange)="onPageSizeChanged()"
           panelClass="scrollbar-custom"
         >
-          <mat-option [value]="8">8</mat-option>
-          <mat-option [value]="16">16</mat-option>
+          <mat-option [value]="7">7</mat-option>
+          <mat-option [value]="14">14</mat-option>
           <mat-option [value]="30">30</mat-option>
           <mat-option [value]="40">40</mat-option>
           <mat-option [value]="50">50</mat-option>
@@ -90,11 +90,11 @@
 
     <button
     type="button" class="w-40 progress"
+    (click)="onSetGraded()"
     >
       <span class="shadow"></span>
       <span class="edge"></span>
-      <span class="front truncate"> Set as Graded
-      </span>
+      <span class="front truncate"> Set as Graded </span>
     </button>
 
     <div class="w-1/4 formField">

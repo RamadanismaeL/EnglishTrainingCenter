@@ -921,7 +921,7 @@ namespace server.src.Repositories
                     .Select(s => new
                     {
                         Student = s,
-                        ActiveCourse = s.CourseInfo!.FirstOrDefault(c => c.Status == "In Progress")
+                        ActiveCourse = s.CourseInfo!.FirstOrDefault(c => c.Status == "In Progress" && c.CurrentLevel)
                     })
                     .Where(x => x.ActiveCourse != null)
                     .Select(x => new ListStudentActiveDto

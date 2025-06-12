@@ -26,5 +26,6 @@ namespace server.src.Interfaces
         Task<List<StudentScheduleExamsDto>> GetListStudentScheduledExams();
         Task<ResponseDto> UpdateStudentScheduledExams(string Id, decimal exam);
         Task<ResponseDto> CancelStudentScheduledExams(string Id);
+        Task<ResponseDto> SetAsGraded(List<string>? IdCourseInfo);
     }
 }

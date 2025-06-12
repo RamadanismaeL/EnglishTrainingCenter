@@ -34,14 +34,14 @@ namespace server.src.Repositories
 
             // 2. Database Context Setup
             await using var transaction = await _dbContext.Database.BeginTransactionAsync();
-            
+
             try
             {
                 // 3. User Validation
                 var user = await _dbContext.Users
                     .AsNoTracking()
                     .FirstOrDefaultAsync(u => u.Id == userId.Value);
-                
+
                 if (user is null)
                 {
                     return new ResponseDto { IsSuccess = false, Message = "User not found." };
@@ -64,7 +64,7 @@ namespace server.src.Repositories
                     return new ResponseDto { IsSuccess = false, Message = "Invalid course ID generation." };
                 }
 
-                var trainerName = userPrincipal.FindFirst(JwtRegisteredClaimNames.Name)?.Value 
+                var trainerName = userPrincipal.FindFirst(JwtRegisteredClaimNames.Name)?.Value
                     ?? "System Generated";
 
                 var courseInfoData = new StudentCourseInfoModel
@@ -79,7 +79,7 @@ namespace server.src.Repositories
                     Schedule = studentCourseCreateDto.Schedule,
                     Duration = "3 Meses",
                     MonthlyFee = GetSettingsMonthlyTuition(
-                        $"{studentCourseCreateDto.Level}-{studentCourseCreateDto.Modality}", 
+                        $"{studentCourseCreateDto.Level}-{studentCourseCreateDto.Modality}",
                         studentCourseCreateDto.Package),
                     QuizOne = 0.0M,
                     QuizTwo = 0.0M,
@@ -220,7 +220,7 @@ namespace server.src.Repositories
                 checkCourse.Schedule = studentCourseUpdateDto.Schedule;
                 checkCourse.TrainerName = trainerName!;
                 checkCourse.DateUpdate = DateTime.Now;
-                    
+
                 await _dbContext.SaveChangesAsync();
 
                 return new ResponseDto
@@ -250,7 +250,7 @@ namespace server.src.Repositories
                     Package = x.Package,
                     Modality = x.Modality,
                     AcademicPeriod = x.AcademicPeriod,
-                    Schedule = x.Schedule,                    
+                    Schedule = x.Schedule,
                 })
                 .FirstOrDefaultAsync();
 
@@ -318,7 +318,7 @@ namespace server.src.Repositories
                 courseId.Exam = courseInfoUpdateQuizDto.Exam;
                 courseId.TrainerName = trainerName!;
                 courseId.DateUpdate = DateTime.Now;
-                
+
                 await _dbContext.SaveChangesAsync();
 
                 return new ResponseDto
@@ -391,7 +391,7 @@ namespace server.src.Repositories
                 courseId.QuizTwo = courseInfoUpdateQuizDto.QuizTwo;
                 courseId.TrainerName = trainerName!;
                 courseId.DateUpdate = DateTime.Now;
-                
+
                 await _dbContext.SaveChangesAsync();
 
                 return new ResponseDto
@@ -463,7 +463,7 @@ namespace server.src.Repositories
                 courseId.IsCancelled = true;
                 courseId.TrainerName = trainerName!;
                 courseId.DateUpdate = DateTime.Now;
-                
+
                 await _dbContext.SaveChangesAsync();
 
                 return new ResponseDto
@@ -493,7 +493,7 @@ namespace server.src.Repositories
                     .Select(s => new
                     {
                         Student = s,
-                        ActiveCourse = s.CourseInfo!.FirstOrDefault(c => c.CurrentLevel == true)
+                        ActiveCourse = s.CourseInfo!.FirstOrDefault(c => c.Status == "In Progress" && c.CurrentLevel)
                     })
                     .Where(x => x.ActiveCourse != null)
                     .Select(x => new StudentCourseInfoListDto
@@ -533,7 +533,7 @@ namespace server.src.Repositories
                     .Select(s => new
                     {
                         Student = s,
-                        ActiveCourse = s.CourseInfo!.FirstOrDefault(c => c.CurrentLevel == true)
+                        ActiveCourse = s.CourseInfo!.FirstOrDefault(c => c.Status == "In Progress" && c.CurrentLevel)
                     })
                     .Where(x => x.ActiveCourse != null)
                     .Select(x => new StudentCourseInfoListDto
@@ -573,7 +573,7 @@ namespace server.src.Repositories
                     .Select(s => new
                     {
                         Student = s,
-                        ActiveCourse = s.CourseInfo!.FirstOrDefault(c => c.CurrentLevel == true)
+                        ActiveCourse = s.CourseInfo!.FirstOrDefault(c => c.Status == "In Progress" && c.CurrentLevel)
                     })
                     .Where(x => x.ActiveCourse != null)
                     .Select(x => new StudentCourseInfoListDto
@@ -695,7 +695,7 @@ namespace server.src.Repositories
 
                     examData.IsScheduled = true;
                     examData.Status = "Scheduled";
-                    
+
                     await _dbContext.SaveChangesAsync();
                 }
 
@@ -785,7 +785,7 @@ namespace server.src.Repositories
 
                 courseInfo.Exam = exam;
                 courseInfo.DateUpdate = DateTime.Now;
-                
+
                 await _dbContext.SaveChangesAsync();
 
                 return new ResponseDto
@@ -868,6 +868,203 @@ namespace server.src.Repositories
             }
         }
 
+        public async Task<ResponseDto> SetAsGraded(List<string>? IdCourseInfo)
+        {
+            try
+            {
+                foreach (var courseCheckId in IdCourseInfo!)
+                {
+                    var examData = await _dbContext.StudentCourseInfoScheduleExam.FindAsync(courseCheckId);
+                    var findCourseOrder = await _dbContext.StudentCourseInfo
+                        .Where(c => c.Id == courseCheckId)
+                        .Select(c => c.Order)
+                        .FirstOrDefaultAsync();
+
+                    var courseData = await _dbContext.StudentCourseInfo.FindAsync(findCourseOrder);
+                    if (examData is null || courseData is null)
+                    {
+                        return new ResponseDto
+                        {
+                            IsSuccess = false,
+                            Message = "ID not found."
+                        };
+                    }
+
+                    if (courseData.Status != "In Progress")
+                    {
+                        var userPrincipal = _httpContextAccessor.HttpContext?.User;
+                        if (userPrincipal?.FindFirst(ClaimTypes.NameIdentifier) is not Claim userId)
+                        {
+                            return new ResponseDto { IsSuccess = false, Message = "User not authenticated." };
+                        }
+
+                        var user = await _dbContext.Users
+                            .AsNoTracking()
+                            .FirstOrDefaultAsync(u => u.Id == userId.Value);
+
+                        if (user is null)
+                        {
+                            return new ResponseDto { IsSuccess = false, Message = "User not found." };
+                        }
+
+                        var trainerName = userPrincipal.FindFirst(JwtRegisteredClaimNames.Name)?.Value
+                                    ?? "System Generated";
+
+                        var activeCourseList = await _dbContext.StudentCourseInfo
+                            .Where(c => c.StudentId == courseCheckId && c.CurrentLevel)
+                            .ToListAsync();
+
+                        foreach (var course in activeCourseList)
+                        {
+                            course.CurrentLevel = false;
+                        }
+
+                        examData.Status = "Completed";
+
+                        // 2. Database Context Setup
+                        await using var transaction = await _dbContext.Database.BeginTransactionAsync();
+
+                        if (courseData.Status == "Pass")
+                        {
+                            var nextLevel = NextLevel(courseData.Level);
+                            if (string.IsNullOrEmpty(nextLevel))
+                            {
+                                return new ResponseDto { IsSuccess = false, Message = "Invalid next level." };
+                            }
+
+                            try
+                            {
+                                var newID = GenerateCourseId(nextLevel);
+                                if (string.IsNullOrEmpty(newID))
+                                {
+                                    return new ResponseDto { IsSuccess = false, Message = "Invalid course ID generation." };
+                                }
+
+                                var courseInfoData = new StudentCourseInfoModel
+                                {
+                                    Id = newID,
+                                    StudentId = courseData.StudentId,
+                                    CourseName = "Inglês",
+                                    Package = courseData.Package,
+                                    Level = nextLevel,
+                                    Modality = courseData.Modality,
+                                    AcademicPeriod = courseData.AcademicPeriod,
+                                    Schedule = courseData.Schedule,
+                                    Duration = "3 Meses",
+                                    MonthlyFee = GetSettingsMonthlyTuition(
+                                        $"{nextLevel}-{courseData.Modality}",
+                                        courseData.Package),
+                                    QuizOne = 0.0M,
+                                    QuizTwo = 0.0M,
+                                    Exam = 0.0M,
+                                    FinalAverage = 0.0M,
+                                    Status = "In Progress",
+                                    CurrentLevel = true, // Only this record will be true
+                                    TrainerName = trainerName
+                                };
+
+                                // 6. Schedule Exam
+                                var courseInfoScheduleExamData = new StudentCourseInfoScheduleExamModel
+                                {
+                                    CourseInfoId = newID,
+                                    Status = "Unscheduled"
+                                };
+
+                                await _dbContext.StudentCourseInfo.AddAsync(courseInfoData);
+                                await _dbContext.StudentCourseInfoScheduleExam.AddAsync(courseInfoScheduleExamData);
+                            }
+                            catch (DbUpdateException dbEx)
+                            {
+                                await transaction.RollbackAsync();
+                                _logger.LogError(dbEx, "Database error creating course");
+                                return new ResponseDto { IsSuccess = false, Message = "Database operation failed." };
+                            }
+                            catch (Exception ex)
+                            {
+                                await transaction.RollbackAsync();
+                                _logger.LogError(ex, "System error creating course");
+                                return new ResponseDto { IsSuccess = false, Message = "System error processing request." };
+                            }
+                        }
+                        else if (courseData.Status == "Failed")
+                        {
+                            try
+                            {
+                                var newID = GenerateCourseId(courseData.Level);
+                                if (string.IsNullOrEmpty(newID))
+                                {
+                                    return new ResponseDto { IsSuccess = false, Message = "Invalid course ID generation." };
+                                }
+
+                                var courseInfoData = new StudentCourseInfoModel
+                                {
+                                    Id = newID,
+                                    StudentId = courseData.StudentId,
+                                    CourseName = "Inglês",
+                                    Package = courseData.Package,
+                                    Level = courseData.Level,
+                                    Modality = courseData.Modality,
+                                    AcademicPeriod = courseData.AcademicPeriod,
+                                    Schedule = courseData.Schedule,
+                                    Duration = "3 Meses",
+                                    MonthlyFee = GetSettingsMonthlyTuition(
+                                        $"{courseData.Level}-{courseData.Modality}",
+                                        courseData.Package),
+                                    QuizOne = 0.0M,
+                                    QuizTwo = 0.0M,
+                                    Exam = 0.0M,
+                                    FinalAverage = 0.0M,
+                                    Status = "In Progress",
+                                    CurrentLevel = true, // Only this record will be true
+                                    TrainerName = trainerName
+                                };
+
+                                // 6. Schedule Exam
+                                var courseInfoScheduleExamData = new StudentCourseInfoScheduleExamModel
+                                {
+                                    CourseInfoId = newID,
+                                    Status = "Unscheduled"
+                                };
+
+                                await _dbContext.StudentCourseInfo.AddAsync(courseInfoData);
+                                await _dbContext.StudentCourseInfoScheduleExam.AddAsync(courseInfoScheduleExamData);
+                            }
+                            catch (DbUpdateException dbEx)
+                            {
+                                await transaction.RollbackAsync();
+                                _logger.LogError(dbEx, "Database error creating course");
+                                return new ResponseDto { IsSuccess = false, Message = "Database operation failed." };
+                            }
+                            catch (Exception ex)
+                            {
+                                await transaction.RollbackAsync();
+                                _logger.LogError(ex, "System error creating course");
+                                return new ResponseDto { IsSuccess = false, Message = "System error processing request." };
+                            }
+                        }
+
+                        await _dbContext.SaveChangesAsync();
+                        await transaction.CommitAsync();
+                    }
+                }
+
+                return new ResponseDto
+                {
+                    IsSuccess = true,
+                    Message = "Students successfully marked as graded."
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to marked as graded.");
+                return new ResponseDto
+                {
+                    IsSuccess = false,
+                    Message = "Failed to marked as graded."
+                };
+            }
+        }
+
         private string GenerateCourseId(string level)
         {
             try
@@ -906,6 +1103,16 @@ namespace server.src.Repositories
                 "Regular" => tuitionId.Regular,
                 _ => 0
             };
+        }
+
+        private static string NextLevel(string oldLevel)
+        {
+            if (oldLevel == "A1") { return "A2"; }
+            if (oldLevel == "A2") { return "B1"; }
+            if (oldLevel == "B1") { return "B2"; }
+            if (oldLevel == "B2") { return "C1"; }
+            if (oldLevel == "C1") { return "C2"; }
+            else { return "Error"; }
         }
     }
 }
