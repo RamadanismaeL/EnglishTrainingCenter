@@ -1,9 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, AfterViewInit, ChangeDetectionStrategy } from '@angular/core';
 import { Chart, ChartOptions, ChartType, ChartDataset, registerables, ScatterDataPoint } from 'chart.js';
 import zoomPlugin from 'chartjs-plugin-zoom';
 import { BaseChartDirective } from 'ng2-charts';
 import { Subscription, interval } from 'rxjs';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {provideNativeDateAdapter} from '@angular/material/core';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { JsonPipe } from '@angular/common';
 
 // Registra todos os componentes necessários do Chart.js uma única vez
 Chart.register(...registerables, zoomPlugin);
@@ -25,14 +30,28 @@ Chart.register();
 @Component({
   selector: 'app-chart-financial-cash-flow',
   standalone: true,
+  providers: [provideNativeDateAdapter()],
   imports: [
     BaseChartDirective,
-    CommonModule
+    CommonModule,
+    MatFormFieldModule,
+    MatDatepickerModule,
+    FormsModule,
+    ReactiveFormsModule,
+    JsonPipe
   ],
   templateUrl: './chart-financial-cash-flow.component.html',
-  styleUrls: ['./chart-financial-cash-flow.component.scss']
+  styleUrls: ['./chart-financial-cash-flow.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ChartFinancialCashFlowComponent implements OnInit, AfterViewInit, OnDestroy {
+  readonly range = new FormGroup({
+    start: new FormControl<Date | null>(null),
+    end: new FormControl<Date | null>(null),
+  });
+
+  // chart
+
   @ViewChild(BaseChartDirective) chart?: BaseChartDirective;
 
   // Configurações do gráfico

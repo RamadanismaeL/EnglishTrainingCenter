@@ -74,3 +74,76 @@
     color: #666;
   }
 }
+
+
+// cards
+.revenue {
+  padding: 2px 0px;
+  cursor: pointer;
+  border: 2px solid #00ff80;
+  border-radius: 15px;
+}
+
+.cardRevenue {
+  &:hover {
+    .revenue {
+      background: #00ff80;
+      border: 2px solid #00ff80;
+      box-shadow: 0 0 5px #00ff80,
+                  0 0 20px #00ff80,
+                  0 0 50px #00ff80,
+                  0 0 100px #00ff80;
+    }
+
+    .textRevenue {
+      font-weight: 500;
+    }
+  }
+}
+
+.expense {
+  padding: 2px 0px;
+  border: 2px solid red;
+  border-radius: 15px;
+}
+
+.cardExpense {
+  &:hover {
+    .expense {
+      background: #ff0000;
+      border: 2px solid #ff0000;
+      box-shadow: 0 0 5px #ff0000,
+                  0 0 20px #ff0000,
+                  0 0 50px #ff0000,
+                  0 0 100px #ff0000;
+    }
+
+    .textExpense {
+      font-weight: 500;
+    }
+  }
+}
+
+.finalBalance {
+  padding: 2px 0px;
+  border: 2px solid rgb(0, 81, 255);
+  border-radius: 15px;
+}
+
+.cardFinalBalance {
+  &:hover {
+    .finalBalance {
+      background: #006eff;
+      border: 2px solid #006eff;
+      box-shadow: 0 0 5px #006eff,
+                  0 0 20px #006eff,
+                  0 0 50px #006eff,
+                  0 0 100px #006eff;
+    }
+
+    .textFinalBalance {
+      font-weight: 500;
+    }
+  }
+}
+
