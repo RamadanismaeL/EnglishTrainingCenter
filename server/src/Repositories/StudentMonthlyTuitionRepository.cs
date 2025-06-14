@@ -77,7 +77,7 @@ namespace server.src.Repositories
                 var receiptData = new StudentMonthlyTuitionModel
                 {
                     Id = newID,
-                    Description = monthlyTuitionCreateDto.Description,
+                    Description = $"{referenceMonthDate:MMMM}Tuition Fee",
                     ReferenceMonthDate = referenceMonthDate,
                     DueDate = dueDate,
                     Status = GetStatus(dueDate, monthlyTuitionCreateDto.PaymentId!),

@@ -9,6 +9,7 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MySqlConnector;
+using Quartz;
 using server.src.Data;
 using server.src.Interfaces;
 using server.src.Models;
@@ -18,6 +19,7 @@ namespace server.src.Configs
 {
     public static class ServiceManager
     {
+        [Obsolete]
         public static void Configure(IServiceCollection services, IConfiguration configuration)
         {
             var logger = LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<Program>();
@@ -68,6 +70,45 @@ namespace server.src.Configs
 
                 services.AddScoped<IConverter, SynchronizedConverter>(_ => new SynchronizedConverter(new PdfTools()));
                 services.AddSingleton<IDocumentRepository, DocumentRepository>();
+
+
+                // Configuração do Quartz para controle de mensalidades
+                services.AddQuartz(q =>
+                {
+                    q.UseMicrosoftDependencyInjectionJobFactory();
+
+                    // Definindo o Job para controle de mensalidades e processar jobs perdidos ao reiniciar
+                    q.AddJob<MonthlyTuitionJob>(j => j
+                        .WithIdentity("MonthlyTuitionJob")
+                        .StoreDurably()
+                        .WithDescription("Job para controle de mensalidades dos alunos"));
+
+                    q.AddTrigger(trigger => trigger
+                        .ForJob("MonthlyTuitionJob")
+                        .WithIdentity("MonthlyTuitionJobTrigger")
+                        .WithCronSchedule("0 2 0 1 1/1 ? *", x => x
+                            .InTimeZone(TimeZoneInfo.Local)
+                            .WithMisfireHandlingInstructionFireAndProceed())
+                            .StartAt(DateBuilder.EvenSecondDate(DateTimeOffset.UtcNow.AddSeconds(10)))
+                            .WithDescription("Dispara o job de mensalidades no dia 1 de cada mês às 00:02:00"));
+                    /*
+                    .StartNow()
+                    .WithSimpleSchedule(schedule => schedule
+                        .WithInterval(TimeSpan.FromMinutes(1)) // Executa a cada 1 minuto
+                        .RepeatForever()));
+                        
+                    // Processa jobs perdidos ao reiniciar
+                    q.UsePersistentStore(s =>
+                    {
+                        s.UseProperties = true;
+                        s.UseMySql(connectionString);
+                    });
+                    */
+                });
+
+                services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
+                // end config.. Quartz.Net
+
 
                 // Registro de serviços da aplicação
                 services.AddScoped<ITrainerRepository, TrainerRepository>();

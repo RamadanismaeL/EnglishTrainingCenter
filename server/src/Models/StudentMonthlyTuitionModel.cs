@@ -15,7 +15,7 @@ namespace server.src.Models
         public DateTime? ReferenceMonthDate { get; set; } // = new DateTime(2023, 5, 1)
         public DateTime? DueDate { get; set; } // Após a data de vencimento os alunos serão suspensos
         // DueDate = new DateTime(2023, 5, 10),
-        public string Status { get; set; } = string.Empty; // Cancelled, Not Paid, Paid, Overdue
+        public string Status { get; set; } = string.Empty; // Cancelled, Pending, Paid, Overdue
         public string TrainerName { get; set; } = string.Empty;
         public DateTime? DateRegister { get; set; }
         public DateTime? DateUpdate { get; set; }

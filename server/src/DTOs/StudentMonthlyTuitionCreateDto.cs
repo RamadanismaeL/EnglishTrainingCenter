@@ -8,6 +8,5 @@ namespace server.src.DTOs
     {
         public string StudentId { get; set; } = string.Empty;
         public string? PaymentId { get; set; }
-        public string Description { get; set; } = string.Empty;
     }
 }
