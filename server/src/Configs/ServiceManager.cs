@@ -19,7 +19,6 @@ namespace server.src.Configs
 {
     public static class ServiceManager
     {
-        [Obsolete]
         public static void Configure(IServiceCollection services, IConfiguration configuration)
         {
             var logger = LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<Program>();
@@ -75,9 +74,23 @@ namespace server.src.Configs
                 // Configuração do Quartz para controle de mensalidades
                 services.AddQuartz(q =>
                 {
-                    q.UseMicrosoftDependencyInjectionJobFactory();
+                    //q.UseMicrosoftDependencyInjectionJobFactory();
+                    q.UseSimpleTypeLoader();
 
-                    // Definindo o Job para controle de mensalidades e processar jobs perdidos ao reiniciar
+                    /*q.UsePersistentStore(s =>
+                    {
+                        s.UseProperties = true;
+                        s.PerformSchemaValidation = false;
+                        s.UseMySql(connectionString);
+                        s.UseClustering(c =>
+                        {
+                            c.CheckinInterval = TimeSpan.FromSeconds(20);
+                            c.CheckinMisfireThreshold = TimeSpan.FromSeconds(30);
+                        });
+                        s.SetProperty("quartz.serializer.type", "json");
+                    });*/
+
+                    // CREATE A MONTHLY TUITION JOB
                     q.AddJob<MonthlyTuitionJob>(j => j
                         .WithIdentity("MonthlyTuitionJob")
                         .StoreDurably()
@@ -86,29 +99,37 @@ namespace server.src.Configs
                     q.AddTrigger(trigger => trigger
                         .ForJob("MonthlyTuitionJob")
                         .WithIdentity("MonthlyTuitionJobTrigger")
-                        .WithCronSchedule("0 2 0 1 1/1 ? *", x => x
+                        //.StartNow()
+                        // 0 segundos 0 minutos 0 horas no dia 1 de cada mês, começando no mês de 1 - janeiro a dezembro
+                        .WithCronSchedule("0 0 0 1 1/1 ? *", x => x
                             .InTimeZone(TimeZoneInfo.Local)
                             .WithMisfireHandlingInstructionFireAndProceed())
-                            .StartAt(DateBuilder.EvenSecondDate(DateTimeOffset.UtcNow.AddSeconds(10)))
-                            .WithDescription("Dispara o job de mensalidades no dia 1 de cada mês às 00:02:00"));
-                    /*
-                    .StartNow()
-                    .WithSimpleSchedule(schedule => schedule
-                        .WithInterval(TimeSpan.FromMinutes(1)) // Executa a cada 1 minuto
-                        .RepeatForever()));
+                            .StartAt(DateBuilder.EvenSecondDate(DateTimeOffset.UtcNow.AddSeconds(5)))
+                            .EndAt(DateBuilder.DateOf(12, 0, 0, 21, 11, 2030)) // ⏰ Data final: 21/11/2030 às 12:00:00
+                        .WithDescription("Dispara o job de mensalidades no dia 1 de cada mês às 00:02:00"));
                         
-                    // Processa jobs perdidos ao reiniciar
-                    q.UsePersistentStore(s =>
-                    {
-                        s.UseProperties = true;
-                        s.UseMySql(connectionString);
-                    });
-                    */
+
+                    // UPDATE A MONTHLY TUITION JOB
+                    q.AddJob<MonthlyTuitionUpdateJob>(j => j
+                        .WithIdentity("MonthlyTuitionUpdateJob")
+                        .StoreDurably()
+                        .WithDescription("Job para controle de mensalidades dos alunos"));
+
+                    q.AddTrigger(trigger => trigger
+                        .ForJob("MonthlyTuitionUpdateJob")
+                        .WithIdentity("MonthlyTuitionUpdateJobTrigger")
+                        //.StartNow()
+                        // 0 segundos 0 minutos 0 horas no dia 11 de cada mês, começando no mês de 1 - janeiro a dezembro
+                        .WithCronSchedule("0 0 0 11 1/1 ? *", x => x
+                            .InTimeZone(TimeZoneInfo.Local)
+                            .WithMisfireHandlingInstructionFireAndProceed())
+                            .StartAt(DateBuilder.EvenSecondDate(DateTimeOffset.UtcNow.AddSeconds(5)))
+                            .EndAt(DateBuilder.DateOf(12, 0, 0, 22, 11, 2030)) // ⏰ Data final: 22/11/2030 às 12:00:00
+                        .WithDescription("Dispara o job de atualização de status das mensalidades no dia 11 de cada mês às 00:00:00"));
                 });
 
                 services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
                 // end config.. Quartz.Net
-
 
                 // Registro de serviços da aplicação
                 services.AddScoped<ITrainerRepository, TrainerRepository>();

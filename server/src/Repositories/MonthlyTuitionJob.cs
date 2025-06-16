@@ -20,51 +20,67 @@ namespace server.src.Repositories
 
         public async Task Execute(IJobExecutionContext context)
         {
-            var now = DateTime.Now;
-            var referenceMonthDate = new DateTime(now.Year, now.Month, 1);
-            var dueDate = new DateTime(now.Year, now.Month, 10);
-
-            var students = await _dbContext.StudentData
-                .AsNoTracking()
-                .Where(s => s.Status == "Active")
-                .Select(s => new
-                {
-                    s.Id,
-                    Course = s.CourseInfo!
-                        .FirstOrDefault(c => c.Status == "In Progress" && c.CurrentLevel)
-                })
-                .Where(x => x.Course != null)
-                .ToListAsync();
-
-            if (students.Count == 0)
+            _logger.LogInformation("MonthlyTuitionJob started at {Time}", DateTime.Now);
+            
+            try
             {
-                _logger.LogInformation("No active students found for monthly tuition.");
-                return;
-            }
-            _logger.LogInformation("Found {Count} active students for monthly tuition.", students.Count);
+                var now = DateTime.Now;
+                var referenceMonthDate = new DateTime(now.Year, now.Month, 1);
+                var dueDate = new DateTime(now.Year, now.Month, 10);
 
-            var existingStudentIds = await _dbContext.StudentMonthlyTuition
-                .Where(m => m.ReferenceMonthDate == referenceMonthDate)
-                .Select(m => m.StudentId)
-                .ToListAsync();
+                var students = await _dbContext.StudentData
+                    .AsNoTracking()
+                    .Where(s => s.Status == "Active")
+                    .Select(s => new
+                    {
+                        s.Id,
+                        Course = s.CourseInfo!
+                            .FirstOrDefault(c => c.Status == "In Progress" && c.CurrentLevel)
+                    })
+                    .Where(x => x.Course != null)
+                    .ToListAsync();
 
-            var receipts = students
-                .Where(s => !existingStudentIds.Contains(s.Id))
-                .Select(s => new StudentMonthlyTuitionModel
+                if (students.Count == 0)
                 {
-                    Id = GenerateMonthlyId(),
-                    Description = $"{referenceMonthDate:MMMM} Tuition Fee",
-                    ReferenceMonthDate = referenceMonthDate,
-                    DueDate = dueDate,
-                    Status = "Pending",
-                    TrainerName = "ETC Team",
-                    StudentId = s.Id,
-                    CourseInfoId = s.Course!.Id,
-                    PaymentId = null,
-                })
-                .ToList();
+                    _logger.LogInformation("No active students found for monthly tuition.");
+                    return;
+                }
+                _logger.LogInformation("Found {Count} active students for monthly tuition.", students.Count);
 
-            await _dbContext.BulkInsertAsync(receipts); //dotnet add package EFCore.BulkExtensions
+                foreach (var student in students)
+                {
+                    var existing = await _dbContext.StudentMonthlyTuition
+                        .AnyAsync(m => m.StudentId == student.Id && m.ReferenceMonthDate == referenceMonthDate);
+
+                    if (existing) continue;
+
+                    var newId = GenerateMonthlyId();
+                    if (newId is null) continue;
+
+                    var receipt = new StudentMonthlyTuitionModel
+                    {
+                        Id = newId,
+                        Description = $"{referenceMonthDate:MMMM} Tuition Fee",
+                        ReferenceMonthDate = referenceMonthDate,
+                        DueDate = dueDate,
+                        Status = "Pending",
+                        TrainerName = "ETC Team",
+                        StudentId = student.Id,
+                        CourseInfoId = student.Course!.Id,
+                        PaymentId = null,
+                    };
+
+                    await _dbContext.StudentMonthlyTuition.AddAsync(receipt);
+                    await _dbContext.SaveChangesAsync();
+                }
+
+                _logger.LogInformation("Monthly tuition created successfully at {Time} : ", DateTime.Now);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred in MonthlyTuitionJob at {Time}", DateTime.Now);
+                throw;
+            }
         }
         
         private string GenerateMonthlyId()
@@ -80,7 +96,9 @@ namespace server.src.Repositories
                 int year = DateTime.Now.Year;
                 int month = DateTime.Now.Month;
 
-                return $"{year}{month}{nextOrder}";
+                string newID = $"{year}{month:D2}-{nextOrder}";
+
+                return newID;
             }
             catch (Exception ex)
             {

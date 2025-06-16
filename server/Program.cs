@@ -11,7 +11,7 @@ using server.src.Signalr;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
+builder.Services.AddSingleton<IConverter>(new SynchronizedConverter(new PdfTools()));
 
 ServiceManager.Configure(builder.Services, builder.Configuration);
 

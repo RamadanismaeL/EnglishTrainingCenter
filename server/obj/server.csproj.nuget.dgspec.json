@@ -52,6 +52,10 @@
               "target": "Package",
               "version": "[9.0.1, )"
             },
+            "EFCore.BulkExtensions.MySql": {
+              "target": "Package",
+              "version": "[9.0.0-rc.1, )"
+            },
             "FluentValidation.AspNetCore": {
               "target": "Package",
               "version": "[11.3.0, )"
@@ -100,6 +104,10 @@
               "target": "Package",
               "version": "[9.0.3, )"
             },
+            "MySql.Data": {
+              "target": "Package",
+              "version": "[9.3.0, )"
+            },
             "Pomelo.EntityFrameworkCore.MySql": {
               "target": "Package",
               "version": "[9.0.0-preview.3.efcore.9.0.0, )"
@@ -113,6 +121,10 @@
               "version": "[3.14.0, )"
             },
             "Quartz.Extensions.Hosting": {
+              "target": "Package",
+              "version": "[3.14.0, )"
+            },
+            "Quartz.Serialization.Json": {
               "target": "Package",
               "version": "[3.14.0, )"
             },
