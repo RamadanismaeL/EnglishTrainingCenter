@@ -6,18 +6,18 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Subscription, switchMap } from 'rxjs';
-import { CourseInfoModel } from '../../../../_interfaces/course-info-model';
+import { lastValueFrom, Subscription, switchMap, timeout } from 'rxjs';
 import { StudentPaymentCreateDto } from '../../../../_interfaces/student-payment-create-dto';
 import { StudentComponent } from '../../../../_pages/Enrollment/student/student.component';
-import { EnrollmentPaymentService } from '../../../../_services/enrollment-payment.service';
-import { EnrollmentStudentService } from '../../../../_services/enrollment-student.service';
 import { NotificationHubService } from '../../../../_services/notification-hub.service';
 import { SettingService } from '../../../../_services/setting.service';
 import { SnackBarService } from '../../../../_services/snack-bar.service';
 import { StepperEnrollmentService } from '../../../../_services/stepper-enrollment.service';
 import { StudentsService } from '../../../../_services/students.service';
 import { MonthlyTuitionPaymentSuccessComponent } from '../monthly-tuition-payment-success/monthly-tuition-payment-success.component';
+import { PaymentPayNowCreateService } from '../../../../_services/payment-pay-now-create.service';
+import { PaymentPayNowMonthlyTuitionService } from '../../../../_services/payment-pay-now-monthly-tuition.service';
+import { StudentCourseInfoService } from '../../../../_services/student-course-info.service';
 
 @Component({
   selector: 'app-monthly-tuition-payment-main',
@@ -43,23 +43,18 @@ export class MonthlyTuitionPaymentMainComponent implements OnInit, OnDestroy {
 
   private subs = new Subscription();
 
-  constructor(private stepperService: StepperEnrollmentService, private enrollmentStudentService: EnrollmentStudentService, private settingService: SettingService, private alert: SnackBarService, private studentService: StudentsService, private notificationHub: NotificationHubService, private enrollmentPaymentService: EnrollmentPaymentService)
+  constructor(private stepperService: StepperEnrollmentService, private alert: SnackBarService, private studentService: StudentsService, private notificationHub: NotificationHubService, private paymentPayNowCreate: PaymentPayNowCreateService, private payNowMonthlyTuition: PaymentPayNowMonthlyTuitionService, private studentCourseInfo: StudentCourseInfoService)
   {
     this.subs.add(
       this.stepperService.activeStep$.subscribe(step => {
         this.currentStep = step;
       })
     );
-    this.resetStepper();
+    this.stepperService.setActiveStep(0);
   }
 
   ngAfterViewInit(): void {
     this.stepper._steps.forEach(step => { step.select = () => {}; })
-  }
-
-  resetStepper() {
-    this.stepper.reset();
-    this.stepperService.setActiveStep(0);
   }
 
   ngOnInit(): void {
@@ -78,13 +73,7 @@ export class MonthlyTuitionPaymentMainComponent implements OnInit, OnDestroy {
 
   private loadDetails()
   {
-    this.subs.add(
-      this.settingService.detailsAmountMt().subscribe(data => {
-        const enr = data.find(d => d.id === 'EnrollmentFee');
-
-        this.enrollmentFee = `${this.formatAmount(enr?.amountMT)} MT`;
-      })
-    );
+    this.enrollmentFee = `${this.formatAmount(this.payNowMonthlyTuition.currentEnrollment.amountToPay)} MT`;
   }
 
   private initializeForm() : void {
@@ -129,77 +118,46 @@ export class MonthlyTuitionPaymentMainComponent implements OnInit, OnDestroy {
 
   @ViewChild('studentPaymentTuitionFormRef') studentPaymentTuitionFormRef!: ElementRef<HTMLFormElement>;
 
-  confirm() {
-    if (!this.form.valid) {
+  async confirm() {
+    if (!this.form.valid || this.payNowMonthlyTuition == null) {
+      this.alert.show('Please complete all required fields correctly', 'warning');
       return;
     }
 
-    //console.log("Student Data = ",this.enrollmentStudentService.currentEnrollment)
+    try {
+      // 1. Criação do payload com validação adicional
+      const paymentData = {
+        studentId: this.payNowMonthlyTuition.currentEnrollment.studentId,
+        courseFeeId: null,
+        receivedFrom: this.capitalizeWords(this.form.value.receivedFrom.trim()),
+        description: this.payNowMonthlyTuition.currentEnrollment.description,
+        method: this.form.value.paymentMethod, // Default value
+        amountMT: this.payNowMonthlyTuition.currentEnrollment.amountToPay
+      };
 
-    this.subs.add(
-      this.studentService.create(this.enrollmentStudentService.currentEnrollment).pipe(
-        switchMap(() => this.studentService.getStudentById()),
-        switchMap((studentId: string) => {
-          const paymentDetails = this.createPaymentDetails(studentId);
-          const courseInfo = this.createCourseInfo(studentId);
+      // 2. Processamento principal com tratamento de erros específico
+      await lastValueFrom(
+        this.studentService.createStudentPayment(paymentData).pipe(
+          switchMap(() => {
+            const orderRef = this.payNowMonthlyTuition.currentEnrollment?.orderMonthlyTuition;
+            return this.studentCourseInfo.statusMonthlyTuition(
+              typeof orderRef === 'number' ? orderRef : 0,
+              "Paid"
+            );
+          }),
+          timeout(8000) // Timeout para evitar chamadas penduradas
+        )
+      );
 
-          this.enrollmentPaymentService.setEnrollmentStudent(paymentDetails);
+      // 3. Ações pós-sucesso
+      this.payNowMonthlyTuition.clear();
+      this.alert.show('Payment processed successfully!', 'success');
+      this.notificationHub.sendMessage("Monthly tuition paid successfully");
+      this.stepperService.setActiveStep(1);
 
-          // Chamada para salvar o Course Info — Agora garantida no fluxo
-          return this.studentService.createStudentCourseInfo(courseInfo).pipe(
-            switchMap(() => {
-              // Só após salvar o Course Info, ele cria o pagamento
-              return this.studentService.createStudentPayment(this.createPaymentDetails(studentId));
-            })
-          );
-        })
-      ).subscribe({
-        next: () => {
-          this.studentComponent.resetForm();
-          this.form.reset();
-          this.studentPaymentTuitionFormRef.nativeElement.reset();
-          this.enrollmentStudentService.clear();
-          this.alert.show('Registration completed successfully!', 'success');
-          this.notificationHub.sendMessage("Initialize enrollment form.");
-          this.stepperService.setActiveStep(2);
-        },
-        error: (error) => {
-          console.error("Erro no processo:", error);
-          this.handleError(error);
-        }
-      })
-    );
-  }
-
-  private createCourseInfo(studentId: string): CourseInfoModel {
-    return {
-      studentId: studentId,
-      package: this.enrollmentStudentService.currentEnrollment.package,
-      level: this.enrollmentStudentService.currentEnrollment.level,
-      modality: this.enrollmentStudentService.currentEnrollment.modality,
-      academicPeriod: this.enrollmentStudentService.currentEnrollment.academicPeriod,
-      schedule: this.enrollmentStudentService.currentEnrollment.schedule
-    };
-  }
-
-  private createPaymentDetails(studentId: string): StudentPaymentCreateDto {
-    //const today = new Date();
-    return {
-      studentId: studentId,
-      courseFeeId: null,
-      receivedFrom: this.capitalizeWords(this.form.value.receivedFrom),
-      description: 'Enrollment',
-      method: this.form.value.paymentMethod,
-      amountMT: this.parseNumber(this.enrollmentFee)
-      /*
-      times: today.toLocaleTimeString('en-US', {
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false
-      })
-        */
-    };
+    } catch (error) {
+      console.error('Payment Error:', error);
+    }
   }
 
   private capitalizeWords(value: string): string {
@@ -212,20 +170,6 @@ export class MonthlyTuitionPaymentMainComponent implements OnInit, OnDestroy {
           : ''
       )
       .join(' ');
-  }
-
-  private handleError(error: HttpErrorResponse) {
-    if (error.status === 400) {
-      this.alert.show('An error occurred.', 'error');
-    } else if (error.status === 401) {
-      this.alert.show('Oops! Unauthorized!', 'error');
-    } else if (error.status === 404) {
-      this.alert.show('Oops! Not found!', 'error');
-    } else if (error.status >= 500) {
-      this.alert.show('Oops! The server is busy!', 'error');
-    } else {
-      this.alert.show('Oops! An unexpected error occurred.', 'error');
-    }
   }
 }
 

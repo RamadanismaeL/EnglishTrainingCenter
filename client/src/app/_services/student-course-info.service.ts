@@ -70,6 +70,6 @@ export class StudentCourseInfoService {
   getMonthlyTuitionPaymentList = () : Observable<MonthlyTuitionPaymentListDto> => this.http
       .get<MonthlyTuitionPaymentListDto>(`${this.myUrl}/StudentMonthlyTuition/get-monthly-tuition-payment-list`, {headers : { 'Allow-Offline' : 'true' }});
 
-    cancelStatusMonthlyTuition = (order: number) : Observable<ResponseDto> => this.http
-        .patch<ResponseDto>(`${this.myUrl}/StudentMonthlyTuition/cancel-status-monthly-tuition/${order}`, {headers : { 'Allow-Offline' : 'true' }});
+    statusMonthlyTuition = (order: number, status: string) : Observable<ResponseDto> => this.http
+        .patch<ResponseDto>(`${this.myUrl}/StudentMonthlyTuition/status-monthly-tuition/${order}/${status}`, {headers : { 'Allow-Offline' : 'true' }});
 }

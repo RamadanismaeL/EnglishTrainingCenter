@@ -101,6 +101,12 @@ export const routes: Routes = [
         outlet : 'ramRouter'
       },
       {
+        path : 'monthly-tuition-pay-now',
+        loadComponent: () =>
+          import('./_components/payment/MonthlyTuition/monthly-tuition-payment-main/monthly-tuition-payment-main.component').then(m => m.MonthlyTuitionPaymentMainComponent),
+        outlet : 'ramRouter'
+      },
+      {
         path : 'student-active',
         component : StudentActiveComponent,
         outlet : 'ramRouter'

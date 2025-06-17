@@ -223,7 +223,7 @@ namespace server.src.Repositories
             }
         }
 
-        public async Task<ResponseDto> CancelStatus(long order)
+        public async Task<ResponseDto> UpdateStatusMonthly(long order, string status)
         {
             try
             {
@@ -272,7 +272,7 @@ namespace server.src.Repositories
                     };
                 }
 
-                courseId.Status = "Canceled";
+                courseId.Status = status;
                 courseId.TrainerName = trainerName!;
                 courseId.DateUpdate = DateTime.Now;
 
@@ -281,7 +281,7 @@ namespace server.src.Repositories
                 return new ResponseDto
                 {
                     IsSuccess = true,
-                    Message = "Monthly tuition canceled successfuly."
+                    Message = "Monthly tuition cancelled successfuly."
                 };
             }
             catch (Exception ex)

@@ -51,7 +51,7 @@ export class EnrollmentComponent implements OnInit, OnDestroy {
         this.currentStep = step;
       })
     );
-    this.resetStepper();
+    this.stepperService.setActiveStep(0);
   }
 
   ngAfterViewInit(): void {

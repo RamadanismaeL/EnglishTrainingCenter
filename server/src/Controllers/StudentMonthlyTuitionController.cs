@@ -50,8 +50,8 @@ namespace server.src.Controllers
             return response.IsSuccess ? Ok(response) : BadRequest(response);
         }
 
-        [HttpPatch("cancel-status-monthly-tuition/{order}")]
-        public async Task<IActionResult> CancelStatus([FromRoute] long order)
+        [HttpPatch("status-monthly-tuition/{order}/{status}")]
+        public async Task<IActionResult> UpdateStatusMonthly([FromRoute] long order, string status)
         {
             if (order <= 0)
             {
@@ -62,7 +62,7 @@ namespace server.src.Controllers
                 });
             }
 
-            var response = await _studentMonthlyTuitionRepository.CancelStatus(order);
+            var response = await _studentMonthlyTuitionRepository.UpdateStatusMonthly(order, status);
 
             // Notifica todos os clientes conectados
             await _hubContext.Clients.All.SendAsync("ReceiveMessage", "Status cancelled successfully.");

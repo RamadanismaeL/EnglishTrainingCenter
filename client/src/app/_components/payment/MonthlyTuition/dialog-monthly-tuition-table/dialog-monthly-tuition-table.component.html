@@ -2,7 +2,8 @@
   <button mat-icon-button
   type="button"
   style="color: #19d232; font-size: 26px; cursor: pointer;"
-  (click)="onPayNow()"
+  [routerLink]="['/', { outlets : { ramRouter: ['monthly-tuition-pay-now'] } }]"
+  (click)="navigateTo({ label: 'MONTHLY TUITION', url: ['/', {outlets: {ramRouter: ['monthly-tuition-pay-now']}}]})"
   matTooltip="Pay Now"
   [matTooltipPosition]="positionL.value!"
   matTooltipHideDelay="50">

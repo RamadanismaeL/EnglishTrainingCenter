@@ -5,6 +5,7 @@ export interface MonthlyTuitionPaymentListDto {
   "package": string
   "level": string
   "modality": string
+  "amount": number
   "amountFormatted": number
   "description": string
   "startDate": string

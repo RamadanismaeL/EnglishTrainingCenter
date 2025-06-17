@@ -150,7 +150,7 @@ matTooltipHideDelay="50">
     <span routerLinkActive="active-btn"
     [routerLink]="['/', {outlets: {ramRouter: ['payments']}}]"
     (click)="navigateTo([
-      { label: 'PAYMENTS' }
+      { label: 'PAYMENTS', url: ['/', {outlets: {ramRouter: ['payments']}}] }
     ])"
     class="btnLeft flex items-center p-2 rounded">
       <a class="flex items-center gap-4">
