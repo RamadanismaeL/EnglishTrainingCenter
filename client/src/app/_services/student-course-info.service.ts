@@ -11,6 +11,7 @@ import { StudentCourseInfoUpdateDto } from '../_interfaces/student-course-info-u
 import { StudentCourseInfoUpdateListDto } from '../_interfaces/student-course-info-update-list-dto';
 import { StudentExamsUnscheduledDto } from '../_interfaces/student-exams-unscheduled-dto';
 import { StudentExamsScheduledDto } from '../_interfaces/student-exams-scheduled-dto';
+import { MonthlyTuitionPaymentListDto } from '../_interfaces/monthly-tuition-payment-list-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -65,4 +66,10 @@ export class StudentCourseInfoService {
 
   setAsGraded = (id : string[]) : Observable<ResponseDto> => this.http
         .patch<ResponseDto>(`${this.myUrl}/StudentCourseInfo/set-as-graded`, id, {headers : { 'Allow-Offline' : 'true' }});
+
+  getMonthlyTuitionPaymentList = () : Observable<MonthlyTuitionPaymentListDto> => this.http
+      .get<MonthlyTuitionPaymentListDto>(`${this.myUrl}/StudentMonthlyTuition/get-monthly-tuition-payment-list`, {headers : { 'Allow-Offline' : 'true' }});
+
+    cancelStatusMonthlyTuition = (order: number) : Observable<ResponseDto> => this.http
+        .patch<ResponseDto>(`${this.myUrl}/StudentMonthlyTuition/cancel-status-monthly-tuition/${order}`, {headers : { 'Allow-Offline' : 'true' }});
 }

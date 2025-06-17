@@ -40,14 +40,41 @@ namespace server.src.Controllers
 
         [HttpPut("update")]
         public async Task<IActionResult> Update(StudentMonthlyTuitionUpdateDto monthlyTuitionUpdateDto)
-        {            
-            if(!ModelState.IsValid) return BadRequest(ModelState);
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
             var response = await _studentMonthlyTuitionRepository.Update(monthlyTuitionUpdateDto);
             // Notifica todos os clientes conectados
-            await _hubContext.Clients.All.SendAsync("ReceiveMessage", "Monthly tuition updated successfully."); 
+            await _hubContext.Clients.All.SendAsync("ReceiveMessage", "Monthly tuition updated successfully.");
 
             return response.IsSuccess ? Ok(response) : BadRequest(response);
+        }
+
+        [HttpPatch("cancel-status-monthly-tuition/{order}")]
+        public async Task<IActionResult> CancelStatus([FromRoute] long order)
+        {
+            if (order <= 0)
+            {
+                return BadRequest(new ResponseDto
+                {
+                    IsSuccess = false,
+                    Message = "Invalid order number."
+                });
+            }
+
+            var response = await _studentMonthlyTuitionRepository.CancelStatus(order);
+
+            // Notifica todos os clientes conectados
+            await _hubContext.Clients.All.SendAsync("ReceiveMessage", "Status cancelled successfully.");
+
+            return response.IsSuccess ? Ok(response) : BadRequest(response);
+        }
+
+        [HttpGet("get-monthly-tuition-payment-list")]
+        public async Task<ActionResult<List<MonthlyTuitionPaymentListDto>>> GetMonthlyTuitionPaymentList()
+        {
+            var monthlyTuition = await _studentMonthlyTuitionRepository.GetMonthlyTuitionPaymentList();
+            return Ok(monthlyTuition);
         }
     }
 }

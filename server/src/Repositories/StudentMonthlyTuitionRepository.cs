@@ -223,6 +223,113 @@ namespace server.src.Repositories
             }
         }
 
+        public async Task<ResponseDto> CancelStatus(long order)
+        {
+            try
+            {
+                var userPrincipal = _httpContextAccessor.HttpContext?.User;
+                if (userPrincipal is null)
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "User not authenticated."
+                    };
+                }
+
+                var userId = userPrincipal.FindFirst(ClaimTypes.NameIdentifier);
+                if (userId is null)
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "User not found."
+                    };
+                }
+
+                var userIdValue = userId.Value;
+                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userIdValue);
+                if (user is null)
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "User not found."
+                    };
+                }
+
+                var usernameClaim = _httpContextAccessor.HttpContext?.User.FindFirst(JwtRegisteredClaimNames.Name);
+
+                var trainerName = usernameClaim?.Value;
+
+                var courseId = await _dbContext.StudentMonthlyTuition.FindAsync(order);
+                if (courseId is null)
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "Course ID not found."
+                    };
+                }
+
+                courseId.Status = "Canceled";
+                courseId.TrainerName = trainerName!;
+                courseId.DateUpdate = DateTime.Now;
+
+                await _dbContext.SaveChangesAsync();
+
+                return new ResponseDto
+                {
+                    IsSuccess = true,
+                    Message = "Monthly tuition canceled successfuly."
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to update course.");
+                return new ResponseDto
+                {
+                    IsSuccess = false,
+                    Message = "Failed to update course."
+                };
+            }
+        }
+
+
+        public async Task<List<MonthlyTuitionPaymentListDto>> GetMonthlyTuitionPaymentList()
+        {
+            try
+            {
+                var query = _dbContext.StudentMonthlyTuition
+                    .AsNoTracking()
+                    .Where(m => m.Status == "Pending" || m.Status == "Overdue")
+                    .Select(m => new MonthlyTuitionPaymentListDto
+                    {
+                        OrderMonthlyTuition = m.Order,
+                        StudentID = m.StudentId,
+                        FullName = m.StudentData!.FullName,
+                        Package = m.CourseInfoData!.Package,
+                        Level = m.CourseInfoData!.Level,
+                        Modality = m.CourseInfoData!.Modality,
+                        Amount = m.CourseInfoData!.MonthlyFee,
+                        Description = m.Description,
+                        StartDate = m.DateRegister != null ? m.DateRegister.Value.ToString("dd/MM/yyyy") : "",
+                        DueDate = m.DueDate != null ? m.DueDate.Value.ToString("dd/MM/yyyy") : "",
+                        Status = m.Status
+                    })
+                    .OrderBy(m => m.Level)
+                    .ThenBy(m => m.FullName);
+
+                var result = await query.ToListAsync();
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving active student list");
+                throw;
+            }
+        }
         private string GenerateMonthlyId()
         {
             try

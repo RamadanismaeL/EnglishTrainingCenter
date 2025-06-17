@@ -218,6 +218,9 @@ namespace server.src.Repositories
                 checkCourse.Modality = studentCourseUpdateDto.Modality;
                 checkCourse.AcademicPeriod = studentCourseUpdateDto.AcademicPeriod;
                 checkCourse.Schedule = studentCourseUpdateDto.Schedule;
+                checkCourse.MonthlyFee = GetSettingsMonthlyTuition(
+                        $"{inProgressCourse.Level}-{studentCourseUpdateDto.Modality}",
+                        studentCourseUpdateDto.Package);
                 checkCourse.TrainerName = trainerName!;
                 checkCourse.DateUpdate = DateTime.Now;
 

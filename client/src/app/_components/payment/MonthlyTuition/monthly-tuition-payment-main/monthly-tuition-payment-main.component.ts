@@ -2,25 +2,25 @@ import { Component, ElementRef, inject, OnDestroy, OnInit, ViewChild } from '@an
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatStepper, MatStepperModule } from '@angular/material/stepper';
-import { StudentComponent } from "../../_pages/Enrollment/student/student.component";
-import { StepperEnrollmentService } from '../../_services/stepper-enrollment.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { SucessEnrollmentComponent } from "../../_pages/Enrollment/sucess-enrollment/sucess-enrollment.component";
-import { EnrollmentStudentService } from '../../_services/enrollment-student.service';
-import { SettingService } from '../../_services/setting.service';
-import { StudentPaymentCreateDto } from '../../_interfaces/student-payment-create-dto';
-import { SnackBarService } from '../../_services/snack-bar.service';
 import { HttpErrorResponse } from '@angular/common/http';
-import { StudentsService } from '../../_services/students.service';
 import { Subscription, switchMap } from 'rxjs';
-import { NotificationHubService } from '../../_services/notification-hub.service';
-import { EnrollmentPaymentService } from '../../_services/enrollment-payment.service';
-import { CourseInfoModel } from '../../_interfaces/course-info-model';
+import { CourseInfoModel } from '../../../../_interfaces/course-info-model';
+import { StudentPaymentCreateDto } from '../../../../_interfaces/student-payment-create-dto';
+import { StudentComponent } from '../../../../_pages/Enrollment/student/student.component';
+import { EnrollmentPaymentService } from '../../../../_services/enrollment-payment.service';
+import { EnrollmentStudentService } from '../../../../_services/enrollment-student.service';
+import { NotificationHubService } from '../../../../_services/notification-hub.service';
+import { SettingService } from '../../../../_services/setting.service';
+import { SnackBarService } from '../../../../_services/snack-bar.service';
+import { StepperEnrollmentService } from '../../../../_services/stepper-enrollment.service';
+import { StudentsService } from '../../../../_services/students.service';
+import { MonthlyTuitionPaymentSuccessComponent } from '../monthly-tuition-payment-success/monthly-tuition-payment-success.component';
 
 @Component({
-  selector: 'app-enrollment',
+  selector: 'app-monthly-tuition-payment-main',
   imports: [
     MatStepperModule,
     MatIconModule,
@@ -28,18 +28,17 @@ import { CourseInfoModel } from '../../_interfaces/course-info-model';
     ReactiveFormsModule,
     MatInputModule,
     MatSelectModule,
-    StudentComponent,
-    SucessEnrollmentComponent
-],
-  templateUrl: './enrollment.component.html',
-  styleUrl: './enrollment.component.scss'
+    MonthlyTuitionPaymentSuccessComponent
+  ],
+  templateUrl: './monthly-tuition-payment-main.component.html',
+  styleUrl: './monthly-tuition-payment-main.component.scss'
 })
-export class EnrollmentComponent implements OnInit, OnDestroy {
+export class MonthlyTuitionPaymentMainComponent implements OnInit, OnDestroy {
   private readonly fb = inject(FormBuilder);
   previousAmountValue: string = '';
   form! : FormGroup;
   currentStep?: number;
-  @ViewChild('stepperEnrollment') stepper!: MatStepper;
+  @ViewChild('stepperTuition') stepper!: MatStepper;
   enrollmentFee: string | undefined = '--';
 
   private subs = new Subscription();
@@ -128,7 +127,7 @@ export class EnrollmentComponent implements OnInit, OnDestroy {
 
   @ViewChild(StudentComponent) studentComponent!: StudentComponent;
 
-  @ViewChild('studentPaymentFormRef') studentPaymentFormRef!: ElementRef<HTMLFormElement>;
+  @ViewChild('studentPaymentTuitionFormRef') studentPaymentTuitionFormRef!: ElementRef<HTMLFormElement>;
 
   confirm() {
     if (!this.form.valid) {
@@ -158,7 +157,7 @@ export class EnrollmentComponent implements OnInit, OnDestroy {
         next: () => {
           this.studentComponent.resetForm();
           this.form.reset();
-          this.studentPaymentFormRef.nativeElement.reset();
+          this.studentPaymentTuitionFormRef.nativeElement.reset();
           this.enrollmentStudentService.clear();
           this.alert.show('Registration completed successfully!', 'success');
           this.notificationHub.sendMessage("Initialize enrollment form.");

@@ -13,5 +13,8 @@ namespace server.src.Interfaces
         Task<IEnumerable<StudentMonthlyTuitionModel>> GetAllMonthlyTuition();
 
         Task<ResponseDto> Update(StudentMonthlyTuitionUpdateDto monthlyTuitionUpdateDto);
+        Task<ResponseDto> CancelStatus(long order);
+
+        Task<List<MonthlyTuitionPaymentListDto>> GetMonthlyTuitionPaymentList();
     }
 }

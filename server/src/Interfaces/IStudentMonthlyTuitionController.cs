@@ -13,5 +13,7 @@ namespace server.src.Interfaces
         Task<IActionResult> Create([FromBody] StudentMonthlyTuitionCreateDto monthlyTuitionCreateDto);
         Task<ActionResult<IEnumerable<StudentMonthlyTuitionModel>>> GetAllMonthlyTuition();
         Task<IActionResult> Update(StudentMonthlyTuitionUpdateDto monthlyTuitionUpdateDto);
+        Task<IActionResult> CancelStatus([FromRoute] long order);
+        Task<ActionResult<List<MonthlyTuitionPaymentListDto>>> GetMonthlyTuitionPaymentList();
     }
 }

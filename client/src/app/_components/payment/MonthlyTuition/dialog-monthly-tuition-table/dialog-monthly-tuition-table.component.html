@@ -1,0 +1,20 @@
+<div class="flex justify-center gap-4">
+  <button mat-icon-button
+  type="button"
+  style="color: #19d232; font-size: 26px; cursor: pointer;"
+  (click)="onPayNow()"
+  matTooltip="Pay Now"
+  [matTooltipPosition]="positionL.value!"
+  matTooltipHideDelay="50">
+    <mat-icon>payment</mat-icon>
+  </button>
+  <button mat-icon-button
+  type="button"
+  style="color: red; font-size: 26px; cursor: pointer;"
+  (click)="onCancel()"
+  matTooltip="Cancel"
+  [matTooltipPosition]="positionL.value!"
+  matTooltipHideDelay="50">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
