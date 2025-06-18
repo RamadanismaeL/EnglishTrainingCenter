@@ -158,9 +158,17 @@ namespace server.src.Controllers
         }
 
         [HttpGet("get-list-student-inactive")]
-        public async  Task<ActionResult<IEnumerable<ListStudentActiveDto>>> GetListStudentInactive()
+        public async Task<ActionResult<IEnumerable<ListStudentActiveDto>>> GetListStudentInactive()
         {
             var student = await _studentRepository.GetListStudentInactive();
+
+            return Ok(student);
+        }
+        
+        [HttpGet("get-list-student-balance")]
+        public async  Task<ActionResult<IEnumerable<StudentBalanceList>>> GetListStudentBalance()
+        {
+            var student = await _studentRepository.GetListStudentBalance();
 
             return Ok(student);
         }

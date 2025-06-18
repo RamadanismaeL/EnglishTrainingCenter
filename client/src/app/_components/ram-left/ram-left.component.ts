@@ -181,9 +181,10 @@ export class RamLeftComponent implements OnInit, OnDestroy {
         // Financials
         if ((currentUrl === ('/(ramRouter:financial-expense)')) ||
         (currentUrl === ('/(ramRouter:financial-revenue)')) ||
-        (currentUrl === ('/(ramRouter:financial-tuition)')) ||
+        (currentUrl === ('/(ramRouter:student-balance)')) ||
         (currentUrl === ('/(ramRouter:financial-cash-flow)')) ||
-        (currentUrl === ('/(ramRouter:financial-daily-report)'))
+        (currentUrl === ('/(ramRouter:financial-daily-report)')) ||
+        (currentUrl === ('/(ramRouter:financial-summary)'))
         )
         {
           this.financial = true;
@@ -211,7 +212,9 @@ export class RamLeftComponent implements OnInit, OnDestroy {
           this.financialRevenue = false;
         }
 
-        if (currentUrl === ('/(ramRouter:financial-tuition)'))
+        if ((currentUrl === ('/(ramRouter:student-balance)')) ||
+            (currentUrl === ('/(ramRouter:financial-summary)'))
+        )
         {
           this.financialTuition = true;
         }
@@ -357,9 +360,10 @@ export class RamLeftComponent implements OnInit, OnDestroy {
   private checkIfFinancialRoute(currentUrl: string): void {
     if ((currentUrl === ('/(ramRouter:financial-expense)')) ||
         (currentUrl === ('/(ramRouter:financial-revenue)')) ||
-        (currentUrl === ('/(ramRouter:financial-tuition)')) ||
+        (currentUrl === ('/(ramRouter:student-balance)')) ||
         (currentUrl === ('/(ramRouter:financial-cash-flow)')) ||
-        (currentUrl === ('/(ramRouter:financial-daily-report)'))
+        (currentUrl === ('/(ramRouter:financial-daily-report)')) ||
+        (currentUrl === ('/(ramRouter:financial-summary)'))
         )
         {
           this.financial = true;
@@ -387,7 +391,9 @@ export class RamLeftComponent implements OnInit, OnDestroy {
           this.financialRevenue = false;
         }
 
-        if (currentUrl === ('/(ramRouter:financial-tuition)'))
+        if ((currentUrl === ('/(ramRouter:student-balance)')) ||
+            (currentUrl === ('/(ramRouter:financial-summary)'))
+        )
         {
           this.financialTuition = true;
         }

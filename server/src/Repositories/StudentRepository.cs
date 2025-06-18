@@ -504,49 +504,6 @@ namespace server.src.Repositories
                 .ToListAsync();
         }
 
-        /*public async Task<List<StudentDataModel>> DetailStudentCourseInProgress()
-        {
-            return await _dbContext.StudentData
-                .AsNoTracking()
-                .Include(sc => sc.CourseInfo!.Where(c => c.Status == "In Progress"))
-                .Select(s => new StudentDataModel
-                {
-                    Order = s.Order,
-                    Id = s.Id,
-
-                    DocumentType = s.DocumentType,
-                    IdNumber = s.IdNumber,
-                    PlaceOfIssue = s.PlaceOfIssue,
-                    ExpirationDate = s.ExpirationDate,
-
-                    FullName = s.FullName,
-                    DateOfBirth = s.DateOfBirth,
-                    DateOfBirthCalc = s.DateOfBirthCalc,
-                    Gender = s.Gender,
-                    MaritalStatus = s.MaritalStatus,
-                    Nationality = s.Nationality,
-                    PlaceOfBirth = s.PlaceOfBirth,
-                    ResidentialAddress = s.ResidentialAddress,
-                    FirstPhoneNumber = s.FirstPhoneNumber,
-                    SecondPhoneNumber = s.SecondPhoneNumber,
-                    EmailAddress = s.EmailAddress,
-                    AdditionalNotes = s.AdditionalNotes,
-
-                    GuardFullName = s.GuardFullName,
-                    GuardRelationship = s.GuardRelationship,
-                    GuardFirstPhoneNumber = s.GuardFirstPhoneNumber,
-                    GuardSecondPhoneNumber = s.GuardSecondPhoneNumber,
-                    GuardEmailAddress = s.GuardEmailAddress,
-
-                    TrainerName = s.TrainerName,
-                    DateUpdate = s.DateUpdate,
-
-                    CourseInfo = s.CourseInfo!.Where(c => c.Status == "In Progress").ToList()
-                })
-                .OrderBy(s => s.FullName)
-                .ToListAsync();
-        }*/
-
         public async Task<StudentEnrollmentFormModel> GetStudentEnrollmentFormById(string id)
         {
             // Inclua StudentData e relacionamentos necessários
@@ -1024,6 +981,44 @@ namespace server.src.Repositories
                         Schedule = x.ActiveCourse.Schedule,
                         Status = x.Student.Status,
                         DateUpdate = x.Student.DateUpdate != null ? x.Student.DateUpdate.Value.ToString("dd/MM/yyyy") : ""
+                    })
+                    .OrderBy(s => s.FullName);
+
+                var result = await query.ToListAsync();
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving active student list");
+                throw;
+            }
+        }
+
+        public async Task<IEnumerable<StudentBalanceList>> GetListStudentBalance()
+        {
+            try
+            {
+                var currentDate = DateTime.Now;
+
+                var query = _dbContext.StudentData
+                    .AsNoTracking()
+                    .Select(s => new
+                    {
+                        Student = s,
+                        ActiveCourse = s.CourseInfo!.FirstOrDefault(c => c.Status == "In Progress" && c.CurrentLevel)
+                    })
+                    .Where(x => x.ActiveCourse != null)
+                    .Select(x => new StudentBalanceList
+                    {
+                        StudentID = x.Student.Id,
+                        FullName = x.Student.FullName,
+                        Gender = x.Student.Gender,
+                        Age = currentDate.Year - x.Student.DateOfBirthCalc.Year,
+                        Package = x.ActiveCourse!.Package,
+                        Level = x.ActiveCourse.Level,
+                        Modality = x.ActiveCourse.Modality,
+                        Status = x.Student.Status
                     })
                     .OrderBy(s => s.FullName);
 

@@ -1,0 +1,189 @@
+<div class="w-full flex gap-3 justify-between mb-5">
+  <div *ngIf="profileDetail$ | async as student"
+  class="w-1/3 shadow-xl rounded-3xl p-7 bg-white"
+  >
+    <div class="bg-[#536DFE] rounded-full text-white text-[40pt] font-medium shadow-md w-30 h-30 flex justify-center items-center mb-5">
+      {{ student.fullName.trim()[0].toUpperCase() }}
+    </div>
+
+    <hr class="border-slate-400">
+    <div class="flex flex-col gap-7 justify-start mt-5">
+      <div class="grid gap-5 w-48">
+
+        <div class="min-w-[1px]">
+          <div class="flex items-center gap-4 text-gray-600 font-bold">
+            <span class="material-icons">badge</span>
+            <div class="text-gray-600 truncate">
+              <div class="truncate">Code</div>
+              <div class="font-normal">{{ sutdentId }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="max-w-60">
+          <div class="flex items-center gap-4 text-gray-600 font-bold">
+            <span class="material-icons">person</span>
+            <div class="text-gray-600 truncate">
+              <div class="truncate">Full Name</div>
+              <div class="font-normal truncate">{{ student.fullName }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="min-w-[1px]">
+          <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+            <span class="material-icons">cake</span>
+            <div class="text-gray-600 truncate">
+              <div class="truncate">Date of Birth</div>
+              <div class="font-normal truncate">{{ student.dateOfBirth }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="min-w-[1px]">
+          <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+            <span class="material-icons">wc</span>
+            <div class="text-gray-600 truncate">
+              <div class="truncate">Gender</div>
+              <div class="font-normal truncate">
+                @if(student.gender == 'M')
+                { Male }
+                @else
+                { Female }
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="max-w-60">
+          <div class="flex items-center gap-4 text-gray-600 font-bold">
+            <span class="material-icons">home</span>
+            <div class="text-gray-600 truncate">
+              <div class="truncate">Residential Address</div>
+              <div class="font-normal truncate">{{ student.residentialAddress }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="min-w-[1px]">
+          <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+            <span class="material-icons">phone_in_talk</span>
+            <div class="text-gray-600 truncate">
+              <div class="truncate">Primary Phone</div>
+              <div class="font-normal truncate">
+                @if(student.firstPhoneNumber == null || student.firstPhoneNumber == '')
+                {--}
+                @else
+                { {{ student.firstPhoneNumber }} }
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="min-w-[1px]">
+          <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+            <span class="material-icons">call</span>
+            <div class="text-gray-600 truncate">
+              <div class="truncate">Alternative Phone</div>
+              <div class="font-normal truncate">
+                @if(student.secondPhoneNumber == null || student.secondPhoneNumber == '')
+                {--}
+                @else
+                { {{ student.secondPhoneNumber }} }
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <h1 class="text-lg text-[#555] font-bold mb-1 text-start mt-10">
+      EMERGENCY CONTACT
+    </h1>
+    <div class="flex gap-7 justify-start mt-5">
+      <div class="grid gap-5 w-48">
+        <div class="min-w-[1px]">
+          <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+            <span class="material-icons">person</span>
+            <div class="text-gray-600 truncate">
+              <div class="truncate">Full Name</div>
+              <div class="font-normal truncate">
+                @if(student.guardFullName == null || student.guardFullName == '')
+                {--}
+                @else
+                { {{ student.guardFullName }} }
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="min-w-[1px]">
+          <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+            <span class="material-icons">supervisor_account</span>
+            <div class="text-gray-600 truncate">
+              <div class="truncate">Relationship</div>
+              <div class="font-normal truncate">
+                @if(student.guardRelationship == null || student.guardRelationship == '')
+                {--}
+                @else
+                { {{ student.guardRelationship }} }
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="min-w-[1px]">
+          <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+            <span class="material-icons">home</span>
+            <div class="text-gray-600 truncate">
+              <div class="truncate">Residential Address</div>
+              <div class="font-normal truncate">
+                @if(student.guardResidentialAddress == null || student.guardResidentialAddress == '')
+                {--}
+                @else
+                { {{ student.guardResidentialAddress }} }
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="min-w-[1px]">
+          <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+            <span class="material-icons">phone_in_talk</span>
+            <div class="text-gray-600 truncate">
+              <div class="truncate">Primary Phone</div>
+              <div class="font-normal truncate">
+                @if(student.guardFirstPhoneNumber == null || student.guardFirstPhoneNumber == '')
+                {--}
+                @else
+                { {{ student.guardFirstPhoneNumber }} }
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="min-w-[1px]">
+          <div class="flex items-center gap-4 text-gray-600 font-bold min-w-[1px]">
+            <span class="material-icons">call</span>
+            <div class="text-gray-600 truncate">
+              <div class="truncate">Alternative Phone</div>
+              <div class="font-normal truncate">
+                @if(student.guardSecondPhoneNumber == null || student.guardSecondPhoneNumber == '')
+                {--}
+                @else
+                { {{ student.guardSecondPhoneNumber }} }
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="w-full">
+    <div class="w-full flex justify-between gap-3">
+      <div class="w-full shadow-xl rounded-3xl p-7 bg-white">
+      </div>
+      <div class="w-full shadow-xl rounded-3xl p-7 bg-white">
+      </div>
+    </div>
+  </div>
+</div>

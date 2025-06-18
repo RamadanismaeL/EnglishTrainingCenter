@@ -9,7 +9,7 @@ namespace server.src.Interfaces
 {
     public interface IStudentMonthlyTuitionRepository
     {
-        Task<ResponseDto> Create(StudentMonthlyTuitionCreateDto monthlyTuitionCreateDto);
+        Task<ResponseDto> Create(string studentID);
         Task<IEnumerable<StudentMonthlyTuitionModel>> GetAllMonthlyTuition();
 
         Task<ResponseDto> Update(StudentMonthlyTuitionUpdateDto monthlyTuitionUpdateDto);

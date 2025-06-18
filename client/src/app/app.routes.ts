@@ -260,9 +260,15 @@ export const routes: Routes = [
         outlet : 'ramRouter'
       },
       {
-        path : 'financial-tuition',
+        path : 'student-balance',
         loadComponent: () =>
-          import('./_pages/Financials/financial-tuition/financial-tuition.component').then(m => m.FinancialTuitionComponent),
+          import('./_pages/Financials/student-balance/student-balance.component').then(m => m.StudentBalanceComponent),
+        outlet : 'ramRouter'
+      },
+      {
+        path : 'financial-summary',
+        loadComponent: () =>
+          import('./_components/Financial/StudentBalance/financial-summary/financial-summary.component').then(m => m.FinancialSummaryComponent),
         outlet : 'ramRouter'
       },
       {

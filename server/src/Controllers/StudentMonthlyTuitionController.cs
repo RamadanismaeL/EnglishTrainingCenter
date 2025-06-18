@@ -18,12 +18,12 @@ namespace server.src.Controllers
         private readonly IStudentMonthlyTuitionRepository _studentMonthlyTuitionRepository = studentMonthlyTuitionRepository;
         private readonly IHubContext<NotificationHub> _hubContext = hubContext;
 
-        [HttpPost("create")]
-        public async Task<IActionResult> Create([FromBody] StudentMonthlyTuitionCreateDto monthlyTuitionCreateDto)
+        [HttpPost("create/{studentID}")]
+        public async Task<IActionResult> Create([FromRoute] string studentID)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            var response = await _studentMonthlyTuitionRepository.Create(monthlyTuitionCreateDto);
+            var response = await _studentMonthlyTuitionRepository.Create(studentID);
 
             await _hubContext.Clients.All.SendAsync("ReceiveMessage", "Monthly tuition created successfully.");
 

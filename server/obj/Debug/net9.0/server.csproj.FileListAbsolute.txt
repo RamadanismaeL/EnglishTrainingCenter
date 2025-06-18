@@ -13,6 +13,7 @@
 /home/ramadan/Documents/Projects/EnglishTrainingCenter/server/bin/Debug/net9.0/BouncyCastle.Cryptography.dll
 /home/ramadan/Documents/Projects/EnglishTrainingCenter/server/bin/Debug/net9.0/DinkToPdf.dll
 /home/ramadan/Documents/Projects/EnglishTrainingCenter/server/bin/Debug/net9.0/EFCore.BulkExtensions.Core.dll
+/home/ramadan/Documents/Projects/EnglishTrainingCenter/server/bin/Debug/net9.0/EFCore.BulkExtensions.MySql.dll
 /home/ramadan/Documents/Projects/EnglishTrainingCenter/server/bin/Debug/net9.0/EFCore.BulkExtensions.Oracle.dll
 /home/ramadan/Documents/Projects/EnglishTrainingCenter/server/bin/Debug/net9.0/EFCore.BulkExtensions.PostgreSql.dll
 /home/ramadan/Documents/Projects/EnglishTrainingCenter/server/bin/Debug/net9.0/EFCore.BulkExtensions.Sqlite.dll
@@ -248,4 +249,3 @@
 /home/ramadan/Documents/Projects/EnglishTrainingCenter/server/obj/Debug/net9.0/server.pdb
 /home/ramadan/Documents/Projects/EnglishTrainingCenter/server/obj/Debug/net9.0/server.genruntimeconfig.cache
 /home/ramadan/Documents/Projects/EnglishTrainingCenter/server/obj/Debug/net9.0/ref/server.dll
-/home/ramadan/Documents/Projects/EnglishTrainingCenter/server/bin/Debug/net9.0/EFCore.BulkExtensions.MySql.dll

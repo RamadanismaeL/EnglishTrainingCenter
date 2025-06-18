@@ -12,7 +12,7 @@ namespace server.src.Interfaces
     {
         Task<IActionResult> Create([FromBody] StudentCreateDto studentCreateDto);
         Task<IActionResult> Update([FromBody] StudentUpdateDto studentUpdateDto);
-        Task<IActionResult> UpdateStatus([FromRoute] string status, [FromBody] List<long> order);        
+        Task<IActionResult> UpdateStatus([FromRoute] string status, [FromBody] List<long> order);
         Task<ActionResult<List<StudentDataModel>>> DetailStudentData();
         Task<ActionResult<List<StudentEnrollmentFormModel>>> DetailStudentEnrollmentForm();
         Task<ActionResult<string>> GetStudentByLastId();
@@ -26,5 +26,6 @@ namespace server.src.Interfaces
         Task<ActionResult<IEnumerable<ListStudentActiveDto>>> GetListStudentActive();
         Task<ActionResult<IEnumerable<ListStudentActiveDto>>> GetListStudentCompleted();
         Task<ActionResult<IEnumerable<ListStudentActiveDto>>> GetListStudentInactive();
+        Task<ActionResult<IEnumerable<StudentBalanceList>>> GetListStudentBalance();
     }
 }

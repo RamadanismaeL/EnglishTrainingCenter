@@ -589,9 +589,9 @@ namespace server.src.Repositories
                                                     <img src='http://localhost:5104/images/marca.png' width='80' alt='Logo' style='padding: 8px 0 1px 0'/>
                                                 </td>
                                                 <td valign='middle' align='left'>
-                                                    <div class='space-line' style='font-size: 10pt'>Rua do Cemitério, Machava Bedene</div>
-                                                    <div class='space-line' style='font-size: 10pt'>Tel.: (+258) 84 767 5145 / 87 767 5145</div>
-                                                    <div class='space-line' style='font-size: 10pt'>Email: etc@gmail.com</div>
+                                                    <div class='space-line' style='font-size: 10pt'>Machava Bedene, Rua da Maternidade</div>
+                                                    <div class='space-line' style='font-size: 10pt'>Tel.: (+258) 87 565 0983 / 87 970 8167</div>
+                                                    <div class='space-line' style='font-size: 10pt'>Email: etc.elf@gmail.com</div>
                                                     <div style='font-size: 9pt'>Maputo - Moçambique</div>
                                                 </td>                                          
                                             </tr>
@@ -836,9 +836,9 @@ namespace server.src.Repositories
                                                     <img src='http://localhost:5104/images/marca.png' width='80' alt='Logo' style='padding: 8px 0 1px 0'/>
                                                 </td>
                                                 <td valign='middle' align='left'>
-                                                    <div class='space-line' style='font-size: 10pt'>Rua do Cemitério, Machava Bedene</div>
-                                                    <div class='space-line' style='font-size: 10pt'>Tel.: (+258) 84 767 5145 / 87 767 5145</div>
-                                                    <div class='space-line' style='font-size: 10pt'>Email: etc@gmail.com</div>
+                                                    <div class='space-line' style='font-size: 10pt'>Machava Bedene, Rua da Maternidade</div>
+                                                    <div class='space-line' style='font-size: 10pt'>Tel.: (+258) 87 565 0983 / 87 970 8167</div>
+                                                    <div class='space-line' style='font-size: 10pt'>Email: etc.elf@gmail.com</div>
                                                     <div style='font-size: 9pt'>Maputo - Moçambique</div>
                                                 </td>                                          
                                             </tr>
@@ -946,9 +946,9 @@ namespace server.src.Repositories
                                                     <img src='http://localhost:5104/images/marca.png' width='80' alt='Logo' style='padding: 8px 0 1px 0'/>
                                                 </td>
                                                 <td valign='middle' align='left'>
-                                                    <div class='space-line' style='font-size: 10pt'>Rua do Cemitério, Machava Bedene</div>
-                                                    <div class='space-line' style='font-size: 10pt'>Tel.: (+258) 84 767 5145 / 87 767 5145</div>
-                                                    <div class='space-line' style='font-size: 10pt'>Email: etc@gmail.com</div>
+                                                    <div class='space-line' style='font-size: 10pt'>Machava Bedene, Rua da Maternidade</div>
+                                                    <div class='space-line' style='font-size: 10pt'>Tel.: (+258) 87 565 0983 / 87 970 8167</div>
+                                                    <div class='space-line' style='font-size: 10pt'>Email: etc.elf@gmail.com</div>
                                                     <div style='font-size: 9pt'>Maputo - Moçambique</div>
                                                 </td>                                          
                                             </tr>

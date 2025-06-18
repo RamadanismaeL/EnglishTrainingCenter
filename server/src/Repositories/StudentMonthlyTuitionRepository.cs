@@ -18,7 +18,7 @@ namespace server.src.Repositories
         private readonly ILogger<StudentMonthlyTuitionRepository> _logger = logger;
         private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
 
-        public async Task<ResponseDto> Create(StudentMonthlyTuitionCreateDto monthlyTuitionCreateDto)
+        public async Task<ResponseDto> Create(string studentID)
         {
             try
             {
@@ -57,34 +57,45 @@ namespace server.src.Repositories
 
                 var userName = userNameClaim?.Value;
 
+                var now = DateTime.Now;
+                var referenceMonthDate = new DateTime(now.Year, now.Month, 1);
+                var dueDate = new DateTime(now.Year, now.Month, 10);
+
                 var courseId = await _dbContext.StudentData
                     .AsNoTracking()
-                    .Where(s => s.Id == monthlyTuitionCreateDto.StudentId && s.Status == "Active")
+                    .Where(s => s.Id == studentID && s.Status == "Active")
                     .Select(s => s.CourseInfo!
                         .Where(c => c.Status == "In Progress")
                         .Select(c => c.Id)
                         .FirstOrDefault())
                     .FirstOrDefaultAsync();
 
+                var alreadyExists = await _dbContext.StudentMonthlyTuition
+                        .AnyAsync(m => m.StudentId == studentID && m.ReferenceMonthDate == referenceMonthDate);
+
+                if (alreadyExists)
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "Monthly tuition for this student and date already exists."
+                    };
+                }
+
                 var newID = GenerateMonthlyId();
                 if (newID is null) return null!;
-
-                int currentYear = DateTime.Now.Year;
-                int currentMonth = DateTime.Now.Month;
-                var referenceMonthDate = new DateTime(currentYear, currentMonth, 1);
-                var dueDate = new DateTime(currentYear, currentMonth, 10);
 
                 var receiptData = new StudentMonthlyTuitionModel
                 {
                     Id = newID,
-                    Description = $"{referenceMonthDate:MMMM}Tuition Fee",
+                    Description = $"{referenceMonthDate:MMMM} Tuition Fee",
                     ReferenceMonthDate = referenceMonthDate,
                     DueDate = dueDate,
-                    Status = GetStatus(dueDate, monthlyTuitionCreateDto.PaymentId!),
+                    Status = GetStatus(dueDate),
                     TrainerName = userName!,
-                    StudentId = monthlyTuitionCreateDto.StudentId,
+                    StudentId = studentID,
                     CourseInfoId = courseId!,
-                    PaymentId = monthlyTuitionCreateDto.PaymentId!,
+                    PaymentId = null,
                 };
 
                 await _dbContext.StudentMonthlyTuition.AddAsync(receiptData);
@@ -352,15 +363,13 @@ namespace server.src.Repositories
             }
         }
 
-        private static string GetStatus(DateTime dueDate, string paymentId)
+        private static string GetStatus(DateTime dueDate)
         {
-            int currentDay = DateTime.Now.Day;
-            if (string.IsNullOrEmpty(paymentId) && (dueDate.Day >= currentDay))
-            { return "Not Paid"; }
-            else if (string.IsNullOrEmpty(paymentId) && (dueDate.Day < currentDay))
+            var now = DateTime.Now;
+            if (dueDate >= now)
+            { return "Pending"; }
+            else if (dueDate < now)
             { return "Overdue"; }
-            else if (!string.IsNullOrEmpty(paymentId))
-            { return "Paid"; }
             else
             { return "Error"; }
         }

@@ -181,6 +181,26 @@ matTooltipHideDelay="50">
         </div>
       </span>
       <div *ngIf="isOpenFinancial" class="mt-2 space-y-2">
+        <span [ngClass]="{ 'active-verticalLineBtn': financialTuition }"
+        [routerLink]="['/', {outlets: {ramRouter: ['student-balance']}}]"
+        (click)="navigateTo([
+          { label: 'FINANCIALS : STUDENT BALANCE', url: ['/', {outlets: {ramRouter: ['student-balance']}}] }
+        ])"
+        class="verticalLineBtn flex items-center p-2 rounded">
+          <a class="flex items-center gap-4">
+            @if (!collapsed)
+            {
+              <span class="verticalLine ml-2"></span>
+              <span>SB</span>
+            }
+            @else
+            {
+              <span class="verticalLine ml-5 pr-1"></span>
+              <span *ngIf="collapsed">Student Balance</span>
+            }
+          </a>
+        </span>
+
         <span [ngClass]="{ 'active-verticalLineBtn': financialExpense }"
         [routerLink]="['/', {outlets: {ramRouter: ['financial-expense']}}]"
         (click)="navigateTo([
@@ -217,26 +237,6 @@ matTooltipHideDelay="50">
             {
               <span class="verticalLine ml-5 pr-1"></span>
               <span *ngIf="collapsed">Revenue</span>
-            }
-          </a>
-        </span>
-
-        <span [ngClass]="{ 'active-verticalLineBtn': financialTuition }"
-        [routerLink]="['/', {outlets: {ramRouter: ['financial-tuition']}}]"
-        (click)="navigateTo([
-          { label: 'FINANCIALS : TUITION MANAGEMENT' }
-        ])"
-        class="verticalLineBtn flex items-center p-2 rounded">
-          <a class="flex items-center gap-4">
-            @if (!collapsed)
-            {
-              <span class="verticalLine ml-2"></span>
-              <span>TM</span>
-            }
-            @else
-            {
-              <span class="verticalLine ml-5 pr-1"></span>
-              <span *ngIf="collapsed">Tuition Management</span>
             }
           </a>
         </span>

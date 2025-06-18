@@ -148,10 +148,8 @@ export class EnrollmentComponent implements OnInit, OnDestroy {
 
           // Chamada para salvar o Course Info — Agora garantida no fluxo
           return this.studentService.createStudentCourseInfo(courseInfo).pipe(
-            switchMap(() => {
-              // Só após salvar o Course Info, ele cria o pagamento
-              return this.studentService.createStudentPayment(this.createPaymentDetails(studentId));
-            })
+            switchMap(() => this.studentService.createTuitionInEnrollment(studentId)),
+            switchMap(() => this.studentService.createStudentPayment(this.createPaymentDetails(studentId)))
           );
         })
       ).subscribe({

@@ -1,0 +1,130 @@
+.container {
+  background-color: #fff;
+}
+
+.mat-icon {
+  font-size: 26px;
+  color: #525252;
+}
+
+::ng-deep .ag-header-cell-label {
+  justify-content: center !important; // horizontal
+  align-items: center !important;     // vertical
+  text-align: center !important;
+  font-size: 12pt;
+  color: #2c2c2c;
+  font-weight: 500;
+}
+
+::ng-deep .custom-cell-start {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  text-align: center;
+  font-size: 11pt;
+  color: #2c2c2c;
+  height: 100%;
+  cursor: pointer;
+}
+
+::ng-deep .custom-cell-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-size: 11pt;
+  color: #2c2c2c;
+  height: 100%;
+  cursor: pointer;
+}
+
+::ng-deep .custom-cell-end {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  text-align: center;
+  font-size: 11pt;
+  color: #2c2c2c;
+  height: 100%;
+}
+
+select {
+  height: 2.5rem;
+  width: 4rem;
+  border-color: rgb(23, 0, 155);
+}
+
+.table-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+
+  label {
+    margin: 5px;
+  }
+
+  .export-buttons {
+    display: flex;
+    gap: 8px;
+  }
+}
+
+.ag-theme-alpine {
+  border-radius: 6px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+}
+
+.pagination {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 4px;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+
+  button {
+    padding: 4px 10px;
+    font-size: 10pt;
+    border: 1px solid #ddd;
+    background-color: white;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.2;
+
+    &.active {
+      background-color: #007bff;
+      color: white;
+      border-color: #007bff;
+    }
+
+    &:hover:not(.active) {
+      background-color: #f0f0f0;
+      font-size: 12pt;
+    }
+
+    .mat-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15pt;
+      color: #525252;
+
+      &:hover:not(.active) {
+        font-size: 18pt;
+      }
+    }
+  }
+}
+
+p {
+  margin-top: 5px;
+  font-size: 14px;
+  color: #555;
+}
+
+.formField {
+  position: relative;
+  top: 7px;
+}

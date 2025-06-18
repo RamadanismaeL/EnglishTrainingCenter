@@ -2,7 +2,6 @@
 * Copyright 2025 - @author: Ramadan Ismael
 */
 
-using EFCore.BulkExtensions;
 using Microsoft.EntityFrameworkCore;
 using Quartz;
 using server.src.Data;

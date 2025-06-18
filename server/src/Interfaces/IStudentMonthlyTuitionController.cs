@@ -10,7 +10,7 @@ namespace server.src.Interfaces
 {
     public interface IStudentMonthlyTuitionController
     {
-        Task<IActionResult> Create([FromBody] StudentMonthlyTuitionCreateDto monthlyTuitionCreateDto);
+        Task<IActionResult> Create([FromRoute] string studentID);
         Task<ActionResult<IEnumerable<StudentMonthlyTuitionModel>>> GetAllMonthlyTuition();
         Task<IActionResult> Update(StudentMonthlyTuitionUpdateDto monthlyTuitionUpdateDto);
         Task<IActionResult> UpdateStatusMonthly([FromRoute] long order, string status);

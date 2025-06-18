@@ -11,7 +11,7 @@ namespace server.src.Interfaces
     {
         Task<ResponseDto> Create(StudentCreateDto studentCreateDto);
         Task<ResponseDto> Update(StudentUpdateDto studentUpdateDto);
-        Task<ResponseDto> UpdateStatus(List<long> order, string status);        
+        Task<ResponseDto> UpdateStatus(List<long> order, string status);
         Task<List<StudentDataModel>> DetailStudentData();
         Task<List<StudentEnrollmentFormModel>> DetailStudentEnrollmentForm();
         Task<string> GetStudentByLastId();
@@ -22,8 +22,9 @@ namespace server.src.Interfaces
         Task<StudentUpdateDto> GetStudentListProfileEditById(string id);
         Task<StudentListProfileDto> GetStudentListProfileById(string id);
         Task<StudentListProfileEnrollmentDto> GetStudentListProfileEnrollmentById(string id);
-        Task<IEnumerable<ListStudentActiveDto>> GetListStudentActive(); 
-        Task<IEnumerable<ListStudentActiveDto>> GetListStudentCompleted();   
-        Task<IEnumerable<ListStudentActiveDto>> GetListStudentInactive();      
+        Task<IEnumerable<ListStudentActiveDto>> GetListStudentActive();
+        Task<IEnumerable<ListStudentActiveDto>> GetListStudentCompleted();
+        Task<IEnumerable<ListStudentActiveDto>> GetListStudentInactive(); 
+        Task<IEnumerable<StudentBalanceList>> GetListStudentBalance();      
     }
 }
