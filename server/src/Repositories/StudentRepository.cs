@@ -1096,6 +1096,80 @@ namespace server.src.Repositories
             }
         }
 
+        /*public async Task<List<StudentBalanceTransactionsDto>> GetTransactionsByStudentId(string id)
+        {
+            var transactions = await _dbContext.StudentData
+                .AsNoTracking()
+                .Where(s => s.Id == id)
+                .SelectMany(s => s.Payments!)  // Usa SelectMany para "achatar" a lista de pagamentos
+                .Where(payment => payment != null)  // Filtra pagamentos nulos (se houver)
+                .Select(payment => new StudentBalanceTransactionsDto
+                {
+                    PaymentId = payment.Id,
+                    DescriptionEnglish = payment.DescriptionEnglish,
+                    ReceivedFrom = payment.ReceivedFrom,
+                    Method = payment.Method,
+                    AmountMT = payment.AmountMT,
+                    Status = payment.Status,
+                    DateRegister = payment.DateRegister,
+                    TrainerName = payment.TrainerName
+                })
+                .OrderByDescending(t => t.DateRegister)
+                .ToListAsync();
+
+            return transactions;
+        }*/
+        public async Task<List<StudentBalanceTransactionsDto>> GetTransactionsByStudentId(string id)
+        {
+            // 1. Busca todos os Pagamentos (Payments)
+            var payments = await _dbContext.StudentData
+                .AsNoTracking()
+                .Where(s => s.Id == id)
+                .SelectMany(s => s.Payments!
+                    .Where(p => p != null)
+                    .Select(p => new StudentBalanceTransactionsDto
+                    {
+                        StudentFullName = p.StudentData!.FullName,
+                        PaymentId = p.Id.ToString(),
+                        DescriptionEnglish = p.DescriptionEnglish,
+                        ReceivedFrom = p.ReceivedFrom,
+                        Method = p.Method,
+                        AmountMT = p.AmountMT,
+                        Status = p.Status,
+                        DateRegister = p.DateRegister,
+                        TrainerName = p.TrainerName
+                    }))
+                .ToListAsync();
+
+            // 2. Busca todas as Mensalidades (MonthlyTuition) e transforma no mesmo formato
+            var monthlyTuitions = await _dbContext.StudentData
+                .AsNoTracking()
+                .Where(s => s.Id == id)
+                .SelectMany(s => s.MonthlyTuition!
+                    .Where(m => m != null && m.Status != "Paid") // Filtra mensalidades sem PaymentId
+                    .Select(m => new StudentBalanceTransactionsDto
+                    {
+                        StudentFullName = m.StudentData!.FullName,
+                        PaymentId = m.Id.ToString(), // Ou m.PaymentId se existir
+                        DescriptionEnglish = m.Description,
+                        ReceivedFrom = "--", 
+                        Method = "--", 
+                        AmountMT = m.CourseInfoData!.MonthlyFee,
+                        Status = m.Status,
+                        DateRegister = m.DateRegister,
+                        TrainerName = m.TrainerName
+                    }))
+                .ToListAsync();
+
+            // 3. Combina as duas listas e ordena por DataRegister (do mais recente para o mais antigo)
+            var allTransactions = payments
+                .Concat(monthlyTuitions)
+                .OrderByDescending(t => t.DateRegister)
+                .ToList();
+
+            return allTransactions;
+        }
+
         private decimal GetSettingsMonthlyTuition(string id, string packageName)
         {
             var tuitionId = _dbContext.SettingsMonthlyTuition.FirstOrDefault(s => s.Id == id);

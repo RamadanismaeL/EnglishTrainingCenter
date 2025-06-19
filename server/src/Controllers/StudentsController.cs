@@ -164,11 +164,19 @@ namespace server.src.Controllers
 
             return Ok(student);
         }
-        
+
         [HttpGet("get-list-student-balance")]
-        public async  Task<ActionResult<IEnumerable<StudentBalanceList>>> GetListStudentBalance()
+        public async Task<ActionResult<IEnumerable<StudentBalanceList>>> GetListStudentBalance()
         {
             var student = await _studentRepository.GetListStudentBalance();
+
+            return Ok(student);
+        }
+
+        [HttpPost("get-transactions-by-student-id/{id}")]
+        public async Task<ActionResult<List<StudentBalanceTransactionsDto>>> GetTransactionsByStudentId(string id)
+        {
+            var student = await _studentRepository.GetTransactionsByStudentId(id);
 
             return Ok(student);
         }

@@ -13,6 +13,6 @@ namespace server.src.Interfaces
         Task<List<StudentPaymentModel>> Details();
         Task<string> GetStudentPaymentByLastId();
         Task<StudentPaymentModel> GetStudentPaymentById(string id);
-        Task<decimal> GetPriceDueById(string id);
+        Task<decimal> GetPriceDueById(string id);        
     }
 }

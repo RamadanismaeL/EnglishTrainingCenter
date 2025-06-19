@@ -17,7 +17,7 @@ namespace server.src.Models
         // DueDate = new DateTime(2023, 5, 10),
         public string Status { get; set; } = string.Empty; // Cancelled, Pending, Paid, Overdue
         public string TrainerName { get; set; } = string.Empty;
-        public DateTime? DateRegister { get; set; }
+        public DateTime DateRegister { get; set; }
         public DateTime? DateUpdate { get; set; }
         
         public string StudentId { get; set; } = string.Empty;

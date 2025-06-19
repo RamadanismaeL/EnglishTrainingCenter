@@ -9,14 +9,16 @@ import { StudentListProfileDto } from '../../../../_interfaces/student-list-prof
 import { CommonModule } from '@angular/common';
 import { NotificationHubService } from '../../../../_services/notification-hub.service';
 import { StudentCourseInfoService } from '../../../../_services/student-course-info.service';
+import { TransactionFinancialSummaryComponent } from "../transaction-financial-summary/transaction-financial-summary.component";
 
 @Component({
   selector: 'app-financial-summary',
   imports: [
     MatMenuModule,
     MatIconModule,
-    CommonModule
-  ],
+    CommonModule,
+    TransactionFinancialSummaryComponent
+],
   templateUrl: './financial-summary.component.html',
   styleUrl: './financial-summary.component.scss'
 })

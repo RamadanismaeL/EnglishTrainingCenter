@@ -43,7 +43,7 @@ export class MonthlyTuitionPaymentMainComponent implements OnInit, OnDestroy {
 
   private subs = new Subscription();
 
-  constructor(private stepperService: StepperEnrollmentService, private alert: SnackBarService, private studentService: StudentsService, private notificationHub: NotificationHubService, private paymentPayNowCreate: PaymentPayNowCreateService, private payNowMonthlyTuition: PaymentPayNowMonthlyTuitionService, private studentCourseInfo: StudentCourseInfoService)
+  constructor(private stepperService: StepperEnrollmentService, private alert: SnackBarService, private studentService: StudentsService, private notificationHub: NotificationHubService, private payNowMonthlyTuition: PaymentPayNowMonthlyTuitionService, private studentCourseInfo: StudentCourseInfoService)
   {
     this.subs.add(
       this.stepperService.activeStep$.subscribe(step => {

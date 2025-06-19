@@ -324,7 +324,7 @@ namespace server.src.Repositories
                         Modality = m.CourseInfoData!.Modality,
                         Amount = m.CourseInfoData!.MonthlyFee,
                         Description = m.Description,
-                        StartDate = m.DateRegister != null ? m.DateRegister.Value.ToString("dd/MM/yyyy") : "",
+                        StartDate = m.DateRegister.ToString("dd/MM/yyyy"),
                         DueDate = m.DueDate != null ? m.DueDate.Value.ToString("dd/MM/yyyy") : "",
                         Status = m.Status
                     })

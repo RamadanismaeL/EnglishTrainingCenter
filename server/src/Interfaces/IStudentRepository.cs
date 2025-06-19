@@ -24,7 +24,8 @@ namespace server.src.Interfaces
         Task<StudentListProfileEnrollmentDto> GetStudentListProfileEnrollmentById(string id);
         Task<IEnumerable<ListStudentActiveDto>> GetListStudentActive();
         Task<IEnumerable<ListStudentActiveDto>> GetListStudentCompleted();
-        Task<IEnumerable<ListStudentActiveDto>> GetListStudentInactive(); 
-        Task<IEnumerable<StudentBalanceList>> GetListStudentBalance();      
+        Task<IEnumerable<ListStudentActiveDto>> GetListStudentInactive();
+        Task<IEnumerable<StudentBalanceList>> GetListStudentBalance();     
+        Task<List<StudentBalanceTransactionsDto>> GetTransactionsByStudentId(string id); 
     }
 }

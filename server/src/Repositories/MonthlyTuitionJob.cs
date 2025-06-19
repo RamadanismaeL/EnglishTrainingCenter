@@ -63,7 +63,7 @@ namespace server.src.Repositories
                         ReferenceMonthDate = referenceMonthDate,
                         DueDate = dueDate,
                         Status = "Pending",
-                        TrainerName = "ETC Team",
+                        TrainerName = "ETC TEAM",
                         StudentId = student.Id,
                         CourseInfoId = student.Course!.Id,
                         PaymentId = null,

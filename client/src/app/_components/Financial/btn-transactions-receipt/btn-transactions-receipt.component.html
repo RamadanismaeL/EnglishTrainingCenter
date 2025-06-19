@@ -1,0 +1,31 @@
+<div class="flex justify-center gap-4">
+  <button mat-icon-button
+  (click)="onExport('paymentReceiptPdf')"
+  type="button"
+  style="color: #4b4b4b; font-size: 26pt; cursor: pointer;"
+  matTooltip="PDF"
+  [matTooltipPosition]="positionL.value!"
+  matTooltipHideDelay="50">
+    <mat-icon style="color: rgb(224, 0, 0);">picture_as_pdf</mat-icon>
+  </button>
+
+  <button mat-icon-button
+  (click)="onExport('paymentReceiptPng')"
+  type="button"
+  style="color: #4b4b4b; font-size: 26pt; cursor: pointer;"
+  matTooltip="PICTURE"
+  [matTooltipPosition]="positionL.value!"
+  matTooltipHideDelay="50">
+    <mat-icon style="color: rgb(0, 142, 224);">photo</mat-icon>
+  </button>
+
+  <button mat-icon-button
+  (click)="onExport('PrintPaymentReceipt')"
+  type="button"
+  style="color: #4b4b4b; font-size: 26pt; cursor: pointer;"
+  matTooltip="PRINT"
+  [matTooltipPosition]="positionL.value!"
+  matTooltipHideDelay="50">
+    <mat-icon style="color: #555;">print</mat-icon>
+  </button>
+</div>

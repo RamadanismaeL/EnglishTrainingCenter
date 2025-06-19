@@ -14,6 +14,7 @@ import { StudentListProfileDto } from '../_interfaces/student-list-profile-dto';
 import { StudentListProfileEnrollmentDto } from '../_interfaces/student-list-profile-enrollment-dto';
 import { StudentListProfileEditDto } from '../_interfaces/student-list-profile-edit-dto';
 import { ListStudentBalanceDto } from '../_interfaces/list-student-balance-dto';
+import { ListTransactionsStudentBalance } from '../_interfaces/list-transactions-student-balance';
 
 @Injectable({
   providedIn: 'root'
@@ -109,5 +110,9 @@ export class StudentsService {
 
   getListStudentBalance = () : Observable<ListStudentBalanceDto> => this.http
     .get<ListStudentBalanceDto>(`${this.myUrl}/Students/get-list-student-balance`,
+      {headers : { 'Allow-Offline' : 'true' }});
+
+  getTransactionsByStudentId = (id: string) : Observable<ListTransactionsStudentBalance> => this.http
+    .post<ListTransactionsStudentBalance>(`${this.myUrl}/Students/get-transactions-by-student-id/${id}`,
       {headers : { 'Allow-Offline' : 'true' }});
 }
