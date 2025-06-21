@@ -7,7 +7,7 @@
         matTooltip="Copy"
         [matTooltipPosition]="position.value!"
         [matMenuTriggerFor]="menuCopy"
-
+        matTooltipHideDelay="100"
         (click)="toggleBtn('copy')"
         (menuClosed)="copy = false"
         [class.copy-active]="copy"
@@ -23,7 +23,7 @@
         class="icon excel"
         matTooltip="Excel"
         [matTooltipPosition]="position.value!"
-        matTooltipHideDelay="0"
+        matTooltipHideDelay="100"
         [matMenuTriggerFor]="menuExcel"
         [class.excel-active]="excel"
         (click)="toggleBtn('excel')"
@@ -39,7 +39,7 @@
         class="icon pdf"
         matTooltip="PDF"
         [matTooltipPosition]="position.value!"
-        matTooltipHideDelay="0"
+        matTooltipHideDelay="100"
         [matMenuTriggerFor]="menuPdf"
         [class.pdf-active]="pdf"
         (click)="toggleBtn('pdf')"
@@ -55,7 +55,7 @@
         class="icon print"
         matTooltip="Print"
         [matTooltipPosition]="position.value!"
-        matTooltipHideDelay="0"
+        matTooltipHideDelay="100"
         [matMenuTriggerFor]="menuPrint"
         [class.print-active]="print"
         (click)="toggleBtn('print')"
@@ -121,4 +121,77 @@
       <mat-icon>chevron_right</mat-icon>
     </button>
   </div>
+</div>
+<div class="w-1/2">
+  <form class="flex flex-col items-center justify-start w-full"
+    [formGroup]="form"
+    #registerFormRef>
+    <div class="w-full flex justify-between">
+      <h1 class="text-lg text-gray-600 font-bold text-start">
+        EXPENSE&nbsp;&nbsp;FORM
+      </h1>
+      <div>
+        <button mat-icon-button [matMenuTriggerFor]="menu"
+        type="button" class="cursor-pointer">
+          <mat-icon>more_horiz</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item type="button" (click)="onAdd()">
+            <span>New</span>
+          </button>
+          <button mat-menu-item type="button" (click)="onUpdate()">
+            <span>Update</span>
+          </button>
+          <button mat-menu-item type="button" (click)="onClear()">
+            <span>Clear</span>
+          </button>
+        </mat-menu>
+      </div>
+    </div>
+    <hr class="w-full border-slate-400 my-2">
+    <div class="container max-auto bg-white shadow-md rounded-[15px] w-full">
+      <div class="flex flex-col gap-7">
+          <div class="flex gap-7 w-full pt-5 px-5">
+            <div class="flex w-full flex-col gap-y-0">
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Description</mat-label>
+                  <input matInput
+                  formControlName="description"
+                  type="area"
+                  maxlength="500"/>
+                  @if (getErrorForms('description')?.hasError('required')) {
+                    <mat-error>Description is required</mat-error>
+                  }
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="w-1/2">
+                <mat-label>Amount (MT)</mat-label>
+                <input matInput
+                  formControlName="amountMT"
+                  type="text"
+                  placeholder="0,00"
+                  (input)="onAmount($event)"/>
+                @if (getErrorForms('amountMT')?.hasError('required')) {
+                  <mat-error>Amount MT is required</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="w-1/2">
+                <mat-label>Payout Method</mat-label>
+                <mat-select panelClass="scrollbar-custom"
+                formControlName="payoutMethod">
+                  <mat-option value="Bank">Bank</mat-option>
+                  <mat-option value="Cash">Cash</mat-option>
+                  <mat-option value="E-Mola">E-Mola</mat-option>
+                  <mat-option value="M-Pesa">M-Pesa</mat-option>
+                </mat-select>
+                @if (getErrorForms('payoutMethod')?.hasError('required')) {
+                  <mat-error>Payout method is required</mat-error>
+                }
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+    </div>
+  </form>
 </div>

@@ -25,6 +25,9 @@ namespace server.src.Data
         public required DbSet<StudentMonthlyTuitionModel> StudentMonthlyTuition { get; set; }
         public required DbSet<StudentCourseFeeModel> StudentCourseFee { get; set; }
         public required DbSet<StudentCourseInfoScheduleExamModel> StudentCourseInfoScheduleExam { get; set; }
+
+        // Financial
+        public required DbSet<FinancialExpenseModel> FinancialExpense { get; set; }
  
 
         // Settings

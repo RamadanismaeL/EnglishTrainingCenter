@@ -62,16 +62,16 @@
 
             <div>
               <mat-form-field appearance="outline" class="w-1/2" *ngIf="courseFeeActive">
-              <mat-label>Course Fee (MT)</mat-label>
-                <input matInput
-                formControlName="courseFee"
-                type="text"
-                placeholder="0,00"
-                (input)="onAmount($event)"/>
-                @if (getErrorForms('courseFee')?.hasError('required')) {
-                  <mat-error>Course fee is required</mat-error>
-                }
-            </mat-form-field>
+                <mat-label>Course Fee (MT)</mat-label>
+                  <input matInput
+                  formControlName="courseFee"
+                  type="text"
+                  placeholder="0,00"
+                  (input)="onAmount($event)"/>
+                  @if (getErrorForms('courseFee')?.hasError('required')) {
+                    <mat-error>Course fee is required</mat-error>
+                  }
+              </mat-form-field>
             </div>
 
             <mat-form-field appearance="outline" class="w-full">

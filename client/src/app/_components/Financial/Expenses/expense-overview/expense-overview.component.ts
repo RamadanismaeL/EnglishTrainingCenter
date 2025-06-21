@@ -1,5 +1,5 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormsModule } from '@angular/forms';
+import { Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule, TooltipPosition } from '@angular/material/tooltip';
 import { AgGridAngular } from 'ag-grid-angular';
@@ -24,7 +24,7 @@ import { NotificationHubService } from '../../../../_services/notification-hub.s
 import { SnackBarService } from '../../../../_services/snack-bar.service';
 import { StudentsService } from '../../../../_services/students.service';
 import { TitleNavbarService } from '../../../../_services/title-navbar.service';
-import { BtnStudentActiveActionTableComponent } from '../../../Students/btn-student-active-action-table/btn-student-active-action-table.component';
+import { BtnTransactionsReceiptComponent } from '../../btn-transactions-receipt/btn-transactions-receipt.component';
 
 ModuleRegistry.registerModules([ AllCommunityModule]);
 
@@ -42,7 +42,8 @@ ModuleRegistry.registerModules([ AllCommunityModule]);
     MatCardModule,
     MatDialogModule,
     MatButtonModule,
-    MatMenuModule
+    MatMenuModule,
+    ReactiveFormsModule
   ],
   templateUrl: './expense-overview.component.html',
   styleUrl: './expense-overview.component.scss'
@@ -53,75 +54,73 @@ export class ExpenseOverviewComponent implements OnInit, OnDestroy {
   positionT = new FormControl(this.positionOptions[0]);
 
   columnDefs: ColDef[] =
-    [
-      {
-        headerName: 'Code',
-        field: 'id', minWidth: 130, flex: 1,
-        cellClass: 'custom-cell-center'
-      },
-      {
-        headerName: 'Full Name',
-        field: 'fullName', minWidth: 250, flex: 1,
-        cellClass: 'custom-cell-start'
-      },
-      {
-        headerName: 'Gender',
-        field: 'gender', minWidth: 90, flex: 1,
-        cellClass: 'custom-cell-center'
-      },
-      {
-        headerName: 'Age',
-        field: 'age', minWidth: 61, flex: 1,
-        cellClass: 'custom-cell-center'
-      },
-      {
-        headerName: 'Package',
-        field: 'package', minWidth: 110, flex: 1,
-        cellClass: 'custom-cell-center',
-        cellRenderer: (params: any) => {
-          if (params.value === "Intensive")
-          { return '<span style="color: #6A040F;">Intensive</span>'; }
-          else if (params.value === "Private")
-          { return '<span style="color: #023047;">Private</span>'; }
-          else if (params.value === "Regular")
-          { return '<span style="color: #014F43;">Regular</span>'; }
+      [
+        {
+          headerName: 'Description',
+          field: 'descriptionEnglish', minWidth: 320, flex: 1,
+          cellClass: 'custom-cell-center',
+          autoHeight: true,
+          wrapText: true,
+        },
+        {
+          headerName: 'Method',
+          field: 'method', minWidth: 90, flex: 1,
+          cellClass: 'custom-cell-center'
+        },
+        {
+          headerName: 'Amount (MT)',
+          field: 'amountMT', minWidth: 130, flex: 1,
+          cellClass: 'custom-cell-end',
+          valueFormatter: (params) => this.formatAmount(params.value)
+        },
+        {
+          headerName: 'Status',
+          field: 'status',
+          minWidth: 130,
+          flex: 1,
+          cellClass: 'custom-cell-center',
+          cellRenderer: (params: any) => {
+            const status = params.value?.trim() || 'Error';
+            const statusMap: Record<string, { class: string; text: string }> = {
+              'Paid': {
+                class: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
+                text: 'Paid'
+              },
+              'Cancelled': {
+                class: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200',
+                text: 'Cancelled'
+              }
+            };
 
-          return ""
+            const statusConfig = statusMap[status] || {
+              class: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
+              text: 'Error'
+            };
+
+            return `
+              <span class="px-2 py-1 rounded-full text-[12pt] font-normal ${statusConfig.class}">
+                ${statusConfig.text}
+              </span>
+            `;
+          }
+        },
+        {
+          headerName: 'Date & Time',
+          field: 'dateRegister', minWidth: 200, flex: 1,
+          cellClass: 'custom-cell-center'
+        },
+        {
+          headerName: 'User',
+          field: 'trainerName', minWidth: 200, flex: 1,
+          cellClass: 'custom-cell-start'
+        },
+        {
+          headerName: 'Actions',
+          minWidth: 90, flex: 1,
+          cellRenderer: BtnTransactionsReceiptComponent,
+          cellClass: 'custom-cell-center'
         }
-      },
-      {
-        headerName: 'Level',
-        field: 'level', minWidth: 80, flex: 1,
-        cellClass: 'custom-cell-center'
-      },
-      {
-        headerName: 'Modality',
-        field: 'modality', minWidth: 110, flex: 1,
-        cellClass: 'custom-cell-center',
-        cellRenderer: (params: any) => {
-          if (params.value === "Online")
-          { return '<span style="color: #3A86FF;">Online</span>'; }
-          else
-          { return '<span style="color: #43AA8B;">In-Person</span>'; }
-        }
-      },
-      {
-        headerName: 'Period',
-        field: 'academicPeriod', minWidth: 110, flex: 1,
-        cellClass: 'custom-cell-center'
-      },
-      {
-        headerName: 'Schedule',
-        field: 'schedule', minWidth: 110, flex: 1,
-        cellClass: 'custom-cell-center'
-      },
-      {
-        headerName: 'Profile',
-        minWidth: 100, flex: 1,
-        cellRenderer: BtnStudentActiveActionTableComponent,
-        cellClass: 'custom-cell-center'
-      }
-    ];
+      ];
 
   rowData: any[] = [];
   filteredData: any[] = [];
@@ -149,6 +148,10 @@ export class ExpenseOverviewComponent implements OnInit, OnDestroy {
 // &copy; 2025 | Ramadan I.A. Ismael · License: English Training Center · All rights reserved
   private footer = `© 2025 | ${this.author} · License: ${this.institution} · All rights reserved.`;
 
+  private readonly fb = inject(FormBuilder);
+  form! : FormGroup;
+  previousAmountValue: string = '';
+
   constructor(private studentService: StudentsService, private notificationHub: NotificationHubService, private alert: SnackBarService, private clipboard: Clipboard, private titleNavbarService: TitleNavbarService)
   {}
 
@@ -163,6 +166,71 @@ export class ExpenseOverviewComponent implements OnInit, OnDestroy {
     return isNaN(d.getTime())
       ? ''
       : `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth()+1).toString().padStart(2, '0')}/${d.getFullYear()}`;
+  }
+
+  formatAmount(value: number | undefined | string): string {
+    if (value === null || value === undefined || value === '') return '';
+
+    let numberValue: number;
+
+    if (typeof value === 'string') {
+      const cleanedValue = value.replace(/\./g, '').replace(',', '.');
+      numberValue = parseFloat(cleanedValue);
+    } else {
+      numberValue = value;
+    }
+
+    if (isNaN(numberValue)) return '';
+
+    // Formatação manual com regex
+    return numberValue.toFixed(2)
+      .replace('.', ',') // Substitui ponto decimal por vírgula
+      .replace(/\B(?=(\d{3})+(?!\d))/g, '.'); // Adiciona pontos nos milhares
+  }
+
+  onAmount(event: any) {
+    const input = event.target as HTMLInputElement;
+    let value = input.value;
+
+    value = value.replace(/[^\d]/g, '');
+
+    const numberValue = this.parseNumber(value);
+
+    // Validação de limite
+    if (numberValue > 10000000) {
+      input.value = this.previousAmountValue || '';
+      return;
+    }
+
+    input.value = this.formatNumber(value);
+    this.previousAmountValue = input.value;
+  }
+
+  formatNumber(value: string): string {
+    if (value.endsWith(',')) {
+      let integerPart = value.replace(',', '').replace(/\D/g, '');
+      integerPart = integerPart.replace(/^0+/, '') || '0';
+      integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+      return integerPart + ',';
+    }
+
+    let [integerPart, decimalPart] = value.split(',');
+
+    integerPart = integerPart.replace(/\D/g, '');
+    integerPart = integerPart.replace(/^0+/, '') || '0';
+    integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+    if (decimalPart !== undefined) {
+      decimalPart = decimalPart.replace(/\D/g, '').substring(0, 2);
+      return integerPart + ',' + decimalPart;
+    }
+
+    return integerPart;
+  }
+
+  parseNumber(formattedValue: string): number {
+    const numberString = formattedValue.replace(/\./g, '').replace(',', '.');
+    return parseFloat(numberString) || 0;
   }
 
   ngOnInit(): void
@@ -188,6 +256,29 @@ export class ExpenseOverviewComponent implements OnInit, OnDestroy {
         this.applyPagination();
       })
     );
+
+    this.form = this.fb.group({
+      description : ['', [Validators.required, Validators.nullValidator]],
+      amountMT : ['', [Validators.required, Validators.nullValidator]],
+      payoutMethod : ['', [Validators.required, Validators.nullValidator]]
+    });
+  }
+
+  getErrorForms(controlName: string)
+  {
+    return this.form.get(controlName);
+  }
+
+  onAdd() {
+    console.log("New works")
+  }
+
+  onUpdate() {
+    console.log("Update works")
+  }
+
+  onClear() {
+    this.form.reset();
   }
 
   onSearch()
