@@ -25,7 +25,8 @@ namespace server.src.Interfaces
         Task<IEnumerable<ListStudentActiveDto>> GetListStudentActive();
         Task<IEnumerable<ListStudentActiveDto>> GetListStudentCompleted();
         Task<IEnumerable<ListStudentActiveDto>> GetListStudentInactive();
-        Task<IEnumerable<StudentBalanceList>> GetListStudentBalance();     
+        Task<IEnumerable<StudentBalanceList>> GetListStudentBalance();
         Task<List<StudentBalanceTransactionsDto>> GetTransactionsByStudentId(string id); 
+        Task<StudentFinancialSummaryListDto> GetTotalTransactionsByStudentId(string id);
     }
 }

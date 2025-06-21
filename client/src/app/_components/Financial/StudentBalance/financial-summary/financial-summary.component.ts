@@ -8,8 +8,8 @@ import { Observable, Subscription } from 'rxjs';
 import { StudentListProfileDto } from '../../../../_interfaces/student-list-profile-dto';
 import { CommonModule } from '@angular/common';
 import { NotificationHubService } from '../../../../_services/notification-hub.service';
-import { StudentCourseInfoService } from '../../../../_services/student-course-info.service';
 import { TransactionFinancialSummaryComponent } from "../transaction-financial-summary/transaction-financial-summary.component";
+import { ListTotalTransactionsStudentBalance } from '../../../../_interfaces/list-total-transactions-student-balance';
 
 @Component({
   selector: 'app-financial-summary',
@@ -24,44 +24,29 @@ import { TransactionFinancialSummaryComponent } from "../transaction-financial-s
 })
 export class FinancialSummaryComponent implements OnInit, OnDestroy {
   profileDetail$!: Observable<StudentListProfileDto>;
-  sutdentId : string | undefined = ""
+  sutdentId : string | undefined = "";
+  totalTransactions$!: Observable<ListTotalTransactionsStudentBalance>;
 
   private subs = new Subscription();
 
-  constructor(private titleNavbarService: TitleNavbarService, private studentShareId: StudentShareIdService, private studentService: StudentsService, private notificationHub: NotificationHubService, private courseInfoService: StudentCourseInfoService)
+  constructor(private titleNavbarService: TitleNavbarService, private studentShareId: StudentShareIdService, private studentService: StudentsService, private notificationHub: NotificationHubService)
   {}
 
   ngOnInit(): void {
     this.subs.add(
       this.notificationHub.receiveMessage().subscribe(() => {
         this.profileDetail$ = this.studentService.getStudentListProfileById(this.studentShareId.currentEnrollment);
-        this.onloadeddata();
+        this.totalTransactions$ = this.studentService.getTotalTransactionsByStudentId(this.studentShareId.currentEnrollment);
       })
     );
     //console.log("Student id = ",this.studentShareId.currentEnrollment)
     this.sutdentId = this.studentShareId.currentEnrollment;
     this.profileDetail$ = this.studentService.getStudentListProfileById(this.studentShareId.currentEnrollment);
-    this.onloadeddata();
+    this.totalTransactions$ = this.studentService.getTotalTransactionsByStudentId(this.studentShareId.currentEnrollment);
   }
 
   ngOnDestroy(): void {
     this.subs.unsubscribe();
-  }
-
-  onloadeddata()
-  {
-    /*
-    this.subs.add(
-      this.courseInfoService.getStudentCourseInfoUpdateListByStudentId(this.studentShareId.currentEnrollment).subscribe({
-        next: (list: StudentCourseInfoUpdateListDto) => {
-          this.courseInfoUpdateList = { ...list };
-        },
-        error: (err: HttpErrorResponse) => {
-          console.error('Error loading student course information:', err);
-        }
-      })
-    );
-    */
   }
 
   navigateTo (breadcrumbs: { label: string, url?: any[] }) {

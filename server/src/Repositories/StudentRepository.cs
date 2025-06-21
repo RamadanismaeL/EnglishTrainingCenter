@@ -1170,6 +1170,52 @@ namespace server.src.Repositories
             return allTransactions;
         }
 
+        public async Task<StudentFinancialSummaryListDto> GetTotalTransactionsByStudentId(string id)
+        {
+            var courseFeeData = await _dbContext.StudentCourseFee
+                .Where(f => f.StudentId == id)
+                .GroupBy(f => f.StudentId)
+                .Select(g => new
+                {
+                    CourseFeeTotal = g.Sum(x => x.PriceTotal),
+                    CourseFeePaid = g.Sum(x => x.PricePaid),
+                    CourseFeeDue = g.Sum(x => x.PriceDue),
+                    CourseFeeDateUpdate = g.Max(x => x.DateUpdate) != null ? g.Max(x => x.DateUpdate)!.Value.ToString("dd/MM/yyyy") : null
+                })
+                .FirstOrDefaultAsync();
+
+            var paymentData = await _dbContext.StudentPayments
+                .Where(p => p.StudentId == id)
+                .GroupBy(p => p.StudentId)
+                .Select(g => new
+                {
+                    Certificate = g.Where(x => x.DescriptionEnglish.Contains("Certificate")).Sum(x => x.AmountMT),
+                    Enrollment = g.Where(x => x.DescriptionEnglish.Contains("Enrollment")).Sum(x => x.AmountMT),
+                    Examination = g.Where(x => x.DescriptionEnglish.Contains("Examination")).Sum(x => x.AmountMT),
+                    Tuition = g.Where(x => x.DescriptionEnglish.Contains("Tuition")).Sum(x => x.AmountMT),
+                    TotalIncome = g.Sum(x => x.AmountMT)
+                })
+                .FirstOrDefaultAsync();
+
+            if (courseFeeData == null && paymentData == null)
+                return null!;
+
+            var dto = new StudentFinancialSummaryListDto
+            {
+                CourseFeeTotal = courseFeeData?.CourseFeeTotal ?? 0,
+                CourseFeePaid = courseFeeData?.CourseFeePaid ?? 0,
+                CourseFeeDue = courseFeeData?.CourseFeeDue ?? 0,
+                CourseFeeDateUpdate = courseFeeData?.CourseFeeDateUpdate ?? string.Empty,
+                Certificate = paymentData?.Certificate ?? 0,
+                Enrollment = paymentData?.Enrollment ?? 0,
+                Examination = paymentData?.Examination ?? 0,
+                Tuition = paymentData?.Tuition ?? 0,
+                TotalIncome = paymentData?.TotalIncome ?? 0
+            };
+
+            return dto;
+        }
+
         private decimal GetSettingsMonthlyTuition(string id, string packageName)
         {
             var tuitionId = _dbContext.SettingsMonthlyTuition.FirstOrDefault(s => s.Id == id);

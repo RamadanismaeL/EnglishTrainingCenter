@@ -178,7 +178,8 @@
       </div>
     </div>
   </div>
-  <div class="flex flex-col gap-3 w-full">
+  <div *ngIf="totalTransactions$ | async as total"
+  class="flex flex-col gap-3 w-full">
     <div class="w-full flex justify-between gap-3">
       <div class="w-full shadow-xl rounded-xl p-4 bg-white">
         <span class="text-lg text-gray-600 font-bold text-start truncate text-[14pt]">
@@ -187,59 +188,62 @@
         <hr class="border-slate-400 mb-2">
         <div class="flex items-center justify-between gap-4 text-gray-600 truncate font-medium text-[13pt]">
           <span>Total</span>
-          <span class="font-normal">2 500,00 MT</span>
+          <span class="font-normal">{{ formatAmount(total.courseFeeTotal) }} MT</span>
         </div>
         <div class="flex items-center justify-between gap-4 text-gray-600 truncate font-medium text-[13pt]">
           <span>Paid</span>
-          <span class="font-normal text-green-500">600,00 MT</span>
+          <span class="font-normal text-green-500">{{ formatAmount(total.courseFeePaid) }} MT</span>
         </div>
         <div class="flex items-center justify-between gap-4 text-gray-600 truncate font-medium text-[13pt]">
           <span>Due</span>
-          <span class="font-normal text-red-500">1 900,00 MT</span>
+          <span class="font-normal text-red-500">{{ formatAmount(total.courseFeeDue) }} MT</span>
         </div>
         <div class="flex items-center justify-between gap-4 text-gray-600 truncate font-medium text-[13pt]">
           <span>Last Update</span>
-          <span class="font-normal">19/6/2025</span>
+          <span class="font-normal">
+            {{ !total.courseFeeDateUpdate ? '--' : total.courseFeeDateUpdate }}
+          </span>
         </div>
       </div>
 
       <div class="w-full shadow-xl rounded-xl p-4 bg-white">
         <span class="text-lg text-gray-600 font-bold text-start truncate text-[14pt]">
-          Payments Received
+          Total Payments Received
         </span>
         <hr class="border-slate-400 mb-2">
         <div class="flex items-center justify-between gap-4 text-gray-600 truncate font-medium text-[13pt]">
           <span>Certificate</span>
-          <span class="font-normal text-green-500">0,00 MT</span>
+          <span class="font-normal text-gray-500">{{ formatAmount(total.certificate) }} MT</span>
         </div>
         <div class="flex items-center justify-between gap-4 text-gray-600 truncate font-medium text-[13pt]">
           <span>Enrollment</span>
-          <span class="font-normal text-green-500">300,00 MT</span>
+          <span class="font-normal text-gray-500">{{ formatAmount(total.enrollment) }} MT</span>
         </div>
         <div class="flex items-center justify-between gap-4 text-gray-600 truncate font-medium text-[13pt]">
           <span>Examination</span>
-          <span class="font-normal text-green-500">700,00 MT</span>
+          <span class="font-normal text-gray-500">{{ formatAmount(total.examination) }} MT</span>
         </div>
         <div class="flex items-center justify-between gap-4 text-gray-600 truncate font-medium text-[13pt]">
           <span>Tuition</span>
-          <span class="font-normal text-green-500">32 000,00 MT</span>
+          <span class="font-normal text-gray-500">{{ formatAmount(total.tuition) }} MT</span>
         </div>
       </div>
     </div>
 
     <div class="w-full shadow-xl rounded-xl p-4 bg-white">
         <span class="text-lg text-gray-600 font-bold text-start truncate text-[14pt]">
-          Total Balance
+          Total Income
         </span>
         <hr class="border-slate-400 mb-2">
         <div class="flex items-center justify-end text-gray-600 truncate text-[30pt]">
-          <span class="font-normal text-green-500">600,00 MT</span>
+          <span class="font-normal text-green-500">{{ formatAmount(total.totalIncome) }} MT</span>
         </div>
     </div>
     <div class="w-full p-4">
         <span class="text-lg text-gray-600 font-bold text-start truncate text-[14pt]">
-          TRANSACTIONS
+          Transactions
         </span>
+        <hr class="border-slate-400 mb-2">
         <app-transaction-financial-summary></app-transaction-financial-summary>
     </div>
   </div>

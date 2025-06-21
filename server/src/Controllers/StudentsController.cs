@@ -180,5 +180,13 @@ namespace server.src.Controllers
 
             return Ok(student);
         }
+
+        [HttpPost("get-total-transactions-by-student-id/{id}")]
+        public async Task<ActionResult<StudentFinancialSummaryListDto>> GetTotalTransactionsByStudentId(string id)
+        {
+            var student = await _studentRepository.GetTotalTransactionsByStudentId(id);
+
+            return Ok(student);
+        }
     }
 }
