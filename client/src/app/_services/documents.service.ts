@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { environment } from '../../environments/environment.development';
+import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { StudentEnrollmentFormModel } from '../_interfaces/student-enrollment-form-model';
 import { StudentPaymentModel } from '../_interfaces/student-payment-model';

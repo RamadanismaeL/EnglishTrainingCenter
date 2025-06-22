@@ -110,7 +110,7 @@ export class TransactionFinancialSummaryComponent implements OnInit, OnDestroy {
           };
 
           return `
-            <span class="px-2 py-1 rounded-full text-[12pt] font-normal ${statusConfig.class}">
+            <span class="px-2 py-1 rounded-[7px] text-[12pt] font-normal ${statusConfig.class}">
               ${statusConfig.text}
             </span>
           `;

@@ -64,7 +64,9 @@ export class StudentActiveComponent implements OnInit, OnDestroy {
       {
         headerName: 'Full Name',
         field: 'fullName', minWidth: 250, flex: 1,
-        cellClass: 'custom-cell-start'
+        cellClass: 'custom-cell-start',
+        autoHeight: true,
+        wrapText: true,
       },
       {
         headerName: 'Gender',

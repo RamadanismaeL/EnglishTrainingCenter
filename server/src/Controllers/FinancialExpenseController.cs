@@ -31,19 +31,36 @@ namespace server.src.Controllers
             return response.IsSuccess ? Ok(response) : BadRequest(response);
         }
 
-        public Task<IActionResult> Update([FromBody] FinancialExpenseUpdateDto financialExpenseUpdateDto)
+        [HttpPatch("update")]
+        public async Task<IActionResult> Update([FromBody] FinancialExpenseUpdateDto financialExpenseUpdateDto)
         {
-            throw new NotImplementedException();
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var response = await _expenseRepository.Update(financialExpenseUpdateDto);
+
+            await _hubContext.Clients.All.SendAsync("ReceiveMessage", "Approved and updated.");
+
+            return response.IsSuccess ? Ok(response) : BadRequest(response);
         }
 
-        public Task<IActionResult> CancelStatus([FromRoute] long id)
+        [HttpPatch("cancel-status/{id}")]
+        public async Task<IActionResult> CancelStatus([FromRoute] long id)
         {
-            throw new NotImplementedException();
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var response = await _expenseRepository.CancelStatus(id);
+
+            await _hubContext.Clients.All.SendAsync("ReceiveMessage", "Cancelled successfully.");
+
+            return response.IsSuccess ? Ok(response) : BadRequest(response);
         }
 
-        public Task<ActionResult<List<FinancialExpenseModel>>> GetListAllData()
+        [HttpGet("get-list-all")]
+        public async Task<ActionResult<List<FinancialExpenseListDto>>> GetListAllData()
         {
-            throw new NotImplementedException();
+            var response = await _expenseRepository.GetListAllData();
+
+            return Ok(response);
         }
     }
 }

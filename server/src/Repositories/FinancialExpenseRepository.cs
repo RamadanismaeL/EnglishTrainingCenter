@@ -222,9 +222,19 @@ namespace server.src.Repositories
             }
         }
 
-        public async Task<List<FinancialExpenseModel>> GetListAllData()
+        public async Task<List<FinancialExpenseListDto>> GetListAllData()
         {
-            return await _dbContext.FinancialExpense.AsNoTracking().ToListAsync();
+            var expenseList = await _dbContext.FinancialExpense.AsNoTracking().ToListAsync();
+            return [.. expenseList.Select(s => new FinancialExpenseListDto
+            {
+                Id = s.Id,
+                Description = s.Description,
+                Method = s.Method,
+                AmountMT = s.AmountMT,
+                LastUpdate = s.LastUpdate,
+                Status = s.Status,
+                TrainerName = s.TrainerName
+            }).OrderByDescending(x => x.LastUpdate)];
         }
     }
 }

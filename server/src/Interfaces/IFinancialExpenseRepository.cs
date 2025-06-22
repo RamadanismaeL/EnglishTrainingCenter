@@ -3,7 +3,6 @@
 */
 
 using server.src.DTOs;
-using server.src.Models;
 
 namespace server.src.Interfaces
 {
@@ -12,6 +11,6 @@ namespace server.src.Interfaces
         Task<ResponseDto> Create(FinancialExpenseCreateDto financialExpenseCreateDto);
         Task<ResponseDto> Update(FinancialExpenseUpdateDto financialExpenseUpdateDto);
         Task<ResponseDto> CancelStatus(long id);
-        Task<List<FinancialExpenseModel>> GetListAllData();
+        Task<List<FinancialExpenseListDto>> GetListAllData();
     }
 }

@@ -22,9 +22,11 @@ import printJS from 'print-js';
 import { MatSelectModule } from '@angular/material/select';
 import { NotificationHubService } from '../../../../_services/notification-hub.service';
 import { SnackBarService } from '../../../../_services/snack-bar.service';
-import { StudentsService } from '../../../../_services/students.service';
 import { TitleNavbarService } from '../../../../_services/title-navbar.service';
-import { BtnTransactionsReceiptComponent } from '../../btn-transactions-receipt/btn-transactions-receipt.component';
+import { FinancialService } from '../../../../_services/financial.service';
+import { BtnTableActionComponent } from '../btn-table-action/btn-table-action.component';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ListFinancialExpenseCreateDto } from '../../../../_interfaces/list-financial-expense-create-dto';
 
 ModuleRegistry.registerModules([ AllCommunityModule]);
 
@@ -57,21 +59,21 @@ export class ExpenseOverviewComponent implements OnInit, OnDestroy {
       [
         {
           headerName: 'Description',
-          field: 'descriptionEnglish', minWidth: 320, flex: 1,
-          cellClass: 'custom-cell-center',
+          field: 'description', minWidth: 300, flex: 1,
+          cellClass: 'custom-cell-start',
           autoHeight: true,
           wrapText: true,
         },
         {
-          headerName: 'Method',
-          field: 'method', minWidth: 90, flex: 1,
+          headerName: 'P. Method',
+          field: 'method', minWidth: 110, flex: 1,
           cellClass: 'custom-cell-center'
         },
         {
           headerName: 'Amount (MT)',
-          field: 'amountMT', minWidth: 130, flex: 1,
-          cellClass: 'custom-cell-end',
-          valueFormatter: (params) => this.formatAmount(params.value)
+          field: 'amountMTFormatted', minWidth: 130, flex: 1,
+          cellClass: 'custom-cell-end'
+          //valueFormatter: (params) => this.formatAmount(params.value)
         },
         {
           headerName: 'Status',
@@ -82,9 +84,9 @@ export class ExpenseOverviewComponent implements OnInit, OnDestroy {
           cellRenderer: (params: any) => {
             const status = params.value?.trim() || 'Error';
             const statusMap: Record<string, { class: string; text: string }> = {
-              'Paid': {
+              'Approved': {
                 class: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
-                text: 'Paid'
+                text: 'Approved'
               },
               'Cancelled': {
                 class: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200',
@@ -98,7 +100,7 @@ export class ExpenseOverviewComponent implements OnInit, OnDestroy {
             };
 
             return `
-              <span class="px-2 py-1 rounded-full text-[12pt] font-normal ${statusConfig.class}">
+              <span class="px-2 py-1 rounded-[7px] text-[12pt] font-normal ${statusConfig.class}">
                 ${statusConfig.text}
               </span>
             `;
@@ -106,7 +108,7 @@ export class ExpenseOverviewComponent implements OnInit, OnDestroy {
         },
         {
           headerName: 'Date & Time',
-          field: 'dateRegister', minWidth: 200, flex: 1,
+          field: 'lastUpdate', minWidth: 240, flex: 1,
           cellClass: 'custom-cell-center'
         },
         {
@@ -116,8 +118,8 @@ export class ExpenseOverviewComponent implements OnInit, OnDestroy {
         },
         {
           headerName: 'Actions',
-          minWidth: 90, flex: 1,
-          cellRenderer: BtnTransactionsReceiptComponent,
+          minWidth: 80, flex: 1,
+          cellRenderer: BtnTableActionComponent,
           cellClass: 'custom-cell-center'
         }
       ];
@@ -152,7 +154,9 @@ export class ExpenseOverviewComponent implements OnInit, OnDestroy {
   form! : FormGroup;
   previousAmountValue: string = '';
 
-  constructor(private studentService: StudentsService, private notificationHub: NotificationHubService, private alert: SnackBarService, private clipboard: Clipboard, private titleNavbarService: TitleNavbarService)
+  private financialCreate = {} as ListFinancialExpenseCreateDto;
+
+  constructor(private financialService: FinancialService, private notificationHub: NotificationHubService, private alert: SnackBarService, private clipboard: Clipboard, private titleNavbarService: TitleNavbarService)
   {}
 
   navigateTo (breadcrumbs: { label: string, url?: any[] }) {
@@ -251,7 +255,7 @@ export class ExpenseOverviewComponent implements OnInit, OnDestroy {
   private loadData(): void
   {
     this.subs.add(
-      this.studentService.getListStudentActive().subscribe((data: any) => {
+      this.financialService.getListAll().subscribe((data: any) => {
         this.rowData = data;
         this.applyPagination();
       })
@@ -270,15 +274,70 @@ export class ExpenseOverviewComponent implements OnInit, OnDestroy {
   }
 
   onAdd() {
-    console.log("New works")
-  }
-
-  onUpdate() {
-    console.log("Update works")
+    //console.log("New works")
+    if (this.form.valid)
+    {
+      this.financialCreate = {
+        description: this.capitalizeWords(this.form.value.description),
+        method: this.form.value.payoutMethod,
+        amountMT: this.form.value.amountMT
+      }
+      //console.log("Add = ",this.financialCreate)
+      this.subs.add(
+        this.financialService.create(this.financialCreate).subscribe({
+          next: (response) => {
+            this.alert.show(response.message, 'success');
+          },
+          error: (error: HttpErrorResponse) => {
+            if (error.status === 400) {
+              this.alert.show('An error occurred while creating.', 'error');
+            } else if (error.status === 401) {
+              this.alert.show('Oops! Unauthorized!', 'error');
+            } else if (error.status === 403) {
+              this.alert.show('Oops! Access denied. You do not have permission.', 'error');
+            } else if (error.status === 404) {
+              this.alert.show('Oops! Not found!', 'error');
+            }  else if (error.status >= 500) {
+              this.alert.show('Oops! The server is busy!', 'error');
+            } else {
+            this.alert.show('Oops! An unexpected error occurred.', 'error');
+            }
+          }
+        })
+      );
+    }
+    else
+    {
+      this.markFormGroupTouched(this.form);
+    }
   }
 
   onClear() {
     this.form.reset();
+  }
+
+  private markFormGroupTouched(formGroup: FormGroup) {
+    Object.values(formGroup.controls).forEach(control => {
+        control.markAsTouched();
+
+        if (control instanceof FormGroup) {
+            this.markFormGroupTouched(control);
+        }
+    });
+  }
+
+  private capitalizeWords(value: string | null): string {
+    if (value === null) return '';
+
+    return value
+      .toLowerCase()
+      .split(' ')
+      .map(word =>
+        word.length > 0 && word.length != 1
+          ? word.charAt(0).toUpperCase() + word.slice(1)
+          : word
+      )
+      .join(' ');
   }
 
   onSearch()
@@ -446,7 +505,7 @@ export class ExpenseOverviewComponent implements OnInit, OnDestroy {
   private async copyAllDataTable(): Promise<void> {
     try {
       // 1. Busca todos os dados dos trainers
-      const response = await lastValueFrom(this.studentService.getListStudentActive());
+      const response = await lastValueFrom(this.financialService.getListAll());
       const trainers = Array.isArray(response) ? response : [response];
 
       if (!trainers.length) {
@@ -454,8 +513,8 @@ export class ExpenseOverviewComponent implements OnInit, OnDestroy {
         return;
       }
 
-      const ignoreKeys = ['order'];
-      const orderedKeys = ['id', 'fullName', 'gender', 'age', 'package', 'level', 'modality', 'academicPeriod', 'schedule']; // ordem desejada
+      const ignoreKeys = ['id'];
+      const orderedKeys = ['description', 'method', 'amountMTFormatted', 'lastUpdate', 'status', 'trainerName']; // ordem desejada
 
       // Filtra a ordem excluindo colunas ignoradas
       const finalKeys = orderedKeys.filter(key => !ignoreKeys.includes(key));
@@ -512,7 +571,7 @@ export class ExpenseOverviewComponent implements OnInit, OnDestroy {
   private async exportExcelAllDataTable(): Promise<void> {
     try {
       // 1. Fetch all trainer data
-      const response = await lastValueFrom(this.studentService.getListStudentActive());
+      const response = await lastValueFrom(this.financialService.getListAll());
 
       // Validate response
       if (!response) {
@@ -530,15 +589,12 @@ export class ExpenseOverviewComponent implements OnInit, OnDestroy {
       const worksheet = workbook.addWorksheet('Trainers');
 
       const excelColumns = [
-        { header: 'Code', key: 'id', width: 20 },
-        { header: 'Full Name', key: 'fullName', width: 40 },
-        { header: 'Gender', key: 'gender', width: 15 },
-        { header: 'Age', key: 'age', width: 10 },
-        { header: 'Package', key: 'package', width: 20 },
-        { header: 'Level', key: 'level', width: 10 },
-        { header: 'Modality', key: 'modality', width: 20 },
-        { header: 'Period', key: 'academicPeriod', width: 15 },
-        { header: 'Schedule', key: 'schedule', width: 15 },
+        { header: 'Description', key: 'description', width: 70 },
+        { header: 'P. Method', key: 'method', width: 20 },
+        { header: 'Amount (MT)', key: 'amountMTFormatted', width: 20 },
+        { header: 'Last Update', key: 'lastUpdate', width: 40 },
+        { header: 'Status', key: 'status', width: 20 },
+        { header: 'User', key: 'trainerName', width: 40 }
       ];
 
       // 2. Definir manualmente os valores do cabeçalho na linha 4
@@ -577,15 +633,12 @@ export class ExpenseOverviewComponent implements OnInit, OnDestroy {
       students.forEach((student, index) => {
         const rowNumber = index + 5; // Começa da linha 5
         worksheet.getRow(rowNumber).values = [
-          student.id ?? '',
-          student.fullName ?? '',
-          student.gender ?? '',
-          student.age ?? '',
-          student.package ?? '',
-          student.level ?? '',
-          student.modality ?? '',
-          student.academicPeriod ?? '',
-          student.schedule ?? ''
+          student.description ?? '',
+          student.method ?? '',
+          student.amountMTFormatted ?? '',
+          student.lastUpdate ?? '',
+          student.status ?? '',
+          student.trainerName ?? ''
         ];
       });
 
@@ -600,8 +653,12 @@ export class ExpenseOverviewComponent implements OnInit, OnDestroy {
 
             const columnLetter = worksheet.getColumn(cell.col).letter;
 
-            if (['B'].includes(columnLetter)) {
+            if (['A', 'F'].includes(columnLetter)) {
               cell.alignment = { vertical: 'middle', horizontal: 'left' };
+            }
+
+            if (['C'].includes(columnLetter)) {
+              cell.alignment = { vertical: 'middle', horizontal: 'right' };
             }
 
             cell.border = {
@@ -652,7 +709,7 @@ export class ExpenseOverviewComponent implements OnInit, OnDestroy {
       //console.log('LastRow + 2 = ', calc)
 
       const footer = worksheet.getRow(calc);
-      worksheet.mergeCells(`A${calc}:I${calc}`);
+      worksheet.mergeCells(`A${calc}:F${calc}`);
       footer.height = 20;
       const myName = worksheet.getCell(`A${calc}`);
       myName.value = this.footer;
@@ -663,21 +720,20 @@ export class ExpenseOverviewComponent implements OnInit, OnDestroy {
 
       worksheet.getRow(1).values = [];
       worksheet.getRow(1).height = 30;
-      worksheet.mergeCells('A1:G1');
+      worksheet.mergeCells('A1:E1');
       const titleCell1 = worksheet.getCell('A1');
       titleCell1.value = 'ENGLISH TRAINING CENTER';
       titleCell1.font = { size: 22, bold: true, color: { argb: 'FF2C2C2C' } };
       titleCell1.alignment = { vertical: 'middle', horizontal: 'center' };
 
-      worksheet.mergeCells('A2:G2');
+      worksheet.mergeCells('A2:E2');
       const titleCell2 = worksheet.getCell('A2');
-      titleCell2.value = 'Students : Active – Full List';
+      titleCell2.value = 'Financial : Expenses – Full List';
       titleCell2.font = { size: 20, bold: true, color: { argb: '2C2C2C' } };
       titleCell2.alignment = { vertical: 'middle', horizontal: 'center' };
 
       // Adicionar data
-      const dateCell = worksheet.getCell('H2');
-      worksheet.mergeCells('H2:I2')
+      const dateCell = worksheet.getCell('F2');
       dateCell.value = `Issued on: ${this.formatDate(new Date())}`;
       dateCell.font = { size: 12, bold: false, color: { argb: '2C2C2C' } };
       dateCell.alignment = { vertical: 'middle', horizontal: 'right' };
@@ -687,7 +743,7 @@ export class ExpenseOverviewComponent implements OnInit, OnDestroy {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
       });
 
-      FileSaver.saveAs(blob, 'ETC_students_active_full_list_data.xlsx');
+      FileSaver.saveAs(blob, 'ETC_financial_expenses_full_list.xlsx');
       this.alert.show('All data exported to Excel.', 'success');
     } catch (error) {
       console.error('Error exporting Excel:', error);
@@ -890,7 +946,7 @@ export class ExpenseOverviewComponent implements OnInit, OnDestroy {
   private async exportPdfAllDataTable(): Promise<void> {
     try {
       // 1. Fetch all trainer data
-      const response = await lastValueFrom(this.studentService.getListStudentActive());
+      const response = await lastValueFrom(this.financialService.getListAll());
       const students = Array.isArray(response) ? response : [response];
 
       if (!response) {
@@ -900,28 +956,22 @@ export class ExpenseOverviewComponent implements OnInit, OnDestroy {
 
       // Preparar cabeçalhos
       const headers = [
-        'Code',
-        'Full Name',
-        'Gender',
-        'Age',
-        'Package',
-        'Level',
-        'Modality',
-        'Period',
-        'Schedule'
+        'Description',
+        'P. Method',
+        'Amount (MT)',
+        'Last Update',
+        'Status',
+        'User'
       ];
 
       // 4. Mapear os dados para o formato da tabela
       const data = students.map(student => [
-          student.id ?? '',
-          student.fullName ?? '',
-          student.gender ?? '',
-          student.age ?? '',
-          student.package ?? '',
-          student.level ?? '',
-          student.modality ?? '',
-          student.academicPeriod ?? '',
-          student.schedule ?? ''
+          student.description ?? '',
+          student.method ?? '',
+          student.amountMT ?? '',
+          student.lastUpdate ?? '',
+          student.status ?? '',
+          student.trainerName ?? ''
       ]);
 
       // Cria o documento PDF
@@ -1151,7 +1201,7 @@ export class ExpenseOverviewComponent implements OnInit, OnDestroy {
   private async printAllDataTable(): Promise<void> {
     try {
       // 1. Fetch all trainer data
-      const response = await lastValueFrom(this.studentService.getListStudentActive());
+      const response = await lastValueFrom(this.financialService.getListAll());
       const students = Array.isArray(response) ? response : [response];
 
       if (!response) {
