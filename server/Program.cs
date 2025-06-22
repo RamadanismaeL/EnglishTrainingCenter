@@ -1,5 +1,5 @@
 /*
-*@auhtor Ramadan Ismael
+* Copyright 2025 | Ramadan Ismael
 */
 
 using DinkToPdf;

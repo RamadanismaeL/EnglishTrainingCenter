@@ -1,5 +1,5 @@
 /*
-*@author Ramadan Ismael
+* Copyright 2025 | Ramadan Ismael
 */
 
 using Microsoft.AspNetCore.Authorization;

@@ -1,11 +1,10 @@
 /*
-*@auhtor Ramadan Ismael
+* Copyright 2025 | Ramadan Ismael
 */
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using server.src.DTOs;
-using server.src.Signalr;
 using server.src.Interfaces;
 
 namespace server.src.Controllers

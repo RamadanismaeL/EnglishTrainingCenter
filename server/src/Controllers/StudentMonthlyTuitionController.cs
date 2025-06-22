@@ -1,7 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+/*
+* Copyright 2025 | Ramadan Ismael
+*/
+
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using server.src.DTOs;
@@ -11,6 +12,7 @@ using server.src.Signalr;
 
 namespace server.src.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class StudentMonthlyTuitionController(IStudentMonthlyTuitionRepository studentMonthlyTuitionRepository, IHubContext<NotificationHub> hubContext) : ControllerBase, IStudentMonthlyTuitionController

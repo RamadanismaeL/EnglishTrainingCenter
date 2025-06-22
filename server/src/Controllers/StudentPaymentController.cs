@@ -1,5 +1,5 @@
 /*
-*@author Ramadan Ismael
+* Copyright 2025 | Ramadan Ismael
 */
 
 using Microsoft.AspNetCore.Authorization;
@@ -12,7 +12,7 @@ using server.src.Signalr;
 
 namespace server.src.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class StudentPaymentController : ControllerBase, IStudentPaymentController

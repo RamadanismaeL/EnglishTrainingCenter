@@ -1,6 +1,7 @@
 /*
-*@author Ramadan Ismael
+* Copyright 2025 | Ramadan Ismael
 */
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
@@ -11,7 +12,7 @@ using server.src.Signalr;
 
 namespace server.src.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class StudentsController : ControllerBase, IStudentController

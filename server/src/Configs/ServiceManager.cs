@@ -1,5 +1,5 @@
 /*
-*@auhtor Ramadan Ismael
+* Copyright 2025 | Ramadan Ismael
 */
 
 using DinkToPdf;
@@ -140,7 +140,10 @@ namespace server.src.Configs
                 services.AddScoped<IStudentRepository, StudentRepository>();
                 services.AddScoped<IStudentPaymentRepository, StudentPaymentRepository>();
                 services.AddScoped<IStudentCourseInfoRepository, StudentCourseInfoRepository>();
-                services.AddScoped<IStudentMonthlyTuitionRepository, StudentMonthlyTuitionRepository>();      
+                services.AddScoped<IStudentMonthlyTuitionRepository, StudentMonthlyTuitionRepository>();
+
+                // Financial
+                services.AddScoped<IFinancialExpenseRepository, FinancialExpenseRepository>();    
 
                 // Settings
                 services.AddScoped<ISettingRepository, SettingRepository>();

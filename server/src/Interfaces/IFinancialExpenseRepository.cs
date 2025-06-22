@@ -10,7 +10,8 @@ namespace server.src.Interfaces
     public interface IFinancialExpenseRepository
     {
         Task<ResponseDto> Create(FinancialExpenseCreateDto financialExpenseCreateDto);
-        Task<ResponseDto> Update(FinancialExpenseModel financialExpense);
-        Task<ResponseDto> CancelStatus(long order);
+        Task<ResponseDto> Update(FinancialExpenseUpdateDto financialExpenseUpdateDto);
+        Task<ResponseDto> CancelStatus(long id);
+        Task<List<FinancialExpenseModel>> GetListAllData();
     }
 }

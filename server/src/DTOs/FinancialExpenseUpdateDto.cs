@@ -4,8 +4,9 @@
 
 namespace server.src.DTOs
 {
-    public class FinancialExpenseCreateDto
+    public class FinancialExpenseUpdateDto
     {
+        public long Id { get;  set; }
         public string Description { get; set; } = string.Empty;
         public string Method { get; set; } = string.Empty;
         public decimal AmountMT { get; set; }

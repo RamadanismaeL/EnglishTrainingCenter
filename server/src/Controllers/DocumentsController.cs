@@ -1,13 +1,15 @@
 /*
-*@author Ramadan Ismael
+* Copyright 2025 | Ramadan Ismael
 */
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using server.src.Interfaces;
 using server.src.Models;
 
 namespace server.src.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class DocumentsController(IDocumentRepository docs) : ControllerBase, IDocumentController
