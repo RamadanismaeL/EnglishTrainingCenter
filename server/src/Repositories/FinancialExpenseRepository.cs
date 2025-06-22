@@ -199,6 +199,16 @@ namespace server.src.Repositories
                     };
                 }
 
+                // Check if already cancelled → Do not allow further updates
+                if (findExpenseId.Status == "Cancelled")
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "Cannot update a cancelled expense."
+                    };
+                }
+
                 findExpenseId.LastUpdate = DateTime.Now;
                 findExpenseId.Status = "Cancelled";
                 findExpenseId.TrainerName = trainerName!;

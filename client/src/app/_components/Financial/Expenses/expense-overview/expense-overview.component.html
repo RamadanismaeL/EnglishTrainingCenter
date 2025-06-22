@@ -128,7 +128,7 @@
     #registerFormRef>
     <div class="w-full flex justify-between">
       <h1 class="text-lg text-gray-600 font-bold text-start">
-        EXPENSE&nbsp;&nbsp;FORM
+        Register Your Daily Expenses
       </h1>
       <div>
         <button mat-icon-button [matMenuTriggerFor]="menu"
@@ -137,9 +137,11 @@
         </button>
         <mat-menu #menu="matMenu">
           <button mat-menu-item type="button" (click)="onAdd()">
+            <mat-icon>post_add</mat-icon>
             <span>New</span>
           </button>
           <button mat-menu-item type="button" (click)="onClear()">
+            <mat-icon>clear</mat-icon>
             <span>Clear</span>
           </button>
         </mat-menu>

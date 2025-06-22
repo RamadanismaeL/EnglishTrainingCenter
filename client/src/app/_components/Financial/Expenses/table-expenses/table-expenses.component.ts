@@ -1,14 +1,12 @@
-import { Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { FormControl, FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule, TooltipPosition } from '@angular/material/tooltip';
 import { AgGridAngular } from 'ag-grid-angular';
-import { AllCommunityModule, ModuleRegistry, ColDef, GridApi, GridReadyEvent, RowSelectionOptions } from 'ag-grid-community';
+import { ColDef, GridApi, GridReadyEvent, RowSelectionOptions } from 'ag-grid-community';
 import { MatInputModule } from '@angular/material/input';
 import { CommonModule } from '@angular/common';
-import { MatCardModule } from '@angular/material/card';
 import { Subscription } from 'rxjs';
-import { MatDialogModule } from '@angular/material/dialog';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { lastValueFrom } from 'rxjs';
 import ExcelJS from 'exceljs';
@@ -16,22 +14,16 @@ import FileSaver from 'file-saver';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 import autoTable from 'jspdf-autotable';
-import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import printJS from 'print-js';
 import { MatSelectModule } from '@angular/material/select';
 import { NotificationHubService } from '../../../../_services/notification-hub.service';
 import { SnackBarService } from '../../../../_services/snack-bar.service';
-import { TitleNavbarService } from '../../../../_services/title-navbar.service';
 import { FinancialService } from '../../../../_services/financial.service';
 import { BtnTableActionComponent } from '../btn-table-action/btn-table-action.component';
-import { HttpErrorResponse } from '@angular/common/http';
-import { ListFinancialExpenseCreateDto } from '../../../../_interfaces/list-financial-expense-create-dto';
-
-ModuleRegistry.registerModules([ AllCommunityModule]);
 
 @Component({
-  selector: 'app-expense-fixed-costs',
+  selector: 'app-table-expenses',
   imports: [
     AgGridAngular,
     MatIconModule,
@@ -40,16 +32,12 @@ ModuleRegistry.registerModules([ AllCommunityModule]);
     FormsModule,
     MatInputModule,
     CommonModule,
-    MatCardModule,
-    MatDialogModule,
-    MatButtonModule,
-    MatMenuModule,
-    ReactiveFormsModule
+    MatMenuModule
   ],
-  templateUrl: './expense-fixed-costs.component.html',
-  styleUrl: './expense-fixed-costs.component.scss'
+  templateUrl: './table-expenses.component.html',
+  styleUrl: './table-expenses.component.scss'
 })
-export class ExpenseFixedCostsComponent implements OnInit, OnDestroy {
+export class TableExpensesComponent implements OnInit, OnDestroy {
   positionOptions: TooltipPosition[] = ['below', 'above', 'left', 'right'];
   position = new FormControl(this.positionOptions[1]);
   positionT = new FormControl(this.positionOptions[0]);
@@ -149,18 +137,8 @@ export class ExpenseFixedCostsComponent implements OnInit, OnDestroy {
 // &copy; 2025 | Ramadan I.A. Ismael · License: English Training Center · All rights reserved
   private footer = `© 2025 | ${this.author} · License: ${this.institution} · All rights reserved.`;
 
-  private readonly fb = inject(FormBuilder);
-  form! : FormGroup;
-  previousAmountValue: string = '';
-
-  private financialCreate = {} as ListFinancialExpenseCreateDto;
-
-  constructor(private financialService: FinancialService, private notificationHub: NotificationHubService, private alert: SnackBarService, private clipboard: Clipboard, private titleNavbarService: TitleNavbarService)
+  constructor(private financialService: FinancialService, private notificationHub: NotificationHubService, private alert: SnackBarService, private clipboard: Clipboard)
   {}
-
-  navigateTo (breadcrumbs: { label: string, url?: any[] }) {
-    this.titleNavbarService.addBreadcrumb(breadcrumbs);
-  }
 
   formatDate(date: Date | string | null): string {
     if (!date) return '';
@@ -169,71 +147,6 @@ export class ExpenseFixedCostsComponent implements OnInit, OnDestroy {
     return isNaN(d.getTime())
       ? ''
       : `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth()+1).toString().padStart(2, '0')}/${d.getFullYear()}`;
-  }
-
-  formatAmount(value: number | undefined | string): string {
-    if (value === null || value === undefined || value === '') return '';
-
-    let numberValue: number;
-
-    if (typeof value === 'string') {
-      const cleanedValue = value.replace(/\./g, '').replace(',', '.');
-      numberValue = parseFloat(cleanedValue);
-    } else {
-      numberValue = value;
-    }
-
-    if (isNaN(numberValue)) return '';
-
-    // Formatação manual com regex
-    return numberValue.toFixed(2)
-      .replace('.', ',') // Substitui ponto decimal por vírgula
-      .replace(/\B(?=(\d{3})+(?!\d))/g, '.'); // Adiciona pontos nos milhares
-  }
-
-  onAmount(event: any) {
-    const input = event.target as HTMLInputElement;
-    let value = input.value;
-
-    value = value.replace(/[^\d]/g, '');
-
-    const numberValue = this.parseNumber(value);
-
-    // Validação de limite
-    if (numberValue > 10000000) {
-      input.value = this.previousAmountValue || '';
-      return;
-    }
-
-    input.value = this.formatNumber(value);
-    this.previousAmountValue = input.value;
-  }
-
-  formatNumber(value: string): string {
-    if (value.endsWith(',')) {
-      let integerPart = value.replace(',', '').replace(/\D/g, '');
-      integerPart = integerPart.replace(/^0+/, '') || '0';
-      integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-      return integerPart + ',';
-    }
-
-    let [integerPart, decimalPart] = value.split(',');
-
-    integerPart = integerPart.replace(/\D/g, '');
-    integerPart = integerPart.replace(/^0+/, '') || '0';
-    integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-
-    if (decimalPart !== undefined) {
-      decimalPart = decimalPart.replace(/\D/g, '').substring(0, 2);
-      return integerPart + ',' + decimalPart;
-    }
-
-    return integerPart;
-  }
-
-  parseNumber(formattedValue: string): number {
-    const numberString = formattedValue.replace(/\./g, '').replace(',', '.');
-    return parseFloat(numberString) || 0;
   }
 
   ngOnInit(): void
@@ -259,84 +172,6 @@ export class ExpenseFixedCostsComponent implements OnInit, OnDestroy {
         this.applyPagination();
       })
     );
-
-    this.form = this.fb.group({
-      description : ['', [Validators.required, Validators.nullValidator]],
-      amountMT : ['', [Validators.required, Validators.nullValidator]],
-      payoutMethod : ['', [Validators.required, Validators.nullValidator]]
-    });
-  }
-
-  getErrorForms(controlName: string)
-  {
-    return this.form.get(controlName);
-  }
-
-  onAdd() {
-    //console.log("New works")
-    if (this.form.valid)
-    {
-      this.financialCreate = {
-        description: this.capitalizeWords(this.form.value.description),
-        method: this.form.value.payoutMethod,
-        amountMT: this.form.value.amountMT
-      }
-      //console.log("Add = ",this.financialCreate)
-      this.subs.add(
-        this.financialService.create(this.financialCreate).subscribe({
-          next: (response) => {
-            this.alert.show(response.message, 'success');
-          },
-          error: (error: HttpErrorResponse) => {
-            if (error.status === 400) {
-              this.alert.show('An error occurred while creating.', 'error');
-            } else if (error.status === 401) {
-              this.alert.show('Oops! Unauthorized!', 'error');
-            } else if (error.status === 403) {
-              this.alert.show('Oops! Access denied. You do not have permission.', 'error');
-            } else if (error.status === 404) {
-              this.alert.show('Oops! Not found!', 'error');
-            }  else if (error.status >= 500) {
-              this.alert.show('Oops! The server is busy!', 'error');
-            } else {
-            this.alert.show('Oops! An unexpected error occurred.', 'error');
-            }
-          }
-        })
-      );
-    }
-    else
-    {
-      this.markFormGroupTouched(this.form);
-    }
-  }
-
-  onClear() {
-    this.form.reset();
-  }
-
-  private markFormGroupTouched(formGroup: FormGroup) {
-    Object.values(formGroup.controls).forEach(control => {
-        control.markAsTouched();
-
-        if (control instanceof FormGroup) {
-            this.markFormGroupTouched(control);
-        }
-    });
-  }
-
-  private capitalizeWords(value: string | null): string {
-    if (value === null) return '';
-
-    return value
-      .toLowerCase()
-      .split(' ')
-      .map(word =>
-        word.length > 0 && word.length != 1
-          ? word.charAt(0).toUpperCase() + word.slice(1)
-          : word
-      )
-      .join(' ');
   }
 
   onSearch()

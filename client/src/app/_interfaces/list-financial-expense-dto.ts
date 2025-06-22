@@ -7,4 +7,3 @@ export interface ListFinancialExpenseDto {
   "status": string
   "trainerName": string
 }
-

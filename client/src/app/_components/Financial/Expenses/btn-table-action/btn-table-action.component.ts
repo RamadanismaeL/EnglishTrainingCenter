@@ -45,7 +45,7 @@ export class BtnTableActionComponent implements ICellRendererAngularComp, OnDest
         },
         error: (error: HttpErrorResponse) => {
           if (error.status === 400) {
-            this.alert.show('An error occurred while deleting.', 'error');
+            this.alert.show(error.error.message, 'error');
           } else if (error.status === 401) {
             this.alert.show('Oops! Unauthorized!', 'error');
           } else if (error.status === 403) {
