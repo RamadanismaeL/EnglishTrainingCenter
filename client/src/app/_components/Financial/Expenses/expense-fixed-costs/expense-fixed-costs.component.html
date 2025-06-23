@@ -1,74 +1,5 @@
 <div class="table-toolbar text-[#525252]">
-  <div class="w-full flex items-center justify-between">
-
-    <div class="flex gap-2 h-12">
-      <a
-        class="icon copy m-0 p-0"
-        matTooltip="Copy"
-        [matTooltipPosition]="position.value!"
-        [matMenuTriggerFor]="menuCopy"
-        matTooltipHideDelay="100"
-        (click)="toggleBtn('copy')"
-        (menuClosed)="copy = false"
-        [class.copy-active]="copy"
-      >
-        <span class="material-icons">content_copy</span>
-
-        <mat-menu #menuCopy="matMenu">
-          <button mat-menu-item (click)="onExport('copyAllData')">All data</button>
-          <button mat-menu-item (click)="onExport('copyFiltered')">Filtered</button>
-        </mat-menu>
-      </a>
-      <a
-        class="icon excel"
-        matTooltip="Excel"
-        [matTooltipPosition]="position.value!"
-        matTooltipHideDelay="100"
-        [matMenuTriggerFor]="menuExcel"
-        [class.excel-active]="excel"
-        (click)="toggleBtn('excel')"
-        (menuClosed)="excel = false"
-        >
-        <span class="material-icons">table_view</span>
-        <mat-menu #menuExcel="matMenu">
-          <button mat-menu-item (click)="onExport('exportExcelAllData')">All data</button>
-          <button mat-menu-item (click)="onExport('exportExcelFiltered')">Filtered</button>
-        </mat-menu>
-      </a>
-      <a
-        class="icon pdf"
-        matTooltip="PDF"
-        [matTooltipPosition]="position.value!"
-        matTooltipHideDelay="100"
-        [matMenuTriggerFor]="menuPdf"
-        [class.pdf-active]="pdf"
-        (click)="toggleBtn('pdf')"
-        (menuClosed)="pdf = false"
-        >
-        <span class="material-icons">picture_as_pdf</span>
-        <mat-menu #menuPdf="matMenu">
-          <button mat-menu-item (click)="onExport('exportPdfAllData')">All data</button>
-          <button mat-menu-item (click)="onExport('exportPdfFiltered')">Filtered</button>
-        </mat-menu>
-      </a>
-      <a
-        class="icon print"
-        matTooltip="Print"
-        [matTooltipPosition]="position.value!"
-        matTooltipHideDelay="100"
-        [matMenuTriggerFor]="menuPrint"
-        [class.print-active]="print"
-        (click)="toggleBtn('print')"
-        (menuClosed)="print = false"
-        >
-        <span class="material-icons">print</span>
-        <mat-menu #menuPrint="matMenu">
-          <button mat-menu-item (click)="onExport('printAllData')">All data</button>
-          <button mat-menu-item (click)="onExport('printFiltered')">Filtered</button>
-        </mat-menu>
-      </a>
-    </div>
-
+  <div class="w-full flex items-center justify-end">
     <div class="w-1/4 formField">
       <mat-form-field appearance="outline" class="w-full">
         <mat-label>Type to search...</mat-label>
@@ -88,7 +19,6 @@
     [headerHeight]="56"
     [rowHeight]="56"
     [rowSelection]="rowSelection"
-    (gridReady)="onGridReady($event)"
     #agGrid
     >
   </ag-grid-angular>
@@ -172,20 +102,6 @@
                   (input)="onAmount($event)"/>
                 @if (getErrorForms('amountMT')?.hasError('required')) {
                   <mat-error>Amount MT is required</mat-error>
-                }
-              </mat-form-field>
-
-              <mat-form-field appearance="outline" class="w-1/2">
-                <mat-label>Payout Method</mat-label>
-                <mat-select panelClass="scrollbar-custom"
-                formControlName="payoutMethod">
-                  <mat-option value="Bank">Bank</mat-option>
-                  <mat-option value="Cash">Cash</mat-option>
-                  <mat-option value="E-Mola">E-Mola</mat-option>
-                  <mat-option value="M-Pesa">M-Pesa</mat-option>
-                </mat-select>
-                @if (getErrorForms('payoutMethod')?.hasError('required')) {
-                  <mat-error>Payout method is required</mat-error>
                 }
               </mat-form-field>
             </div>

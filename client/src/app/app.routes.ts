@@ -254,12 +254,6 @@ export const routes: Routes = [
         outlet : 'ramRouter'
       },
       {
-        path : 'financial-revenue',
-        loadComponent: () =>
-          import('./_pages/Financials/financial-revenue/financial-revenue.component').then(m => m.FinancialRevenueComponent),
-        outlet : 'ramRouter'
-      },
-      {
         path : 'student-balance',
         loadComponent: () =>
           import('./_pages/Financials/student-balance/student-balance.component').then(m => m.StudentBalanceComponent),

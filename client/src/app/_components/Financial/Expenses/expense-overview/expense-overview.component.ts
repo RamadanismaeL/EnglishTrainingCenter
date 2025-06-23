@@ -84,9 +84,9 @@ export class ExpenseOverviewComponent implements OnInit, OnDestroy {
           cellRenderer: (params: any) => {
             const status = params.value?.trim() || 'Error';
             const statusMap: Record<string, { class: string; text: string }> = {
-              'Approved': {
+              'Paid': {
                 class: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
-                text: 'Approved'
+                text: 'Paid'
               },
               'Cancelled': {
                 class: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200',
@@ -127,7 +127,7 @@ export class ExpenseOverviewComponent implements OnInit, OnDestroy {
   rowData: any[] = [];
   filteredData: any[] = [];
   searchText: string = '';
-  pageSize: number = 20;
+  pageSize: number = 10;
   currentPage: number = 1;
   totalPages: number = 1;
   startIndex: number = 0;
@@ -280,7 +280,7 @@ export class ExpenseOverviewComponent implements OnInit, OnDestroy {
       this.financialCreate = {
         description: this.capitalizeWords(this.form.value.description),
         method: this.form.value.payoutMethod,
-        amountMT: this.form.value.amountMT
+        amountMT: this.parseNumber(this.form.value.amountMT)
       }
       //console.log("Add = ",this.financialCreate)
       this.subs.add(
@@ -997,7 +997,7 @@ export class ExpenseOverviewComponent implements OnInit, OnDestroy {
       doc.setFontSize(20);
       doc.setTextColor(44, 44, 44);
       doc.setFont('helvetica', 'normal');
-      doc.text('Financial : Expenses – Full List', 100, 23);
+      doc.text('Financial : Expenses – Full List', 96, 23);
 
       // 5. Adicionar data de emissão
       doc.setFontSize(10);
@@ -1123,7 +1123,7 @@ export class ExpenseOverviewComponent implements OnInit, OnDestroy {
       doc.setFontSize(20);
       doc.setTextColor(44, 44, 44);
       doc.setFont('helvetica', 'normal');
-      doc.text('Financial : Expenses – Filtered List', 100, 23);
+      doc.text('Financial : Expenses – Filtered List', 89, 23);
 
       // 5. Adicionar data de emissão
       doc.setFontSize(10);
@@ -1241,7 +1241,7 @@ export class ExpenseOverviewComponent implements OnInit, OnDestroy {
       doc.setFontSize(20);
       doc.setTextColor(44, 44, 44);
       doc.setFont('helvetica', 'normal');
-      doc.text('Financial : Expenses – Filtered List', 100, 23);
+      doc.text('Financial : Expenses – Full List', 96, 23);
 
       // 5. Adicionar data de emissão
       doc.setFontSize(10);
@@ -1389,7 +1389,7 @@ export class ExpenseOverviewComponent implements OnInit, OnDestroy {
       doc.setFontSize(20);
       doc.setTextColor(44, 44, 44);
       doc.setFont('helvetica', 'normal');
-      doc.text('Financial : Expenses – Filtered List', 100, 23);
+      doc.text('Financial : Expenses – Filtered List', 89, 23);
 
       // 5. Adicionar data de emissão
       doc.setFontSize(10);

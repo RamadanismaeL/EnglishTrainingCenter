@@ -1,0 +1,50 @@
+<div class="flex flex-col items-center gap-5 w-auto px-5 py-3 overflow-hidden">
+  <div class="w-65">
+    <h1 class="flex items-center justify-center text-lg text-gray-600 font-medium">
+      {{ data.description }}
+    </h1>
+    <h1 class="flex items-center justify-center text-lg text-green-600 font-medium">
+      {{ data.amountMT }} MT
+    </h1>
+    <hr class="border-slate-400">
+  </div>
+  <form
+  [formGroup]="form"
+  (ngSubmit)="onSave()"
+  class="flex flex-col gap-1 w-50"
+  >
+    <div class="w-full flex justify-center items-center">
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Payout Method</mat-label>
+        <mat-select panelClass="scrollbar-custom"
+          formControlName="payoutMethod">
+          <mat-option value="Bank">Bank</mat-option>
+          <mat-option value="Cash">Cash</mat-option>
+          <mat-option value="E-Mola">E-Mola</mat-option>
+          <mat-option value="M-Pesa">M-Pesa</mat-option>
+        </mat-select>
+        @if (getErrorForms('payoutMethod')?.hasError('required')) {
+          <mat-error>Payout method is required</mat-error>
+        }
+      </mat-form-field>
+    </div>
+    <div class="flex  w-full items-center justify-end gap-5 px-2 w-full">
+      <button
+      (click)="onCancel()" type="reset"
+      class="button-share-cancel">
+        <span class="shadow"></span>
+        <span class="edge"></span>
+        <span class="front text"> Cancel
+        </span>
+      </button>
+      <button
+      type="submit"
+      class="button-share-send">
+        <span class="shadow"></span>
+        <span class="edge"></span>
+        <span class="front text"> Save
+        </span>
+      </button>
+    </div>
+  </form>
+</div>

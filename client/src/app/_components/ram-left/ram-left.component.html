@@ -221,26 +221,6 @@ matTooltipHideDelay="50">
           </a>
         </span>
 
-        <span [ngClass]="{ 'active-verticalLineBtn': financialRevenue }"
-        [routerLink]="['/', {outlets: {ramRouter: ['financial-revenue']}}]"
-        (click)="navigateTo([
-          { label: 'FINANCIALS : REVENUE' }
-        ])"
-        class="verticalLineBtn flex items-center p-2 rounded">
-          <a class="flex items-center gap-4">
-            @if (!collapsed)
-            {
-              <span class="verticalLine ml-2"></span>
-              <span>R</span>
-            }
-            @else
-            {
-              <span class="verticalLine ml-5 pr-1"></span>
-              <span *ngIf="collapsed">Revenue</span>
-            }
-          </a>
-        </span>
-
         <span [ngClass]="{ 'active-verticalLineBtn': financialCashFlow }"
         [routerLink]="['/', {outlets: {ramRouter: ['financial-cash-flow']}}]"
         (click)="navigateTo([

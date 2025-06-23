@@ -63,11 +63,23 @@
   </table>
 </div>
 <hr class="border-slate-400 my-5">
-<mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
-  <mat-tab label="Expense">
-    <app-expense-financial-daily-report></app-expense-financial-daily-report>
-  </mat-tab>
-  <mat-tab label="Revenue">
-    <app-revenue-financial-daily-report></app-revenue-financial-daily-report>
-  </mat-tab>
-</mat-tab-group>
+<div>
+  <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+    <mat-tab>
+      <ng-template mat-tab-label>
+        Revenue
+      </ng-template>
+      <ng-template matTabContent>
+        <app-revenue-financial-daily-report></app-revenue-financial-daily-report>
+      </ng-template>
+    </mat-tab>
+    <mat-tab>
+      <ng-template mat-tab-label>
+        Expense
+      </ng-template>
+      <ng-template matTabContent>
+        <app-expense-financial-daily-report></app-expense-financial-daily-report>
+      </ng-template>
+    </mat-tab>
+  </mat-tab-group>
+</div>

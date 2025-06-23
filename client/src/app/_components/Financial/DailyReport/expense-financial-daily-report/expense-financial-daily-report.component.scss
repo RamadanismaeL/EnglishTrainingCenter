@@ -124,93 +124,13 @@ p {
   color: #555;
 }
 
-.icon {
-  background: #fff;
-  border-radius: 10%;
-  width: 4rem;
-  height: 2.6rem;
-  font-family: "Poppins", sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) ease-in-out;
-  cursor: pointer;
-}
-
-.copy {
-  &:hover {
-    text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.1);
-    color: #fff;
-    background: #5900ff;
-  }
-  &:active {
-    background: #3d00af;
-    border-radius: 10px;
-  }
-}
-
-.copy-active {
-  text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.1);
-  color: #fff;
-  background: #5900ff;
-}
-
-.excel {
-  &:hover {
-    text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.1);
-    color: #fff;
-    background: #1db954;
-  }
-  &:active {
-    background: #009133;
-    border-radius: 10px;
-  }
-}
-
-.excel-active {
-  text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.1);
-  color: #fff;
-  background: #1db954;
-}
-
-.pdf {
-  &:hover {
-    text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.1);
-    color: #fff;
-    background: #bd081c;
-  }
-  &:active {
-    background: #9b0718;
-    border-radius: 10px;
-  }
-}
-
-.pdf-active {
-  text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.1);
-  color: #fff;
-  background: #bd081c;
-}
-
-.print {
-  &:hover {
-    text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.1);
-    color: #fff;
-    background: #0088cc;
-  }
-  &:active {
-    background: #006091;
-    border-radius: 10px;
-  }
-}
-
-.print-active {
-  text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.1);
-  color: #fff;
-  background: #0088cc;
-}
-
 .formField {
   position: relative;
   top: 7px;
+}
+
+
+.mat-icon {
+  font-size: 26px;
+  color: #555555;
 }

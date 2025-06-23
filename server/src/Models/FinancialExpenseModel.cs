@@ -11,7 +11,7 @@ namespace server.src.Models
         public string Method { get; set; } = string.Empty;
         public decimal AmountMT { get; set; }        
         public DateTime LastUpdate { get; set; }
-        public string Status { get; set; } = string.Empty; //Approved, Cancelled
+        public string Status { get; set; } = string.Empty; //Approved, Cancelled, Pending
         public string TrainerName { get; set; } = string.Empty;
     }
 }

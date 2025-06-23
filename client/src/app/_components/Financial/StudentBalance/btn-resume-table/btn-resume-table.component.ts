@@ -37,7 +37,7 @@ export class BtnResumeTableComponent implements ICellRendererAngularComp {
   navigateTo (breadcrumbs: { label: string, url?: any[] }) {
     this.titleNavbarService.addBreadcrumb(breadcrumbs);
 
-    console.log(`Dados = ${this.params.data.studentID}`)
+    //console.log(`Dados = ${this.params.data.studentID}`)
     this.studentShareId.setEnrollmentStudent(this.params.data.studentID);
   }
 }

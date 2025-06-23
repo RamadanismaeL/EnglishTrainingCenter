@@ -10,7 +10,13 @@ namespace server.src.Interfaces
     {
         Task<ResponseDto> Create(FinancialExpenseCreateDto financialExpenseCreateDto);
         Task<ResponseDto> Update(FinancialExpenseUpdateDto financialExpenseUpdateDto);
-        Task<ResponseDto> CancelStatus(long id);
+        Task<ResponseDto> UpdateStatus(long id, string status);
         Task<List<FinancialExpenseListDto>> GetListAllData();
+        Task<ResponseDto> CreatePending(FinancialExpenseCreatePendingDto financialExpenseCreatePendingDto);
+        Task<List<FinancialExpenseListPendingDto>> GetListPending();
+        Task<ResponseDto> Delete(long id);
+        Task<ResponseDto> PayNow(long id, string method);
+
+        Task<List<FinancialExpenseListDto>> GetListDailyReport();
     }
 }
