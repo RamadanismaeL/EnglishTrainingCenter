@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatStepper, MatStepperModule } from '@angular/material/stepper';
@@ -21,7 +21,7 @@ import { PaymentPayNowCreateService } from '../../_services/payment-pay-now-crea
   templateUrl: './payment.component.html',
   styleUrl: './payment.component.scss'
 })
-export class PaymentComponent implements OnInit, OnDestroy {
+export class PaymentComponent implements OnDestroy {
   currentStep?: number;
   @ViewChild('stepperPayment') stepper!: MatStepper;
   private subs = new Subscription();
@@ -32,20 +32,11 @@ export class PaymentComponent implements OnInit, OnDestroy {
         this.currentStep = step;
       })
     );
+    this.stepperService.setActiveStep(0);
   }
 
   ngAfterViewInit(): void {
     this.stepper._steps.forEach(step => { step.select = () => {}; })
-  }
-
-  ngOnInit(): void {
-    this.subs.add(
-      this.notificationHub.receiveMessage().subscribe(() => {
-        //this.loadDetails();
-      })
-    );
-    //this.initializeForm();
-    //this.loadDetails();
   }
 
   ngOnDestroy(): void {

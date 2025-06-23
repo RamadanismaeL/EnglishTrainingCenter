@@ -7,6 +7,9 @@ import { ResponseDto } from '../_interfaces/response-dto';
 import { ListFinancialExpenseCreateDto } from '../_interfaces/list-financial-expense-create-dto';
 import { ListFinancialExpenseCreatePendingDto } from '../_interfaces/list-financial-expense-create-pending-dto';
 import { ListFinancialExpensePendingDto } from '../_interfaces/list-financial-expense-pending-dto';
+import { ListTotalTransactionsStudentBalance } from '../_interfaces/list-total-transactions-student-balance';
+import { ListFinancialDailyReportTransactionPayment } from '../_interfaces/list-financial-daily-report-transaction-payment';
+import { ListFinancialDailyReportBalanceDto } from '../_interfaces/list-financial-daily-report-balance-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -47,7 +50,19 @@ export class FinancialService {
     .delete<ResponseDto>(`${this.myUrl}/FinancialExpense/delete/${id}`, {headers : { 'Allow-Offline' : 'true' }});
 
 
-    // Daily Report
-    getListDailyReport = () : Observable<ListFinancialExpenseDto> => this.http
-      .get<ListFinancialExpenseDto>(`${this.myUrl}/FinancialExpense/get-list-daily-report`, {headers : { 'Allow-Offline' : 'true' }});
+  // Daily Report
+  getListDailyReport = () : Observable<ListFinancialExpenseDto> => this.http
+    .get<ListFinancialExpenseDto>(`${this.myUrl}/FinancialExpense/get-list-daily-report`, {headers : { 'Allow-Offline' : 'true' }});
+
+  getListDailyReportRevenue = () : Observable<ListTotalTransactionsStudentBalance> => this.http
+    .get<ListTotalTransactionsStudentBalance>(`${this.myUrl}/Students/get-list-daily-report-revenue`,
+    {headers : { 'Allow-Offline' : 'true' }});
+
+  getListDailyReportTransaction = () : Observable<ListFinancialDailyReportTransactionPayment> => this.http
+    .get<ListFinancialDailyReportTransactionPayment>(`${this.myUrl}/Students/get-list-daily-report-transaction`,
+    {headers : { 'Allow-Offline' : 'true' }});
+
+  getListDailyReportBalance = () : Observable<ListFinancialDailyReportBalanceDto> => this.http
+    .get<ListFinancialDailyReportBalanceDto>(`${this.myUrl}/Students/get-list-daily-report-balance`,
+    {headers : { 'Allow-Offline' : 'true' }});
 }

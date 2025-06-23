@@ -6,13 +6,8 @@ import { AgGridAngular } from 'ag-grid-angular';
 import { AllCommunityModule, ModuleRegistry, ColDef, RowSelectionOptions } from 'ag-grid-community';
 import { MatInputModule } from '@angular/material/input';
 import { CommonModule } from '@angular/common';
-import { MatCardModule } from '@angular/material/card';
 import { Subscription } from 'rxjs';
-import { MatDialogModule } from '@angular/material/dialog';
 import 'jspdf-autotable';
-import { MatButtonModule } from '@angular/material/button';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatSelectModule } from '@angular/material/select';
 import { NotificationHubService } from '../../../../_services/notification-hub.service';
 import { FinancialService } from '../../../../_services/financial.service';
 
@@ -24,14 +19,9 @@ ModuleRegistry.registerModules([ AllCommunityModule]);
     AgGridAngular,
     MatIconModule,
     MatTooltipModule,
-    MatSelectModule,
     FormsModule,
     MatInputModule,
-    CommonModule,
-    MatCardModule,
-    MatDialogModule,
-    MatButtonModule,
-    MatMenuModule
+    CommonModule
   ],
   templateUrl: './expense-financial-daily-report.component.html',
   styleUrl: './expense-financial-daily-report.component.scss'

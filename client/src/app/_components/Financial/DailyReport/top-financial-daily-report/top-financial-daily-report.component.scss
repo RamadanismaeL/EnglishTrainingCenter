@@ -70,6 +70,30 @@
   }
 }
 
+.profit {
+  padding: 2px 0px;
+  border: 2px solid #00ff80;
+  border-radius: 15px;
+}
+
+.cardProfit {
+  //cursor: pointer;
+  &:hover {
+    .profit {
+      background: #00ff80;
+      border: 2px solid #00ff80;
+      box-shadow: 0 0 5px #00ff80,
+                  0 0 20px #00ff80,
+                  0 0 50px #00ff80,
+                  0 0 100px #00ff80;
+    }
+
+    .textProfit {
+      font-weight: 500;
+    }
+  }
+}
+
 .finalBalance {
   padding: 2px 0px;
   border: 2px solid rgb(0, 81, 255);

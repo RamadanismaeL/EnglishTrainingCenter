@@ -1,49 +1,111 @@
-<div class="w-full flex justify-between items-center gap-2 cursor-default">
-  <div class="container max-auto bg-white shadow-md rounded-[13px] w-1/4 h-25 cardInitialBalance">
-    <div class="mx-4 my-4">
-      <div class="mb-5">
-        <span class="initialBalance"></span>
-        <span class="pl-2 text-[12pt] text-[#2f2f2f] textInitialBalance">INITIAL BALANCE</span>
+<div class="w-full flex flex-col gap-2 cursor-default">
+  <div class="w-full flex justify-between items-center gap-2 cursor-default">
+    <div class="container max-auto hover:bg-white bg-white/50 shadow-md rounded-[13px] w-full h-25 cardRevenue font-normal hover:font-medium">
+      <div class="h-full mx-4 my-4 flex flex-col items-between">
+        <div class="mb-1">
+          <span class="revenue"></span>
+          <span class="pl-2 text-[12pt] text-[#2f2f2f] textRevenue">TOTAL REVENUE</span>
+        </div>
+        <div class="w-full flex justify-end text-[25pt] text-[#2f2f2f]">
+          <span>
+            @if (totalRevenue === '0,00') {
+              <p class="text-center">0,00 MT</p>
+            }
+            @else if (totalRevenue > '0,00') {
+              <p class="text-green-900">{{totalRevenue}} MT</p>
+            }
+            @else {
+              <p class="text-red-700">{{totalRevenue}} MT</p>
+            }
+          </span>
+        </div>
       </div>
-      <div class="w-full flex gap-1 justify-end text-[15pt] text-[#2f2f2f] font-bold">
-        <span>0,00</span>
-        <span>MT</span>
+    </div>
+    <div class="container max-auto hover:bg-white bg-white/50 shadow-md rounded-[13px] w-full h-25 cardExpense font-normal hover:font-medium">
+      <div class="h-full mx-4 my-4 flex flex-col items-between">
+        <div class="mb-1">
+          <span class="expense"></span>
+          <span class="pl-2 text-[12pt] text-[#2f2f2f] textExpense">TOTAL EXPENSE</span>
+        </div>
+        <div class="w-full flex justify-end text-[25pt] text-[#2f2f2f]">
+          <span>
+            @if (totalExpense === '0,00') {
+              <p class="text-center">0,00 MT</p>
+            }
+            @else if (totalExpense > '0,00') {
+              <p class="text-green-900">{{totalExpense}} MT</p>
+            }
+            @else {
+              <p class="text-red-700">{{totalExpense}} MT</p>
+            }
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="container max-auto hover:bg-white bg-white/50 shadow-md rounded-[13px] w-full h-25 cardProfit font-normal hover:font-medium">
+      <div class="h-full mx-4 my-4 flex flex-col items-between">
+        <div class="mb-1">
+          <span class="profit"></span>
+          <span class="pl-2 text-[12pt] text-[#2f2f2f] textProfit">PROFIT</span>
+        </div>
+        <div class="w-full flex gap-1 justify-end text-[25pt] text-[#2f2f2f]">
+          <span>
+            @if (profit === '0,00') {
+              <p class="text-center">0,00 MT</p>
+            }
+            @else if (profit > '0,00') {
+              <p class="text-green-900">{{profit}} MT</p>
+            }
+            @else {
+              <p class="text-red-700">{{profit}} MT</p>
+            }
+          </span>
+        </div>
       </div>
     </div>
   </div>
-  <div class="container max-auto bg-white shadow-md rounded-[13px] w-1/4 h-25 cardRevenue">
-    <div class="mx-4 my-4">
-      <div class="mb-5">
-        <span class="revenue"></span>
-        <span class="pl-2 text-[12pt] text-[#2f2f2f] textRevenue">TOTAL REVENUE</span>
-      </div>
-      <div class="w-full flex gap-1 justify-end text-[15pt] text-[#2f2f2f] font-bold">
-        <span>0,00</span>
-        <span>MT</span>
+
+  <div class="w-full flex justify-between items-center gap-2 cursor-default">
+    <div class="container max-auto bg-white/50 hover:bg-white shadow-lg rounded-[13px] w-full h-25 cardInitialBalance font-normal hover:font-medium">
+      <div class="h-full mx-4 my-4 flex flex-col items-between">
+        <div class="mb-1">
+          <span class="initialBalance"></span>
+          <span class="pl-2 text-[12pt] text-[#2f2f2f] textInitialBalance">INITIAL BALANCE</span>
+        </div>
+        <div class="w-full flex gap-1 justify-end text-[25pt] text-[#2f2f2f]">
+          <span>
+            @if (initialBalance === '0,00') {
+              <p class="text-center">0,00 MT</p>
+            }
+            @else if (initialBalance > '0,00') {
+              <p class="text-green-900">{{initialBalance}} MT</p>
+            }
+            @else {
+              <p class="text-red-700">{{initialBalance}} MT</p>
+            }
+          </span>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="container max-auto bg-white shadow-md rounded-[13px] w-1/4 h-25 cardExpense">
-    <div class="mx-4 my-4">
-      <div class="mb-5">
-        <span class="expense"></span>
-        <span class="pl-2 text-[12pt] text-[#2f2f2f] textExpense">TOTAL EXPENSE</span>
-      </div>
-      <div class="w-full flex gap-1 justify-end text-[15pt] text-[#2f2f2f] font-bold">
-        <span>0,00</span>
-        <span>MT</span>
-      </div>
-    </div>
-  </div>
-  <div class="container max-auto bg-white shadow-md rounded-[13px] w-1/4 h-25 cardFinalBalance">
-    <div class="mx-4 my-4">
-      <div class="mb-5">
-        <span class="finalBalance"></span>
-        <span class="pl-2 text-[12pt] text-[#2f2f2f] textFinalBalance">TOTAL BALANCE</span>
-      </div>
-      <div class="w-full flex gap-1 justify-end text-[15pt] text-[#2f2f2f] font-bold">
-        <span>0,00</span>
-        <span>MT</span>
+    <div class="container mx-auto bg-white/50 hover:bg-white shadow-lg rounded-[13px] w-full h-25 cardFinalBalance font-normal hover:font-medium">
+      <div class="h-full mx-4 my-4 flex flex-col items-between">
+        <div class="mb-1">
+          <span class="finalBalance"></span>
+          <span class="pl-2 text-[12pt] text-[#2f2f2f] textFinalBalance">TOTAL BALANCE</span>
+        </div>
+        <div class="w-full flex gap-1 justify-end text-[25pt] text-[#2f2f2f]">
+          <span>
+            @if (totalBalance === '0,00') {
+              <p class="text-center">0,00 MT</p>
+            }
+            @else if (totalBalance > '0,00') {
+              <p class="text-green-900">{{totalBalance}} MT</p>
+            }
+            @else {
+              <p class="text-red-700">{{totalBalance}} MT</p>
+            }
+          </span>
+        </div>
       </div>
     </div>
   </div>

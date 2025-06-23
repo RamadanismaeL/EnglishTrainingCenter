@@ -1216,6 +1216,155 @@ namespace server.src.Repositories
             return dto;
         }
 
+        public async Task<List<StudentBalanceTransactionsDto>> GetListDailyReportRevenue()
+        {
+            // 1. Busca todos os Pagamentos (Payments)
+            var payments = await _dbContext.StudentData
+                .AsNoTracking()
+                .SelectMany(s => s.Payments!
+                    .Where
+                    (e => e != null &&
+                        e.Status == "Paid" &&
+                        e.DateRegister.Date == DateTime.Today
+                    )
+                    .Select(p => new StudentBalanceTransactionsDto
+                    {
+                        StudentFullName = p.StudentData!.FullName,
+                        PaymentId = p.Id.ToString(),
+                        DescriptionEnglish = p.DescriptionEnglish,
+                        ReceivedFrom = p.ReceivedFrom,
+                        Method = p.Method,
+                        AmountMT = p.AmountMT,
+                        Status = p.Status,
+                        DateRegister = p.DateRegister,
+                        TrainerName = p.TrainerName
+                    }))
+                .OrderByDescending(t => t.DateRegister)
+                .ToListAsync();
+
+            // 2. Busca todas as Mensalidades (MonthlyTuition) e transforma no mesmo formato
+            var monthlyTuitions = await _dbContext.StudentData
+                .AsNoTracking()
+                .SelectMany(s => s.MonthlyTuition!
+                    .Where
+                    (e => e != null &&
+                        e.Status == "Cancelled" &&
+                        e.DateUpdate.HasValue && e.DateUpdate.Value.Date == DateTime.Today
+                    )
+                    .Select(m => new StudentBalanceTransactionsDto
+                    {
+                        StudentFullName = m.StudentData!.FullName,
+                        PaymentId = m.Id.ToString(), // Ou m.PaymentId se existir
+                        DescriptionEnglish = m.Description,
+                        ReceivedFrom = "--", 
+                        Method = "--", 
+                        AmountMT = m.CourseInfoData!.MonthlyFee,
+                        Status = m.Status,
+                        DateRegister = m.DateRegister,
+                        TrainerName = m.TrainerName
+                    }))
+                .ToListAsync();
+
+            // 3. Combina as duas listas e ordena por DataRegister (do mais recente para o mais antigo)
+            var allTransactions = payments
+                .Concat(monthlyTuitions)
+                .OrderByDescending(t => t.DateRegister)
+                .ToList();
+
+            return allTransactions;
+        }
+
+        public async Task<FinancialDailyReportTransactionListDto> GetListDailyReportTransaction()
+        {
+            var paymentData = await _dbContext.StudentPayments
+                .Where(e => e != null &&
+                        e.Status == "Paid" &&
+                        e.DateRegister.Date == DateTime.Today)
+                .ToListAsync();
+
+             // Buscar despesas do dia
+            var expenseData = await _dbContext.FinancialExpense
+                .Where
+                (e => e != null &&
+                    e.Status == "Paid" &&
+                    e.LastUpdate.Date == DateTime.Today
+                )
+                .ToListAsync();
+
+            var result = new FinancialDailyReportTransactionListDto();
+
+            // Calcular totais para cada método de pagamento
+            result.BankRevenue = paymentData.Where(p => p.Method == "Bank").Sum(p => p.AmountMT);
+            result.BankExpense = expenseData.Where(e => e.Method == "Bank").Sum(e => e.AmountMT);
+            result.BankFinalBalance = result.BankRevenue - result.BankExpense;
+
+            result.CashRevenue = paymentData.Where(p => p.Method == "Cash").Sum(p => p.AmountMT);
+            result.CashExpense = expenseData.Where(e => e.Method == "Cash").Sum(e => e.AmountMT);
+            result.CashFinalBalance = result.CashRevenue - result.CashExpense;
+
+            result.EMolaRevenue = paymentData.Where(p => p.Method == "E-Mola").Sum(p => p.AmountMT);
+            result.EMolaExpense = expenseData.Where(e => e.Method == "E-Mola").Sum(e => e.AmountMT);
+            result.EMolaFinalBalance = result.EMolaRevenue - result.EMolaExpense;
+
+            result.MPesaRevenue = paymentData.Where(p => p.Method == "M-Pesa").Sum(p => p.AmountMT);
+            result.MPesaExpense = expenseData.Where(e => e.Method == "M-Pesa").Sum(e => e.AmountMT);
+            result.MPesaFinalBalance = result.MPesaRevenue - result.MPesaExpense;
+
+            // Calcular totais gerais
+            result.TotalRevenue = result.BankRevenue + result.CashRevenue + result.EMolaRevenue + result.MPesaRevenue;
+            result.TotalExpense = result.BankExpense + result.CashExpense + result.EMolaExpense + result.MPesaExpense;
+            result.TotalFinalBalance = result.TotalRevenue - result.TotalExpense;
+
+            return result;
+        }
+
+        public async Task<FinancialDailyReportBalanceDto> GetListDailyReportBalance()
+        {
+            // Get today's date
+            var today = DateTime.Today;
+            
+            // Calculate initial balance (sum of all historical revenues minus expenses before today)
+            var initialBalance = await _dbContext.StudentPayments
+                .Where(e => e != null && 
+                        e.Status == "Paid" && 
+                        e.DateRegister.Date < today)
+                .SumAsync(e => e.AmountMT) -
+                await _dbContext.FinancialExpense
+                .Where(e => e != null && 
+                        e.Status == "Paid" && 
+                        e.LastUpdate.Date < today)
+                .SumAsync(e => e.AmountMT);
+
+            // Calculate today's revenue
+            var totalRevenue = await _dbContext.StudentPayments
+                .Where(e => e != null && 
+                        e.Status == "Paid" && 
+                        e.DateRegister.Date == today)
+                .SumAsync(e => e.AmountMT);
+
+            // Calculate today's expenses
+            var totalExpense = await _dbContext.FinancialExpense
+                .Where(e => e != null && 
+                        e.Status == "Paid" && 
+                        e.LastUpdate.Date == today)
+                .SumAsync(e => e.AmountMT);
+
+            // Calculate total profit
+            var totalProfit = totalRevenue - totalExpense;
+
+            // Calculate total balance
+            var totalBalance = totalProfit + initialBalance;
+
+            return new FinancialDailyReportBalanceDto
+            {
+                InitialBalance = initialBalance,
+                TotalRevenue = totalRevenue,
+                TotalExpense = totalExpense,
+                Profit = totalProfit,
+                TotalBalance = totalBalance
+            };
+        }
+
         private decimal GetSettingsMonthlyTuition(string id, string packageName)
         {
             var tuitionId = _dbContext.SettingsMonthlyTuition.FirstOrDefault(s => s.Id == id);

@@ -1,1 +1,54 @@
-<p>revenue-financial-daily-report works!</p>
+<div class="table-toolbar text-[#525252]">
+  <div class="w-full flex items-center justify-start">
+    <div class="w-1/4 formField">
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Type to search...</mat-label>
+        <mat-icon matSuffix>search</mat-icon>
+          <input matInput [(ngModel)]="searchText" (input)="onSearch()"
+          type="text" maxlength="50"/>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <ag-grid-angular
+    class="ag-theme-alpine custom-scrollbar w-full h-100"
+    [rowData]="filteredData"
+    [columnDefs]="columnDefs"
+    [animateRows]="true"
+    [domLayout]="'normal'"
+    [headerHeight]="56"
+    [rowHeight]="56"
+    [rowSelection]="rowSelection"
+    #agGrid
+    >
+  </ag-grid-angular>
+
+  <p>
+    Showing {{ startIndex + 1 }} to {{ endIndex }} of {{ rowData.length }} entries
+  </p>
+
+  <div class="pagination">
+    <button (click)="gotToPrevious()" [disabled]="currentPage === 1"
+    matTooltip="Previous"
+    [matTooltipPosition]="positionT.value!"
+    matTooltipHideDelay="50">
+      <mat-icon>chevron_left</mat-icon>
+    </button>
+
+    <ng-container *ngFor="let page of totalPagesArray">
+      <button *ngIf="isNumber(page)"
+              (click)="goToPage(page)"
+              [class.active]="currentPage === page">
+        {{ page }}
+      </button>
+      <span *ngIf="!isNumber(page)" class="cursor-default">...</span>
+    </ng-container>
+
+    <button (click)="goToNext()" [disabled]="currentPage === totalPages"
+    matTooltip="Next"
+    [matTooltipPosition]="positionT.value!"
+    matTooltipHideDelay="50">
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+  </div>
+</div>

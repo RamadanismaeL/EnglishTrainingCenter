@@ -189,5 +189,29 @@ namespace server.src.Controllers
 
             return Ok(student);
         }
+
+        [HttpGet("get-list-daily-report-revenue")]
+        public async Task<ActionResult<List<StudentBalanceTransactionsDto>>> GetListDailyReportRevenue()
+        {
+            var student = await _studentRepository.GetListDailyReportRevenue();
+
+            return Ok(student);
+        }
+
+        [HttpGet("get-list-daily-report-transaction")]
+        public async Task<ActionResult<FinancialDailyReportTransactionListDto>> GetListDailyReportTransaction()
+        {
+            var student = await _studentRepository.GetListDailyReportTransaction();
+
+            return Ok(student);
+        }
+
+        [HttpGet("get-list-daily-report-balance")]
+        public async Task<ActionResult<FinancialDailyReportBalanceDto>> GetListDailyReportBalance()
+        {
+            var student = await _studentRepository.GetListDailyReportBalance();
+
+            return Ok(student);
+        }
     }
 }

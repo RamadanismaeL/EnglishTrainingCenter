@@ -21,7 +21,7 @@ import { StudentPaymentModel } from '../../../_interfaces/student-payment-model'
 })
 export class BtnTransactionsReceiptComponent implements ICellRendererAngularComp, OnInit, OnDestroy {
   positionOptions: TooltipPosition[] = ['below', 'above', 'left', 'right'];
-  positionL = new FormControl(this.positionOptions[2]);
+  positionL = new FormControl(this.positionOptions[1]);
 
   params: any;
   private subs = new Subscription();
