@@ -10,6 +10,7 @@ import { ListFinancialExpensePendingDto } from '../_interfaces/list-financial-ex
 import { ListTotalTransactionsStudentBalance } from '../_interfaces/list-total-transactions-student-balance';
 import { ListFinancialDailyReportTransactionPayment } from '../_interfaces/list-financial-daily-report-transaction-payment';
 import { ListFinancialDailyReportBalanceDto } from '../_interfaces/list-financial-daily-report-balance-dto';
+import { ListFinancialRevenueCashFlowBalanceDto } from '../_interfaces/list-financial-revenue-cash-flow-balance-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -64,5 +65,17 @@ export class FinancialService {
 
   getListDailyReportBalance = () : Observable<ListFinancialDailyReportBalanceDto> => this.http
     .get<ListFinancialDailyReportBalanceDto>(`${this.myUrl}/Students/get-list-daily-report-balance`,
+    {headers : { 'Allow-Offline' : 'true' }});
+
+  getListCashFlowRevenue = () : Observable<ListTotalTransactionsStudentBalance> => this.http
+    .get<ListTotalTransactionsStudentBalance>(`${this.myUrl}/Students/get-list-cash-flow-revenue`,
+    {headers : { 'Allow-Offline' : 'true' }});
+
+  getListRevenueCashFlowTransaction = () : Observable<ListFinancialDailyReportTransactionPayment> => this.http
+    .get<ListFinancialDailyReportTransactionPayment>(`${this.myUrl}/Students/get-list-revenue-cash-flow-transaction`,
+    {headers : { 'Allow-Offline' : 'true' }});
+
+  getListRevenueCashFlowBalance = () : Observable<ListFinancialRevenueCashFlowBalanceDto> => this.http
+    .get<ListFinancialRevenueCashFlowBalanceDto>(`${this.myUrl}/Students/get-list-revenue-cash-flow-balance`,
     {headers : { 'Allow-Offline' : 'true' }});
 }

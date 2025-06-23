@@ -152,7 +152,7 @@ export class ChartFinancialCashFlowComponent implements OnInit, AfterViewInit, O
     this.initializeEmptyData();
 
     // Simula a chegada de novos dados (substituir por conexão real com API/WebSocket)
-    this.dataSubscription = interval(30000).subscribe(() => {
+    this.dataSubscription = interval(3000).subscribe(() => {
       this.simulateNewData();
     });
   }
@@ -210,8 +210,8 @@ export class ChartFinancialCashFlowComponent implements OnInit, AfterViewInit, O
     this.lastDate = new Date(this.lastDate.getFullYear(), this.lastDate.getMonth() + 1, 1);
 
     // Gera dados aleatórios mensais (valores mais altos para representar um mês)
-    const newRevenue = Math.floor(Math.random() * 30000) + 15000;  // Entre 15.000 e 45.000
-    const newExpense = Math.floor(Math.random() * 25000) + 10000;  // Entre 10.000 e 35.000
+    const newRevenue = Math.floor(Math.random() * 3000) + 1500;  // Entre 15.000 e 45.000
+    const newExpense = Math.floor(Math.random() * 2500) + 1000;  // Entre 10.000 e 35.000
 
     // Adiciona os novos pontos de dados
     this.chartData[0].data.push({ x: this.lastDate.getTime(), y: newRevenue });

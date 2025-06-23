@@ -213,5 +213,29 @@ namespace server.src.Controllers
 
             return Ok(student);
         }
+
+        [HttpGet("get-list-cash-flow-revenue")]
+        public async Task<ActionResult<List<StudentBalanceTransactionsDto>>> GetListCashFlowRevenue()
+        {
+            var student = await _studentRepository.GetListCashFlowRevenue();
+
+            return Ok(student);
+        }
+
+        [HttpGet("get-list-revenue-cash-flow-transaction")]
+        public async Task<ActionResult<FinancialDailyReportTransactionListDto>> GetListRevenueCashFlowTransaction()
+        {
+            var student = await _studentRepository.GetListRevenueCashFlowTransaction();
+
+            return Ok(student);
+        }
+
+        [HttpGet("get-list-revenue-cash-flow-balance")]
+        public async Task<ActionResult<FinancialRevenueCashFlowBalanceDto>> GetListRevenueCashFlowBalance()
+        {
+            var student = await _studentRepository.GetListRevenueCashFlowBalance();
+
+            return Ok(student);
+        }
     }
 }

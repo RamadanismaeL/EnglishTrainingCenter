@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { BottomFinancialCashFlowComponent } from '../../../_components/Financial/CashFlow/bottom-financial-cash-flow/bottom-financial-cash-flow.component';
+import { TopFinancialCashFlowComponent } from "../../../_components/Financial/CashFlow/top-financial-cash-flow/top-financial-cash-flow.component";
 
 @Component({
   standalone: true,
   selector: 'app-financial-cash-flow',
-  imports: [BottomFinancialCashFlowComponent],
+  imports: [BottomFinancialCashFlowComponent, TopFinancialCashFlowComponent],
   templateUrl: './financial-cash-flow.component.html',
   styleUrl: './financial-cash-flow.component.scss'
 })

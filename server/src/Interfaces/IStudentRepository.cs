@@ -31,5 +31,8 @@ namespace server.src.Interfaces
         Task<List<StudentBalanceTransactionsDto>> GetListDailyReportRevenue();
         Task<FinancialDailyReportTransactionListDto> GetListDailyReportTransaction();
         Task<FinancialDailyReportBalanceDto> GetListDailyReportBalance();
+        Task<List<StudentBalanceTransactionsDto>> GetListCashFlowRevenue();
+        Task<FinancialDailyReportTransactionListDto> GetListRevenueCashFlowTransaction();
+        Task<FinancialRevenueCashFlowBalanceDto> GetListRevenueCashFlowBalance();
     }
 }
