@@ -7,6 +7,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { FinancialService } from '../../../../_services/financial.service';
 import { SnackBarService } from '../../../../_services/snack-bar.service';
 import { MatSelectModule } from '@angular/material/select';
+import { ListFinancialExpenseCreateDto } from '../../../../_interfaces/list-financial-expense-create-dto';
 
 @Component({
   selector: 'app-dialog-pay-now-financial-expense-table',
@@ -23,6 +24,7 @@ export class DialogPayNowFinancialExpenseTableComponent implements OnInit, OnDes
   form! : FormGroup;
   previousAmountValue: string = '';
   private subs: Subscription = new Subscription();
+  private financialCreate = {} as ListFinancialExpenseCreateDto;
 
   constructor(public dialogRef : MatDialogRef<DialogPayNowFinancialExpenseTableComponent>, @Inject(MAT_DIALOG_DATA) public data:
     {
@@ -110,10 +112,17 @@ export class DialogPayNowFinancialExpenseTableComponent implements OnInit, OnDes
 
   onSave()
   {
+    var amount = this.parseNumber(this.data.amountMT.toString())
     if (this.form.valid)
     {
+      this.financialCreate = {
+        description: this.data.description,
+        method: this.form.value.payoutMethod,
+        amountMT: amount
+      }
+      console.log("Add = ",this.financialCreate)
       this.subs.add(
-        this.financialService.updateStatusPaid(this.data.id, this.form.value.payoutMethod).subscribe({
+        this.financialService.create(this.financialCreate).subscribe({
           next: (response) => {
             this.alert.show(response.message, 'success');
             this.dialogRef.close(true);
@@ -124,6 +133,19 @@ export class DialogPayNowFinancialExpenseTableComponent implements OnInit, OnDes
           }
         })
       );
+
+      /*this.subs.add(
+        this.financialService.updateStatusPaid(this.data.id, this.form.value.payoutMethod).subscribe({
+          next: (response) => {
+            this.alert.show(response.message, 'success');
+            this.dialogRef.close(true);
+          },
+          error: (error: HttpErrorResponse) => {
+            this.handleError(error);
+            this.dialogRef.close(false);
+          }
+        })
+      );*/
     }
   }
 

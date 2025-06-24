@@ -137,7 +137,7 @@ export class TransactionFinancialSummaryComponent implements OnInit, OnDestroy {
   rowData: any[] = [];
   filteredData: any[] = [];
   searchText: string = '';
-  pageSize: number = 8;
+  pageSize: number = 7;
   currentPage: number = 1;
   totalPages: number = 1;
   startIndex: number = 0;

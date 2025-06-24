@@ -12,6 +12,7 @@ matTooltipHideDelay="50">
   <span class="min cursor-default" *ngIf="collapsed">General</span>
 
   <div class="cursor-pointer">
+    <!--
     <span routerLinkActive="active-btn"
     [routerLink]="['/', {outlets: {ramRouter: ['dashboard']}}]"
     (click)="navigateTo([
@@ -21,6 +22,19 @@ matTooltipHideDelay="50">
       <a class="flex items-center gap-4 p-1">
         <mat-icon>dashboard</mat-icon>
         <span *ngIf="collapsed">Dashboard</span>
+      </a>
+    </span>
+    -->
+
+    <span routerLinkActive="active-btn"
+    [routerLink]="['/', {outlets: {ramRouter: ['enrollments']}}]"
+    (click)="navigateTo([
+      { label: 'ENROLLMENTS' }
+    ])"
+    class="btnLeft flex items-center p-2 rounded">
+      <a class="flex items-center gap-4">
+        <mat-icon>assignment_ind</mat-icon>
+        <span *ngIf="collapsed">Enrollments</span>
       </a>
     </span>
 
@@ -134,18 +148,6 @@ matTooltipHideDelay="50">
         </span>
       </div>
     </div>
-
-    <span routerLinkActive="active-btn"
-    [routerLink]="['/', {outlets: {ramRouter: ['enrollments']}}]"
-    (click)="navigateTo([
-      { label: 'ENROLLMENTS' }
-    ])"
-    class="btnLeft flex items-center p-2 rounded">
-      <a class="flex items-center gap-4">
-        <mat-icon>assignment_ind</mat-icon>
-        <span *ngIf="collapsed">Enrollments</span>
-      </a>
-    </span>
 
     <span routerLinkActive="active-btn"
     [routerLink]="['/', {outlets: {ramRouter: ['payments']}}]"
@@ -294,11 +296,13 @@ matTooltipHideDelay="50">
       </a>
     </span>
 
+    <!--
     <span class="btnLeft flex items-center p-2 rounded">
       <a routerLink="/dashboard" class="flex items-center gap-4">
         <mat-icon>menu_book</mat-icon>
         <span *ngIf="collapsed">Book Hub</span>
       </a>
     </span>
+    -->
   </div>
 </nav>

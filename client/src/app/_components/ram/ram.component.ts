@@ -48,13 +48,13 @@ export class RamComponent implements OnInit {
     const hasOutlet = this.route.children.some(child => child.outlet === 'ramRouter');
 
     if (!hasOutlet) {
-      this.router.navigate([{ outlets: { ramRouter: ['dashboard'] } }], {
+      this.router.navigate([{ outlets: { ramRouter: ['enrollments'] } }], {
         relativeTo: this.route
       });
       //this.titleNavbarService.setTitle('DASHBOARD')
 
       this.titleNavbarService.setBreadcrumbs([
-        { label: 'DASHBOARD' }
+        { label: 'ENROLLMENTS' }
       ]);
     }
   }
