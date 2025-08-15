@@ -1,5 +1,4 @@
-# ETC
-English Training Center Management - v1
+# ETC - v1
 
 # TOOLS
 1. Angular Cli - v.19.2.6
